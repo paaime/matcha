@@ -6,4 +6,5 @@ export default withAuth({
   },
 });
 
+// Private routes
 export const config = { matcher: ['/dashboard', '/favorites', '/collection'] };

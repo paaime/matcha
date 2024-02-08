@@ -1,37 +1,28 @@
-import { BellIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import Profile from '../Sidebar/Profile';
+import { BellIcon } from 'lucide-react';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
 export default function Header() {
   return (
-    <header className="hidden lg:flex border-b h-16 items-center px-6 gap-6">
-      <form className="relative flex flex-1 h-full" action="#" method="GET">
-        <label htmlFor="search-field" className="sr-only">
-          Search
-        </label>
-        <MagnifyingGlassIcon
-          className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
-          aria-hidden="true"
-        />
-        <input
-          id="search-field"
-          className="block h-full w-full border-0 py-0 pl-8 pr-0 placeholder:text-gray-400 focus:ring-0 sm:text-sm bg-transparent outline-none"
-          placeholder="Search..."
-          type="search"
-          name="search"
-        />
-      </form>
-      <button
-        type="button"
-        className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 ml-auto"
-      >
-        <span className="sr-only">View notifications</span>
-        <BellIcon className="h-6 w-6" aria-hidden="true" />
-      </button>
-      <div
-        className="hidden lg:block lg:h-6 lg:w-px dark:bg-white/5 bg-gray-200"
-        aria-hidden="true"
-      />
-      <Profile isMobile={false} />
-    </header>
+    <div className="flex justify-between mb-5">
+      <Link href="/home" className="flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="mr-2 h-6 w-6"
+        >
+          <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+        </svg>
+        <h1 className="text-3xl font-extrabold">Matcha</h1>
+      </Link>
+      <Button variant="outline" className="rounded-full h-10 w-10">
+        <BellIcon className="h-5 w-5" />
+      </Button>
+    </div>
   );
 }

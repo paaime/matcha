@@ -110,7 +110,7 @@ export default function SignInForm({
           <Button
             isLoading={form.formState.isSubmitting}
             type="submit"
-            className="w-full"
+            className="w-full font-bold"
           >
             Continue
           </Button>

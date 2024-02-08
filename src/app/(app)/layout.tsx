@@ -1,14 +1,14 @@
 import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import Menu from '@/components/Menu';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
-      <Sidebar />
-      <div className="lg:ml-72">
+    <div className="bg-[#FDF7FD] min-h-screen ">
+      <main className="max-w-screen-sm mx-auto p-5">
         <Header />
-        <main className="min-h-screen p-6">{children}</main>
-      </div>
+        {children}
+      </main>
+      <Menu />
     </div>
   );
 }
