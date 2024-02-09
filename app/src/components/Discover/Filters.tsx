@@ -28,17 +28,17 @@ export default function Filters() {
           <Settings2Icon />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="max-w-xl mx-auto">
-        <DrawerHeader>
+      <DrawerContent className="max-w-xl mx-auto rounded-t-3xl">
+        <DrawerHeader className="pb-0">
           <DrawerTitle className="text-2xl text-black font-extrabold text-center">
             Filters
           </DrawerTitle>
         </DrawerHeader>
         <div className="flex flex-col p-4">
-          <div className="flex justify-between gap-5 border-b py-6">
-            <p className="text-xl font-bold text-black">Location</p>
+          <div className="flex justify-between items-center gap-5 border-b pb-2">
+            <p className="text-lg font-bold text-black">Location</p>
             <Select>
-              <SelectTrigger className="w-[180px] text-gray-400 font-bold">
+              <SelectTrigger className="w-[180px] text-gray-400 font-bold border-0 text-md">
                 <SelectValue placeholder="People nearby" />
               </SelectTrigger>
               <SelectContent>
@@ -55,14 +55,14 @@ export default function Filters() {
           </div>
           <div className="flex flex-col gap-5 border-b pt-6 pb-8">
             <div className="flex justify-between">
-              <p className="text-xl font-bold text-black">Age</p>
+              <p className="text-lg font-bold text-black">Age</p>
               <p className="text-pink">20-25</p>
             </div>
             <Slider defaultValue={[33, 50]} max={100} step={1} />
           </div>
           <div className="flex flex-col gap-5 border-b pt-6 pb-8">
             <div className="flex justify-between">
-              <p className="text-xl font-bold text-black">Fame Rating</p>
+              <p className="text-lg font-bold text-black">Fame Rating</p>
               <p className="text-pink">20-25</p>
             </div>
             <Slider defaultValue={[33, 50]} max={100} step={1} />
@@ -70,11 +70,11 @@ export default function Filters() {
         </div>
         <DrawerFooter className="flex-row">
           <DrawerClose asChild>
-            <Button variant="secondary" className="w-full h-12">
+            <Button variant="secondary" className="w-full h-12 text-md">
               Reset
             </Button>
           </DrawerClose>
-          <Button className="w-full h-12">Apply</Button>
+          <Button className="w-full h-12 text-md">Apply</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

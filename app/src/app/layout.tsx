@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import '../styles/globals.scss';
 import { Providers } from './providers';
 import clsx from 'clsx';
 import { Toaster } from '@/components/ui/sonner';
 import localFont from 'next/font/local';
-
-const inter = Inter({ subsets: ['latin'] });
+import Header from '@/components/Header';
+import Menu from '@/components/Menu';
 
 const hellix = localFont({
   src: [

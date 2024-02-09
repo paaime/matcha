@@ -6,7 +6,7 @@ import Notifications from './Notifications';
 export default function Header() {
   return (
     <div className="flex justify-between mb-5">
-      <Link href="/home" className="flex items-center">
+      <Link href="/" className="flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -21,9 +21,6 @@ export default function Header() {
         </svg>
         <h1 className="text-3xl font-extrabold">Matcha</h1>
       </Link>
-      {/* <Button variant="outline" className="rounded-full h-10 w-10">
-        <BellIcon className="h-5 w-5" />
-      </Button> */}
       <Notifications />
     </div>
   );

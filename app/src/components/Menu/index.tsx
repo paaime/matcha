@@ -14,12 +14,12 @@ import { usePathname } from 'next/navigation';
 export default function Menu() {
   const pathname = usePathname();
   return (
-    <header className="flex w-full justify-center fixed bottom-5 h-16">
+    <header className="flex w-full justify-center fixed bottom-5 h-16 z-20">
       <nav className="flex items-center bg-white px-5 rounded-full gap-6 shadow-lg">
         <Link
-          href="/home"
+          href="/"
           className={clsx(
-            pathname === '/home' ? 'text-white bg-pink' : 'text-gray-400',
+            pathname === '/' ? 'text-white bg-pink' : 'text-gray-400',
             'h-10 w-10 rounded-full flex items-center justify-center '
           )}
         >
