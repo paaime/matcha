@@ -1,5 +1,6 @@
 import Filters from '@/components/Discover/Filters';
 import Interests from '@/components/Discover/Interests';
+import Results from '@/components/Discover/Results';
 import { Button } from '@/components/ui/button';
 import { MapPinIcon, SearchIcon, Settings2Icon } from 'lucide-react';
 
@@ -22,6 +23,7 @@ export default function Page() {
         </div>
       </div>
       <Interests />
+      <Results />
     </div>
   );
 }

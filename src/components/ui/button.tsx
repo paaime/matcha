@@ -49,12 +49,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : 'button';
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          'rounded-full'
+        )}
         ref={ref}
         {...props}
         disabled={isLoading}
       >
-        <div className="flex items-center">
+        <div className="flex items-center font-bold">
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {props.children}
         </div>

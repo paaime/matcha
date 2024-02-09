@@ -15,7 +15,7 @@ const fakeInterests = [
 
 const Interest = ({ value }: { value: string }) => {
   return (
-    <div className="border border-gray-300 flex w-max rounded-full py-2 px-4 hover:bg-pink hover:text-white cursor-pointer">
+    <div className="border border-gray-300 flex min-w-max rounded-full py-2 px-4 hover:bg-pink hover:text-white cursor-pointer">
       <p className="font-semibold">{value}</p>
     </div>
   );
@@ -28,10 +28,17 @@ export default function Interests() {
         <p className="text-xl text-black font-extrabold">Interest</p>
         <p className="text-pink hover:underline cursor-pointer">View all</p>
       </div>
-      <div className="mt-3 grid grid-rows-2 grid-flow-col gap-4 overflow-scroll">
-        {fakeInterests.map((interest, index) => (
-          <Interest key={index} value={interest} />
-        ))}
+      <div className="flex flex-col overflow-scroll">
+        <div className="flex mt-3 gap-4">
+          {fakeInterests.slice(0, 6).map((interest, index) => (
+            <Interest key={index} value={interest} />
+          ))}
+        </div>
+        <div className="flex mt-3 gap-4">
+          {fakeInterests.slice(6, 12).map((interest, index) => (
+            <Interest key={index} value={interest} />
+          ))}
+        </div>
       </div>
     </div>
   );

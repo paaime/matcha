@@ -1,6 +1,7 @@
 import { BellIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import Notifications from './Notifications';
 
 export default function Header() {
   return (
@@ -20,9 +21,10 @@ export default function Header() {
         </svg>
         <h1 className="text-3xl font-extrabold">Matcha</h1>
       </Link>
-      <Button variant="outline" className="rounded-full h-10 w-10">
+      {/* <Button variant="outline" className="rounded-full h-10 w-10">
         <BellIcon className="h-5 w-5" />
-      </Button>
+      </Button> */}
+      <Notifications />
     </div>
   );
 }
