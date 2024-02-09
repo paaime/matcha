@@ -12,13 +12,14 @@ const LoveCard = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: 'calc(100vh - 450px)',
+        minHeight: '250px',
       }}
     >
       <div
         className="flex flex-col justify-between  p-5 h-full love-card rounded-3xl"
         style={{
           background:
-            'linear-gradient(to top, rgb(5 20 90 / 84%), transparent)',
+            'linear-gradient(to top, rgb(5 20 90 / 84%), transparent)'
         }}
       >
         <div className="flex justify-between items-start">

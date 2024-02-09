@@ -69,7 +69,8 @@ CREATE TABLE Chat (
   content TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (match_id) REFERENCES Matchs(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
+  CHECK (user_id = (SELECT user_id FROM Matchs WHERE id = match_id) OR user_id = (SELECT other_user_id FROM Matchs WHERE id = match_id))
 );
 
 -- Table Tags
@@ -101,8 +102,8 @@ CREATE TABLE Notification (
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 );
 
--- Ajouter le champ match_id à la table Matchs
-ALTER TABLE Matchs ADD COLUMN match_id INT NULL;
+-- -- Ajouter le champ match_id à la table Matchs
+-- ALTER TABLE Matchs ADD COLUMN match_id INT NULL;
 
 -- Créer le déclencheur AFTER INSERT pour UserLike
 DELIMITER //
@@ -113,8 +114,8 @@ BEGIN
     IF EXISTS (SELECT * FROM UserLike ul2 WHERE ul2.user_id = NEW.liked_user_id AND ul2.liked_user_id = NEW.user_id) THEN
         -- Si un like mutuel existe, insérer une nouvelle ligne dans Matchs
         INSERT INTO Matchs (user_id, other_user_id) VALUES (NEW.user_id, NEW.liked_user_id);
-        -- Mettre à jour le champ match_id pour refléter la nouvelle correspondance
-        UPDATE Matchs SET match_id = LAST_INSERT_ID() WHERE id = LAST_INSERT_ID();
+        -- -- Mettre à jour le champ match_id pour refléter la nouvelle correspondance
+        -- UPDATE Matchs SET match_id = LAST_INSERT_ID() WHERE id = LAST_INSERT_ID();
     END IF;
 END;
 //
