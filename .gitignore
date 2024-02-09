@@ -3,6 +3,7 @@
 app/.next/
 app/.vercel/
 app/node_modules/
+app/.pnpm-store
 
 # dependencies
 /node_modules
