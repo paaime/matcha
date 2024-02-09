@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { getAuthSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import SignInForm from '@/components/Auth/SignIn/Form';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -11,12 +10,7 @@ export default async function SignIn({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const session = await getAuthSession();
   let modalContent = null;
-
-  if (session) {
-    redirect('/dashboard');
-  }
 
   if (searchParams?.success) {
     modalContent = {

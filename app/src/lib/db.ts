@@ -1,19 +1,18 @@
-const mysql = require('mysql2');
+import mysql from 'mysql2/promise';
 
-const connection = mysql.createConnection({
-  host: 'db', // Utilisez le nom du service défini dans docker-compose.yml
-  user: 'root',
-  password: 'password',
-  database: 'matcha',
-  port: 3306, // Port défini dans docker-compose.yml
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Erreur de connexion à MySQL :', err.stack);
-    return;
+export async function connectToDatabase() {
+  try {
+    const connection = await mysql.createConnection({
+      host: process.env.MYSQL_HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+      port: parseInt(process.env.MYSQL_PORT || '3306', 10)
+    });
+    console.log('Connecté à la base de données MySQL en tant que ID', connection.threadId);
+    return connection;
+  } catch (error) {
+    console.error('Erreur de connexion à MySQL :', error);
+    throw error;
   }
-  console.log('Connecté à la base de données MySQL en tant que ID', connection.threadId);
-});
-
-module.exports = connection;
+}
