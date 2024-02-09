@@ -1,17 +1,24 @@
-This is a Next.JS Saas-Boilerplate that contains the following features:
+# Matcha
 
-- [x] Authentication (NextAuth.js)
-- [x] Database (Prisma MongoDB)
-- [x] Serverless Functions
-- [x] Light/Dark Mode
-- [x] Tailwind CSS
-- [x] Shadcn ui
-- [x] Landing Page
-- [x] Translation (i18n)
-- [x] Stripe Integration
-- [x] Email Integration
+Matcha is a dating website that allows users to connect with others based on their geolocation. Users can like, dislike, and chat with other users. Users can also filter their search based on their preferences.
 
-TODO:
+## Makefile commands
+  - 'make' or 'make build' to build and run the project
+  - 'make stop' to stop the project
+  - 'make down' to stop and remove the project
+  - 'make up' to start the project
+  - 'make clean' to remove all the containers and images
 
-- [ ] File Uploads
-- [ ] Analytics
+## PHPMyAdmin
+  - PHPMyAdmin is available at `http://localhost:8080`
+  - The server name is `db`
+  - The username is `root` and the password is `password`
+
+## Technologies
+  - React
+  - Next.js
+  - Node.js
+  - Express
+  - MySQL
+  - Socket.io
+  - Docker
