@@ -70,8 +70,7 @@ CREATE TABLE Chat (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (match_id) REFERENCES Matchs(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
-  CHECK (user_id = (SELECT user_id FROM Matchs WHERE id = match_id) OR user_id = (SELECT other_user_id FROM Matchs WHERE id = match_id))
-);
+;
 
 -- Table Tags
 CREATE TABLE Tags (

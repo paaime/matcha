@@ -1,31 +1,19 @@
-import { PrismaClient } from '@prisma/client';
-import 'server-only';
+const mysql = require('mysql2');
 
-declare global {
-  // eslint-disable-next-line no-var, no-unused-vars
-  var cachedPrisma: PrismaClient;
-}
+const connection = mysql.createConnection({
+  host: 'db', // Utilisez le nom du service défini dans docker-compose.yml
+  user: 'root',
+  password: 'password',
+  database: 'matcha',
+  port: 3306, // Port défini dans docker-compose.yml
+});
 
-let prisma: PrismaClient;
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient();
-} else {
-  if (!global.cachedPrisma) {
-    global.cachedPrisma = new PrismaClient();
+connection.connect((err) => {
+  if (err) {
+    console.error('Erreur de connexion à MySQL :', err.stack);
+    return;
   }
-  prisma = global.cachedPrisma;
-}
+  console.log('Connecté à la base de données MySQL en tant que ID', connection.threadId);
+});
 
-export const db = prisma;
-
-import mysql from 'serverless-mysql';
-
-// const dba = mysql({
-//   config: {
-//     // host: process.env.MYSQL_HOST,
-//     // port: parseInt(process.env.MYSQL_PORT || '3306'),
-//     // database: process.env.MYSQL_DATABASE,
-//     // user: process.env.MYSQL_USER,
-//     // password: process.env.MYSQL_PASSWORD
-//   }
-// });
+module.exports = connection;
