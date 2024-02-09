@@ -4,6 +4,9 @@ ENV_FILE		= ./.env
 
 all: build
 
+install:
+	cd ./app && pnpm install
+
 build:
 	docker-compose -p $(NAME) -f $(YML_FILE) --env-file $(ENV_FILE) up --build --remove-orphans
 
@@ -20,4 +23,4 @@ clean: stop
 	docker system prune -af
 	docker volume prune -f
 
-.PHONY: all build stop down up clean
+.PHONY: all install build stop down up clean

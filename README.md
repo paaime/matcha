@@ -4,6 +4,7 @@ Matcha is a dating website that allows users to connect with others based on the
 
 ## Makefile commands
   - 'make' or 'make build' to build and run the project
+  - 'make install' to install the project
   - 'make stop' to stop the project
   - 'make down' to stop and remove the project
   - 'make up' to start the project
