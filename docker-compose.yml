@@ -12,6 +12,7 @@ services:
       - TZ=Europe/Paris
     volumes:
       - ./mysql:/docker-entrypoint-initdb.d
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
 
   phpmyadmin:
     image: phpmyadmin:latest
