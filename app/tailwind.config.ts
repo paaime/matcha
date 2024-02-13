@@ -28,6 +28,8 @@ module.exports = {
           foreground: 'hsl(var(--primary-foreground))',
         },
         pink: '#DD88CF',
+        'light-pink': '#FBF1F9',
+        dark: '#22172A',
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',

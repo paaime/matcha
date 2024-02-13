@@ -1,59 +1,22 @@
 'use client';
 
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button, buttonVariants } from '../ui/button';
 import CircleProgress from '../ui/CircleProgress';
+import TinderCard from 'react-tinder-card';
+import React, { createRef, useMemo, useRef, useState } from 'react';
+import { fakeUsers } from '@/fakeUsers';
+import { IProfile } from '@/types/profile';
+import Link from 'next/link';
+import clsx from 'clsx';
 
-interface ILoveCard {
-  id: number;
-  name: string;
-  age: number;
-  location: string;
-  distance: number;
-  image: string;
-}
-
-const data = [
-  {
-    id: 1,
-    name: 'Xavier Niel',
-    age: 20,
-    location: 'Hamburg, Germany',
-    distance: 2.5,
-    image: '/img/placeholder/LoveCard1.jpg',
-  },
-  {
-    id: 2,
-    name: 'Xavier Niel',
-    age: 20,
-    location: 'Hamburg, Germany',
-    distance: 2.5,
-    image: '/img/placeholder/LoveCard2.jpg',
-  },
-  {
-    id: 3,
-    name: 'Xavier Niel',
-    age: 20,
-    location: 'Hamburg, Germany',
-    distance: 2.5,
-    image: '/img/placeholder/LoveCard3.jpg',
-  },
-  {
-    id: 4,
-    name: 'Xavier Niel',
-    age: 20,
-    location: 'Hamburg, Germany',
-    distance: 2.5,
-    image: '/img/placeholder/LoveCard4.jpg',
-  },
-];
-
-const LoveCard = ({ id, name, age, location, distance, image }: ILoveCard) => {
+const LoveCard = ({ user }: { user: IProfile }) => {
   return (
-    <div
-      className="rounded-3xl"
+    <Link
+      href="/profile"
+      className="rounded-3xl block"
       style={{
-        backgroundImage: `url(${image})`,
+        backgroundImage: `url(${user.image})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: 'calc(100vh - 450px)',
@@ -64,44 +27,138 @@ const LoveCard = ({ id, name, age, location, distance, image }: ILoveCard) => {
         className="flex flex-col justify-between  p-5 h-full love-card rounded-3xl"
         style={{
           background:
-            'linear-gradient(to top, rgb(5 20 90 / 84%), transparent)',
+            'linear-gradient(to top, rgb(5 20 90 / 84%) 0%, transparent 30%)',
         }}
       >
         <div className="flex justify-between items-start">
           <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
-            <p>{distance} km away</p>
+            <p>{user.distance} km away</p>
           </div>
           <CircleProgress />
         </div>
+        <div className="flex flex-col gap-1 items-end">
+          <div className="w-2 h-6 bg-white rounded-full"></div>
+          <div className="w-2 h-6 bg-white/50 rounded-full"></div>
+          <div className="w-2 h-6 bg-white/50 rounded-full"></div>
+          <div className="w-2 h-6 bg-white/50 rounded-full"></div>
+        </div>
         <div className="flex flex-col items-center gap-1">
-          <p className="font-extrabold text-white text-2xl">
-            {name}, {age}
-          </p>
-          <p className="text-[#C0AFC0] font-semibold tracking-wider">
-            {location}
+          <div className="flex items-center gap-3">
+            <p className="font-extrabold text-white text-3xl">
+              {user.name}, {user.age}
+            </p>
+            <div className="bg-green-300 h-3 w-3 rounded-full" />
+          </div>
+          <p className="text-[#C0AFC0] font-semibold tracking-wider uppercase">
+            {user.location}
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
+type Direction = 'left' | 'right' | 'up' | 'down';
+
+interface API {
+  swipe(dir?: Direction): Promise<void>;
+  restoreCard(): Promise<void>;
+}
+
 export default function LoveCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(fakeUsers.length - 1);
+  // used for outOfFrame closure
+  const currentIndexRef = useRef(currentIndex);
+
+  const childRefs = useMemo(
+    () =>
+      Array(fakeUsers.length)
+        .fill(0)
+        .map((i) => createRef<API>()),
+    []
+  );
+
+  const updateCurrentIndex = (val) => {
+    setCurrentIndex(val);
+    currentIndexRef.current = val;
+  };
+
+  const canSwipe = currentIndex >= 0;
+
+  // set last direction and decrease current index
+  const swiped = (index) => {
+    updateCurrentIndex(index - 1);
+  };
+
+  const outOfFrame = (idx) => {
+    currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
+  };
+
+  const swipe = async (dir) => {
+    if (canSwipe && currentIndex < fakeUsers.length) {
+      await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
+    }
+  };
+
   return (
     <>
-      <div className="bg-white rounded-3xl shadow-xl p-3 z-10">
-        {data.map((card, index) => (
-          <LoveCard {...card} key={index} />
-        ))}
+      <div
+        className="flex flex-col bg-white rounded-3xl shadow-xl p-3 z-10"
+        style={{ height: 'calc(100vh - 335px)', minHeight: '250px' }}
+      >
+        <div className="relative w-full">
+          {fakeUsers.map((user, index) => (
+            <TinderCard
+              ref={childRefs[index]}
+              className="tinder-card absolute"
+              key={index}
+              onSwipe={(dir) => swiped(index)}
+              preventSwipe={['up', 'down']}
+              onCardLeftScreen={() => outOfFrame(index)}
+            >
+              <LoveCard user={user} key={index} />
+            </TinderCard>
+          ))}
+          {currentIndex === -1 && (
+            <div
+              className="flex flex-col items-center justify-center"
+              style={{
+                height: 'calc(100vh - 450px)',
+                minHeight: '250px',
+              }}
+            >
+              <p className="text-lg font-bold">No more suggestions</p>
+              <p className="text-gray-400">
+                You can still discover other profile
+              </p>
+              <Link
+                href="/discover"
+                className={clsx(
+                  '!rounded-full !font-bold mt-3 ',
+                  buttonVariants({ variant: 'default' })
+                )}
+              >
+                Discover
+              </Link>
+            </div>
+          )}
+        </div>
 
-        <div className="flex gap-8 justify-center pb-4 pt-6">
-          <Button className="h-14 w-14 rounded-full bg-white shadow-xl text-black">
+        <div className="flex gap-8 justify-center pb-4 pt-6 mt-auto">
+          <Button
+            className="h-14 w-14 rounded-full bg-white shadow-xl text-black"
+            onClick={() => swipe('left')}
+            variant="secondary"
+          >
             <XIcon />
           </Button>
           <Button className="h-14 w-14 rounded-full bg-primary shadow-xl text-white">
             <StarIcon className="fill-white" />
           </Button>
-          <Button className="h-14 w-14 rounded-full bg-pink shadow-xl text-white">
+          <Button
+            className="h-14 w-14 rounded-full bg-pink shadow-xl text-white"
+            onClick={() => swipe('right')}
+          >
             <HeartIcon className="fill-white" />
           </Button>
         </div>

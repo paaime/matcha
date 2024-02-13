@@ -3,44 +3,28 @@ import ProfileCard from '../ProfileCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { fakeUsers } from '@/fakeUsers';
 
 export default function News() {
   return (
     <div>
       <Swiper
-        slidesPerView={2.2}
+        slidesPerView={1.7}
         spaceBetween={15}
-        pagination={{
-          clickable: true,
-        }}
-        className="mySwiper"
         breakpoints={{
           1024: {
-            slidesPerView: 3.2,
+            slidesPerView: 2.8,
           },
         }}
+        className="shadow-scroll !-ml-[20px] !pl-[20px]"
       >
-        <SwiperSlide>
-          <ProfileCard small={true} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <ProfileCard small={true} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <ProfileCard small={true} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <ProfileCard small={true} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <ProfileCard small={true} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <ProfileCard small={true} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <ProfileCard small={true} />
-        </SwiperSlide>
+        {fakeUsers.map((user, index) => {
+          return (
+            <SwiperSlide key={index}>
+              <ProfileCard small={true} user={user} />
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </div>
   );

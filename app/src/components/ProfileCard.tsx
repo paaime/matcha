@@ -1,14 +1,24 @@
+import { IProfile } from '@/types/profile';
 import clsx from 'clsx';
+import Link from 'next/link';
 
-export default function ProfileCard({ small = false }: { small?: boolean }) {
+export default function ProfileCard({
+  small = false,
+  user,
+}: {
+  small?: boolean;
+  user: IProfile;
+}) {
   return (
-    <div
+    <Link
+      href="/profile"
       className={clsx(
         !small && 'border-[5px] border-pink',
-        small ? 'h-64 rounded-xl' : 'h-72 rounded-3xl'
+        small ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',
+        'block'
       )}
       style={{
-        backgroundImage: 'url(/img/placeholder/LoveCard1.jpg)',
+        backgroundImage: `url(${user.image})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -17,7 +27,7 @@ export default function ProfileCard({ small = false }: { small?: boolean }) {
         className="flex flex-col justify-between items-center h-full rounded-3xl"
         style={{
           background:
-            'linear-gradient(to top, rgb(5 20 90 / 84%), transparent)',
+            'linear-gradient(to top, rgb(5 20 90 / 84%) 0%, transparent 35%)',
         }}
       >
         {small ? (
@@ -31,14 +41,16 @@ export default function ProfileCard({ small = false }: { small?: boolean }) {
         )}
         <div className="flex flex-col items-center mb-3 mt-auto">
           <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-1 px-3 text-white text-sm bg-white/30 font-semibold w-fit mb-1">
-            <p>2.5 km away</p>
+            <p>{user.distance} km away</p>
           </div>
-          <p className="font-extrabold text-white text-xl">Xavier Niel, 20</p>
-          <p className="text-[#C0AFC0] font-semibold text-sm tracking-wider">
-            HAMBURG, GERMANY
+          <p className="font-extrabold text-white text-xl">
+            {user.name}, {user.age}
+          </p>
+          <p className="text-[#C0AFC0] font-semibold text-sm tracking-wider uppercase">
+            {user.location}
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

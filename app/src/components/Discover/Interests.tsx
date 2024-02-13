@@ -1,3 +1,6 @@
+import { Checkbox } from '../ui/checkbox';
+import { Label } from '../ui/label';
+
 const fakeInterests = [
   '🎵 Music',
   '🚀 Travel',
@@ -13,11 +16,14 @@ const fakeInterests = [
   '🖊️ Writing',
 ];
 
-const Interest = ({ value }: { value: string }) => {
+export const Interest = ({ value }: { value: string }) => {
   return (
-    <div className="border border-gray-300 flex min-w-max rounded-full py-2 px-4 hover:bg-pink hover:text-white cursor-pointer">
-      <p className="font-semibold">{value}</p>
-    </div>
+    <Label className="[&:has([data-state=checked])]:bg-pink border [&:has([data-state=checked])>p]:text-white border-gray-300 flex min-w-max rounded-full py-2 px-4 hover:bg-pink cursor-pointer group transition-all">
+      <Checkbox className="sr-only" value={value} />
+      <p className="font-semibold text-primary text-base group-hover:text-white">
+        {value}
+      </p>
+    </Label>
   );
 };
 

@@ -47,8 +47,13 @@ export default function Menu() {
           <UsersIcon />
         </Link>
         <Link
-          href="/home"
-          className="h-10 w-10 rounded-full flex items-center justify-center text-gray-400"
+          href="/messages"
+          className={clsx(
+            pathname === '/messages' || pathname === '/chat'
+              ? 'text-white bg-pink'
+              : 'text-gray-400',
+            'h-10 w-10 rounded-full flex items-center justify-center '
+          )}
         >
           <MessageCircleIcon />
         </Link>

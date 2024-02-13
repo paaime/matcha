@@ -33,7 +33,7 @@ export default async function SignIn({
   }
 
   return (
-    <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+    <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] h-full">
       <Link
         href="/auth/sign-up"
         className={clsx(
@@ -61,17 +61,17 @@ export default async function SignIn({
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+          <span className="bg-[#FDF7FD] px-2 text-muted-foreground">
             Or continue with
           </span>
         </div>
       </div>
       <div className="flex gap-3">
-        <Button variant="outline" type="button" className="w-full">
+        <Button variant="outline" type="button" className="w-full text-black">
           <FaGoogle className="mr-2 h-4 w-4" />
           Google
         </Button>
-        <Button variant="outline" type="button" className="w-full">
+        <Button variant="outline" type="button" className="w-full text-black">
           <FaGithub className="mr-2 h-4 w-4" />
           GitHub
         </Button>
