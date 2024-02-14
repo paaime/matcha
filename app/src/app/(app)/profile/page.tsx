@@ -5,29 +5,30 @@ import Informations from '@/components/Profile/Informations';
 import { fakeUsers } from '@/fakeUsers';
 import { IProfile } from '@/types/profile';
 import GoBack from '@/components/GoBack';
+import Gallery from '@/components/Profile/Gallery';
 
 export default function Page() {
   const user: IProfile = fakeUsers[0];
   return (
     <>
       <div
-        className="sm:rounded-3xl -mx-7 sm:mx-auto"
+        className="sm:rounded-3xl -mx-7 sm:mx-auto relative"
         style={{
-          backgroundImage: `url(${user.image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           height: 'calc(70vh - 50px)',
           minHeight: '250px',
         }}
       >
+        <Gallery />
         <div
-          className="flex flex-col justify-between p-5 h-full love-card rounded-3xl"
+          className="flex flex-col justify-between p-5 h-full love-card rounded-3xl relative pointer-events-none"
           style={{
             background:
               'linear-gradient(to top, rgb(5 20 90 / 84%) 0%, transparent 40%)',
           }}
         >
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start pointer-events-auto">
             <GoBack white={true} />
             <div className="flex gap-3">
               <div className="flex gap-2 items-center border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
@@ -38,7 +39,7 @@ export default function Page() {
             </div>
           </div>
           <div className="flex flex-col items-center gap-1 pb-10">
-            <Button className="h-12 w-12 mb-1 rounded-full bg-pink shadow-xl text-white group">
+            <Button className="h-12 w-12 mb-1 rounded-full bg-pink shadow-xl text-white group pointer-events-auto">
               <HeartIcon className="group-hover:fill-white" />
             </Button>
             <p className="font-extrabold text-white text-3xl">

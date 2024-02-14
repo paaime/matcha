@@ -43,9 +43,12 @@ export default function ProfileCard({
           <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-1 px-3 text-white text-sm bg-white/30 font-semibold w-fit mb-1">
             <p>{user.distance} km away</p>
           </div>
-          <p className="font-extrabold text-white text-xl">
-            {user.name}, {user.age}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="font-extrabold text-white text-xl">
+              {user.name}, {user.age}
+            </p>
+            <div className="bg-green-300 h-1.5 w-1.5 rounded-full" />
+          </div>
           <p className="text-[#C0AFC0] font-semibold text-sm tracking-wider uppercase">
             {user.location}
           </p>

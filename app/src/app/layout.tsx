@@ -4,8 +4,7 @@ import { Providers } from './providers';
 import clsx from 'clsx';
 import { Toaster } from '@/components/ui/sonner';
 import localFont from 'next/font/local';
-import Header from '@/components/Header';
-import Menu from '@/components/Menu';
+import 'animate.css';
 
 const hellix = localFont({
   src: [

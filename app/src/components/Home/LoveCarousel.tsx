@@ -9,22 +9,47 @@ import { fakeUsers } from '@/fakeUsers';
 import { IProfile } from '@/types/profile';
 import Link from 'next/link';
 import clsx from 'clsx';
+import Image from 'next/image';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper/modules';
 
 const LoveCard = ({ user }: { user: IProfile }) => {
   return (
-    <Link
-      href="/profile"
-      className="rounded-3xl block"
-      style={{
-        backgroundImage: `url(${user.image})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: 'calc(100vh - 450px)',
-        minHeight: '250px',
-      }}
+    <div
+      // href="/profile"
+      className="rounded-3xl block h-full"
     >
+      <Swiper
+        direction={'vertical'}
+        pagination={{
+          clickable: true,
+        }}
+        modules={[Pagination]}
+        className="!absolute w-full rounded-3xl h-full !z-0"
+      >
+        <SwiperSlide>
+          <Image
+            src={user.image}
+            alt={user.name}
+            width={500}
+            height={500}
+            className="absolute w-full h-full object-cover"
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <Image
+            src={user.image}
+            alt={user.name}
+            width={500}
+            height={500}
+            className="absolute w-full h-full object-cover"
+          />
+        </SwiperSlide>
+      </Swiper>
       <div
-        className="flex flex-col justify-between  p-5 h-full love-card rounded-3xl"
+        className="flex flex-col justify-between p-5 h-full love-card rounded-3xl relative pointer-events-none"
         style={{
           background:
             'linear-gradient(to top, rgb(5 20 90 / 84%) 0%, transparent 30%)',
@@ -36,25 +61,20 @@ const LoveCard = ({ user }: { user: IProfile }) => {
           </div>
           <CircleProgress />
         </div>
-        <div className="flex flex-col gap-1 items-end">
-          <div className="w-2 h-6 bg-white rounded-full"></div>
-          <div className="w-2 h-6 bg-white/50 rounded-full"></div>
-          <div className="w-2 h-6 bg-white/50 rounded-full"></div>
-          <div className="w-2 h-6 bg-white/50 rounded-full"></div>
-        </div>
+
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center gap-3">
             <p className="font-extrabold text-white text-3xl">
               {user.name}, {user.age}
             </p>
-            <div className="bg-green-300 h-3 w-3 rounded-full" />
+            <div className="bg-green-300 h-2.5 w-2.5 rounded-full" />
           </div>
           <p className="text-[#C0AFC0] font-semibold tracking-wider uppercase">
             {user.location}
           </p>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
@@ -106,7 +126,7 @@ export default function LoveCarousel() {
         className="flex flex-col bg-white rounded-3xl shadow-xl p-3 z-10"
         style={{ height: 'calc(100vh - 335px)', minHeight: '250px' }}
       >
-        <div className="relative w-full">
+        <div className="relative w-full h-full">
           {fakeUsers.map((user, index) => (
             <TinderCard
               ref={childRefs[index]}

@@ -20,17 +20,10 @@ const fakeInterests = [
   '🖊️ Writing',
 ];
 
-export default function Gallery({
-  setStep,
-}: {
-  setStep: Dispatch<SetStateAction<number>>;
-}) {
+export default function Gallery() {
   return (
-    <div className="flex flex-col animate__animated animate__fadeIn animate__faster">
-      <h3 className="text-2xl font-extrabold text-center mb-5">
-        Upload your photos
-      </h3>
-      <div className="photo-gallery h-96 mx-auto w-full max-w-[400px]">
+    <div className="flex flex-col mt-5">
+      <div className="photo-gallery h-96 mx-auto w-full">
         <div
           className="photo-1 flex items-end justify-center pb-5 rounded-3xl"
           style={{
@@ -80,12 +73,6 @@ export default function Gallery({
           </Button>
         </div>
       </div>
-      <Button
-        className="mx-auto mt-10 w-52"
-        onClick={() => setStep((prev) => prev + 1)}
-      >
-        Continue
-      </Button>
     </div>
   );
 }
