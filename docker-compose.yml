@@ -40,7 +40,30 @@ services:
       - /app/node_modules
       - /app/.next
     ports:
-      - "3000:3000"
+      - 3000:3000
+    environment:
+      - FAST_REFRESH=true # React's hot reload
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=3306
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: back
+    restart: always
+    volumes:
+      - ./back:/back
+      - /app/node_modules
+    ports:
+      - "3001:3001"
     environment:
       - FAST_REFRESH=true # React's hot reload
       - MYSQL_DATABASE=${MYSQL_DATABASE}
