@@ -33,6 +33,7 @@ const LoveCard = ({ user }: { user: IProfile }) => {
             width={500}
             height={500}
             className="absolute w-full h-full object-cover"
+            priority
           />
         </SwiperSlide>
         <SwiperSlide>
@@ -42,6 +43,7 @@ const LoveCard = ({ user }: { user: IProfile }) => {
             width={500}
             height={500}
             className="absolute w-full h-full object-cover"
+            priority
           />
         </SwiperSlide>
       </Swiper>

@@ -19,6 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           height={300}
           alt="Background"
           className="absolute right-0 z-10 top-[20%]"
+          priority
         />
       </div>
       <div className="py-5 p-8 h-full w-screen lg:w-auto">{children}</div>

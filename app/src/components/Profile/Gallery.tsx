@@ -26,6 +26,7 @@ export default function Gallery() {
           style={{
             objectFit: 'cover',
           }}
+          priority
         />
       </SwiperSlide>
       <SwiperSlide>
@@ -38,6 +39,7 @@ export default function Gallery() {
           style={{
             objectFit: 'cover',
           }}
+          priority
         />
       </SwiperSlide>
     </Swiper>
