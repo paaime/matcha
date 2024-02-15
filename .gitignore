@@ -5,6 +5,11 @@ app/.vercel/
 app/node_modules/
 app/.pnpm-store
 
+back/.next/
+back/.vercel/
+back/node_modules/
+back/.pnpm-store
+
 # dependencies
 /node_modules
 /.pnp
