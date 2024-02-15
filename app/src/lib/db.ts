@@ -9,7 +9,6 @@ export async function connectToDatabase() {
       database: process.env.MYSQL_DATABASE,
       port: parseInt(process.env.MYSQL_PORT || '3306', 10)
     });
-    console.log('Connecté à la base de données MySQL en tant que ID', connection.threadId);
     return connection;
   } catch (error) {
     console.error('Erreur de connexion à MySQL :', error);
