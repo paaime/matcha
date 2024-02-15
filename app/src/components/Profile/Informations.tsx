@@ -1,13 +1,15 @@
 'use client';
 
-import { Drawer, DrawerContent, DrawerOverlay } from '@/components/ui/drawer';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { AiOutlineMan } from 'react-icons/ai';
-import Map from './Map';
 import { Interest } from '../Discover/Interests';
 import clsx from 'clsx';
 import { CalendarDaysIcon, FlameIcon } from 'lucide-react';
 import { useState } from 'react';
 import { IProfile } from '@/types/profile';
+import dynamic from 'next/dynamic';
+
+const Map = dynamic(() => import('./Map'), { ssr: false });
 
 export default function Informations({ user }: { user: IProfile }) {
   const [snap, setSnap] = useState<number | string | null>(0.35);
