@@ -1,4 +1,4 @@
-import { LatLngExpression } from 'leaflet';
+// import { LatLngExpression } from 'leaflet';
 
 export interface IProfile {
   name: string;
@@ -9,5 +9,5 @@ export interface IProfile {
   gender: string;
   fameRating: number;
   about: string;
-  gps: LatLngExpression;
+  gps: any; // TODO: LatLngExpression;
 }

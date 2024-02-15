@@ -1,32 +1,8 @@
+import { IUser } from '../../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 
-interface TagType {
-  id: number;
-	name: string;
-}
-
-interface UserType {
-  id: number;
-	firstName: string;
-  lastName: string;
-  age: number;
-  gender: string;
-  sexualPreferences: string;
-  distance?: number;
-  biography?: string;
-	interests: TagType[];
-	pictures?: string;
-  fameRating: number;
-	isMatch: boolean;
-	isLiked: boolean;
-	hasLiked: boolean;
-	isBlocked: boolean;
-	hasBlocked: boolean;
-	matchId?: string; // If isMatch = true
-}
-
 // Définissez la fonction getUserWithId pour récupérer un utilisateur par son identifiant
-export async function getUserWithId(userId: number): Promise<UserType | null>{
+export async function getUserWithId(userId: number): Promise<IUser | null>{
   try {
     const db = await connectToDatabase();
 
@@ -41,7 +17,7 @@ export async function getUserWithId(userId: number): Promise<UserType | null>{
       return null;
     }
 
-    const user: UserType = {
+    const user: IUser = {
       id: rows[0].id,
       firstName: rows[0].firstName,
       lastName: rows[0].lastName,
