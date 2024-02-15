@@ -8,11 +8,13 @@ CREATE TABLE User (
   email VARCHAR(255) UNIQUE NOT NULL,
   emailToken VARCHAR(255) DEFAULT NULL,
   loc VARCHAR(255) DEFAULT NULL,
+  city VARCHAR(255) DEFAULT NULL,
+  consentLocation BOOLEAN DEFAULT 0,
   gender ENUM('female', 'male', 'other') DEFAULT 'other' NOT NULL,
   sexualPreferences ENUM('female', 'male', 'both') DEFAULT 'both' NOT NULL,
   biography TEXT DEFAULT NULL,
   pictures TEXT DEFAULT NULL,
-  fameRating FLOAT DEFAULT 0
+  fameRating FLOAT DEFAULT 150
 );
 
 -- Table `Like`
@@ -26,7 +28,6 @@ CREATE TABLE UserLike (
   UNIQUE (user_id, liked_user_id),
   CHECK (user_id != liked_user_id)
 );
-
 
 -- Table Matchs
 CREATE TABLE Matchs (
@@ -100,9 +101,6 @@ CREATE TABLE Notification (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 );
-
--- -- Ajouter le champ match_id à la table Matchs
--- ALTER TABLE Matchs ADD COLUMN match_id INT NULL;
 
 -- Créer le déclencheur AFTER INSERT pour UserLike
 DELIMITER //
