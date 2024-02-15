@@ -1,10 +1,10 @@
 'use client';
 
+import { motion, useAnimation } from 'framer-motion';
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
 import { Button, buttonVariants } from '../ui/button';
 import CircleProgress from '../ui/CircleProgress';
-import TinderCard from 'react-tinder-card';
-import React, { createRef, useMemo, useRef, useState } from 'react';
+import React, { createRef, useMemo, useState } from 'react';
 import { fakeUsers } from '@/fakeUsers';
 import { IProfile } from '@/types/profile';
 import Link from 'next/link';
@@ -17,10 +17,7 @@ import { Pagination } from 'swiper/modules';
 
 const LoveCard = ({ user }: { user: IProfile }) => {
   return (
-    <div
-      // href="/profile"
-      className="rounded-3xl block h-full"
-    >
+    <div className="rounded-3xl block h-full w-full absolute">
       <Swiper
         direction={'vertical'}
         pagination={{
@@ -87,37 +84,42 @@ interface API {
 
 export default function LoveCarousel() {
   const [currentIndex, setCurrentIndex] = useState(fakeUsers.length - 1);
-  // used for outOfFrame closure
-  const currentIndexRef = useRef(currentIndex);
-
-  const childRefs = useMemo(
+  const cardRefs = useMemo(
     () =>
       Array(fakeUsers.length)
         .fill(0)
-        .map((i) => createRef<API>()),
+        .map((i) => createRef<HTMLDivElement>()),
     []
   );
+  const controlsArray = fakeUsers.map(useAnimation);
 
-  const updateCurrentIndex = (val) => {
-    setCurrentIndex(val);
-    currentIndexRef.current = val;
+  const swipeLeft = () => {
+    if (currentIndex < 0) return;
+    controlsArray[currentIndex].start({
+      x: '-150vw',
+      y: 50,
+      rotate: -50,
+      transition: { duration: 1, ease: 'easeInOut' },
+    });
+    // delete the dom element of the current index
+    setTimeout(() => {
+      cardRefs[currentIndex].current?.remove();
+    }, 1000);
+    setCurrentIndex(currentIndex - 1);
   };
 
-  const canSwipe = currentIndex >= 0;
-
-  // set last direction and decrease current index
-  const swiped = (index) => {
-    updateCurrentIndex(index - 1);
-  };
-
-  const outOfFrame = (idx) => {
-    currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
-  };
-
-  const swipe = async (dir) => {
-    if (canSwipe && currentIndex < fakeUsers.length) {
-      await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
-    }
+  const swipeRight = () => {
+    if (currentIndex < 0) return;
+    controlsArray[currentIndex].start({
+      x: '150vw',
+      y: 50,
+      rotate: 50,
+      transition: { duration: 1, ease: 'easeInOut' },
+    });
+    setTimeout(() => {
+      cardRefs[currentIndex].current?.remove();
+    }, 1000);
+    setCurrentIndex(currentIndex - 1);
   };
 
   return (
@@ -128,16 +130,17 @@ export default function LoveCarousel() {
       >
         <div className="relative w-full h-full">
           {fakeUsers.map((user, index) => (
-            <TinderCard
-              ref={childRefs[index]}
-              className="tinder-card absolute"
+            <motion.div
               key={index}
-              onSwipe={(dir) => swiped(index)}
-              preventSwipe={['up', 'down']}
-              onCardLeftScreen={() => outOfFrame(index)}
+              ref={cardRefs[index]}
+              className="h-full absolute w-full"
+              animate={controlsArray[index]}
+              transition={{
+                duration: 1,
+              }}
             >
               <LoveCard user={user} key={index} />
-            </TinderCard>
+            </motion.div>
           ))}
           {currentIndex === -1 && (
             <div
@@ -167,7 +170,7 @@ export default function LoveCarousel() {
         <div className="flex gap-8 justify-center pb-4 pt-6 mt-auto">
           <Button
             className="h-14 w-14 rounded-full bg-white shadow-xl text-black"
-            onClick={() => swipe('left')}
+            onClick={swipeLeft}
             variant="secondary"
           >
             <XIcon />
@@ -177,7 +180,7 @@ export default function LoveCarousel() {
           </Button>
           <Button
             className="h-14 w-14 rounded-full bg-pink shadow-xl text-white"
-            onClick={() => swipe('right')}
+            onClick={swipeRight}
           >
             <HeartIcon className="fill-white" />
           </Button>

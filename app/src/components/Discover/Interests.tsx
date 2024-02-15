@@ -34,7 +34,7 @@ export default function Interests() {
         <p className="text-xl text-black font-extrabold">Interest</p>
         <p className="text-pink hover:underline cursor-pointer">View all</p>
       </div>
-      <div className="flex flex-col overflow-scroll">
+      <div className="flex flex-col overflow-scroll relative">
         <div className="flex mt-3 gap-4">
           {fakeInterests.slice(0, 6).map((interest, index) => (
             <Interest key={index} value={interest} />
