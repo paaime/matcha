@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { getAuthSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import SignUpForm from '@/components/Auth/SignUp/Form';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -7,12 +6,6 @@ import { FaGithub, FaGoogle } from 'react-icons/fa';
 import clsx from 'clsx';
 
 export default async function SignUp() {
-  const session = await getAuthSession();
-
-  if (session) {
-    redirect('/dashboard');
-  }
-
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] h-full">
       <Link
