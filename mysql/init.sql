@@ -78,8 +78,12 @@ CREATE TABLE Tags (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   tagName VARCHAR(255) NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
+  UNIQUE (user_id, tagName)
 );
+
+-- SQL command to update Tags table and add unique constraint
+ALTER TABLE Tags ADD UNIQUE (user_id, tagName);
 
 -- Table History
 CREATE TABLE History (
