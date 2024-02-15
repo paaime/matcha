@@ -1,4 +1,4 @@
-import { IUser } from '../../../../types/user';
+import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 
 // Définissez la fonction getUserWithId pour récupérer un utilisateur par son identifiant
