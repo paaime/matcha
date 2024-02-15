@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import SimpleModal from '@/components/ui/Modals/SimpleModal';
 import { SignInSchema } from '@/utils/validator';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -16,8 +15,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { toast } from 'sonner';
-import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 
 type FormFields = z.infer<typeof SignInSchema>;
@@ -40,38 +37,39 @@ export default function SignInForm({
   });
 
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
-    const { email, password } = data;
-    try {
-      const response = await signIn('credentials', {
-        email: email,
-        password: password,
-        callbackUrl: '/default',
-        redirect: false,
-      });
+    console.log(data);
+    // const { email, password } = data;
+    // try {
+    //   const response = await signIn('credentials', {
+    //     email: email,
+    //     password: password,
+    //     callbackUrl: '/default',
+    //     redirect: false,
+    //   });
 
-      if (response.error) {
-        switch (response.error) {
-          case 'CredentialsSignin':
-            toast('Error', { description: 'Invalid credentials.' });
-            break;
-          case 'NotActivated':
-            toast('Error', { description: 'Account not activated.' });
-            break;
-          default:
-            toast('Error', { description: 'An error occured.' });
-            break;
-        }
-      }
+    //   if (response.error) {
+    //     switch (response.error) {
+    //       case 'CredentialsSignin':
+    //         toast('Error', { description: 'Invalid credentials.' });
+    //         break;
+    //       case 'NotActivated':
+    //         toast('Error', { description: 'Account not activated.' });
+    //         break;
+    //       default:
+    //         toast('Error', { description: 'An error occured.' });
+    //         break;
+    //     }
+    //   }
 
-      if (response.ok) {
-        toast('Success', { description: 'Logged in successfully.' });
-        if (callbackUrl) {
-          window.location.href = callbackUrl;
-        } else window.location.href = '/dashboard';
-      }
-    } catch (err) {
-      toast('Error', { description: err.message });
-    }
+    //   if (response.ok) {
+    //     toast('Success', { description: 'Logged in successfully.' });
+    //     if (callbackUrl) {
+    //       window.location.href = callbackUrl;
+    //     } else window.location.href = '/dashboard';
+    //   }
+    // } catch (err) {
+    //   toast('Error', { description: err.message });
+    // }
   };
 
   return (
