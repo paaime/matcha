@@ -19,6 +19,9 @@ app.get('/', (req: Request, res: Response) => {
   res.send('API is running !');
 });
 
+// Middlewares
+app.use(express.json());
+
 // User routes
 app.use('/user', userGet);
 app.use('/user', userPost);
@@ -28,6 +31,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('A client has just left');
+  });
+
+  socket.on('message', (data) => {
+    console.log('Message from client:', data);
+    socket.emit('message', 'Hello from server');
   });
 });
 

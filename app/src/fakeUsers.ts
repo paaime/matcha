@@ -1,4 +1,4 @@
-import { IProfile } from './types/profile';
+import { IProfile } from '../../types/profile';
 
 export const fakeUsers: IProfile[] = [
   {

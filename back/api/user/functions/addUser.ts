@@ -22,7 +22,6 @@ export async function addUser(body: any): Promise<number | null>{
 
     await db.query(query, [newUser.lastName, newUser.firstName, newUser.age, newUser.passwordHashed, newUser.email, newUser.loc, newUser.gender, newUser.sexualPreferences, newUser.biography, newUser.pictures]) as any;
 
-
     // Get last inserted user
     const [rows] = await db.query('SELECT * FROM User ORDER BY id DESC LIMIT 1') as any;
     const id = rows[0].id;
