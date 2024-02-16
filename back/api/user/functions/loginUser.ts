@@ -73,11 +73,14 @@ export async function loginUser(body: any, res: Response): Promise<undefined>{
 
     if (user.isVerified === 0) {
       // TODO : Send a new email to verify the account
-      res.status(403).json({
-        error: 'Forbidden',
-        message: 'User is not verified'
-      });
-      return;
+      // res.status(403).json({
+      //   error: 'Forbidden',
+      //   message: 'User is not verified'
+      // });
+
+      // return;
+
+      console.log('User is not verified, but we will continue for now.');
     }
 
     // Generate token
@@ -86,7 +89,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined>{
         id: user.id,
         email: user.email
       },
-      process.env.MYSQL_HOST as string, // TODO : Change this
+      process.env.JWT_SECRET as string,
       {
         expiresIn: '1h'
       }
