@@ -93,8 +93,11 @@ CREATE TABLE History (
   uri VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
-  FOREIGN KEY (visited_user_id) REFERENCES User(id)
+  FOREIGN KEY (visited_user_id) REFERENCES User(id) ON DELETE CASCADE
 );
+
+-- Update History table, add on delete cascade
+ALTER TABLE History ADD FOREIGN KEY (visited_user_id) REFERENCES User(id) ON DELETE CASCADE;
 
 -- Table Notification
 CREATE TABLE Notification (
