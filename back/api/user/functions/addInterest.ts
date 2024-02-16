@@ -2,30 +2,22 @@ import { Response } from 'express';
 import { connectToDatabase } from '../../../utils/db';
 import { interestRegex } from '../../../types/regex';
 
-export async function addInterest(body: any, res: Response): Promise<boolean>{
+export async function addInterest(body: any, res: Response): Promise<undefined>{
   try {
     // Get infos from body
     const { interest } = body;
 
-    if (!interest) {
+    if (!interest || !interestRegex.test(interest)) {
       res.status(400).json({
         error: 'Bad request',
         message: 'Interest is missing',
       });
-      throw new Error('Interest is missing');
-    }
-
-    if (!interestRegex.test(interest)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Interest is not valid',
-      });
-      throw new Error('Interest is not valid');
+      return;
     }
 
     const db = await connectToDatabase();
 
-    const user_id = 1; // TODO get from request auth
+    const user_id = 14; // TODO get from request auth
 
     const query = 'INSERT INTO Tags (user_id, tagName) VALUES (?, ?)';
 
@@ -33,21 +25,23 @@ export async function addInterest(body: any, res: Response): Promise<boolean>{
     const [rows] = await db.query(query, [user_id, interest]) as any;
     const id = rows.insertId;
 
-    if (!id) {
-      db.end();
-      res.status(501).json({
-        error: 'Server error',
-        message: 'An error occurred while adding interest',
-      });
-      throw new Error('Error while adding interest');
-    }
-
     // Close the connection
     await db.end();
 
-    return true;
+    if (!id) {
+      throw new Error('Interest not added');
+    }
+
+    res.status(200).json({
+      tagName: interest,
+      added: true
+    });
   } catch (error) {
     console.error('Error while adding interest', ':', error);
-    return false;
+    
+    res.status(501).json({
+      error: 'Server error',
+      message: 'An error occurred while adding the interest',
+    });
   }
 }

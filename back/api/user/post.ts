@@ -6,29 +6,11 @@ import { addInterest } from './functions/addInterest';
 const router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
-  const user = await addUser(req.body);
-
-  if (user) {
-    res.status(200).json(user);
-  } else {
-    res.status(501).json({
-      error: 'Server error',
-      message: 'An error occurred while adding the user',
-    });
-  }
+  await addUser(req.body, res);
 });
 
 router.post('/interest', async (req: Request, res: Response) => {
-  const user = await addInterest(req.body, res);
-
-  if (user) {
-    res.status(200).json(user);
-  } else {
-    res.status(501).json({
-      error: 'Server error',
-      message: 'An error occurred while adding the interest',
-    });
-  }
+  await addInterest(req.body, res);
 });
 
 export default router;
