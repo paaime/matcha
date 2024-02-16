@@ -1,9 +1,10 @@
+import { Response } from 'express';
+
+import { ThrownError } from '../../../types/type';
 import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 
-export async function getUserWithId(userId: number): Promise<IUser | null>{
-  const connectedUserId = 2; // TODO get from request auth
-
+export async function getUserWithId(userId: number, connectedUserId: number, res: Response): Promise<undefined>{
   try {
     const db = await connectToDatabase();
 
@@ -62,11 +63,17 @@ export async function getUserWithId(userId: number): Promise<IUser | null>{
     // Execute the query and check the result
     const [rows] = await db.query(query, [connectedUserId, connectedUserId, connectedUserId, userId, connectedUserId, userId, userId]) as any;
 
+    // Close the connection
+    await db.end();
+
     if (!rows || rows.length === 0) {
       console.error('No user found with id:', userId);
 
-      db.end();
-      return null;
+      res.status(404).json({
+        error: 'Not found',
+        message: 'User not found'
+      });
+      return;
     }
 
     // Create the user object
@@ -84,32 +91,38 @@ export async function getUserWithId(userId: number): Promise<IUser | null>{
       biography: rows[0].biography,
       pictures: rows[0].pictures,
       fameRating: rows[0].fameRating,
-      isMatch: rows[0].isMatch === 1,
+      isMatch: !!rows[0].isMatch,
       matchId: rows[0].matchId || undefined,
-      isLiked: rows[0].isLiked === 1,
-      hasLiked: rows[0].hasLiked === 1,
-      isBlocked: rows[0].isBlocked === 1,
-      hasBlocked: rows[0].hasBlocked === 1,
-      isVerified: rows[0].isVerified === 1,
+      isLiked: !!rows[0].isLiked,
+      hasLiked: !!rows[0].hasLiked,
+      isBlocked: !!rows[0].isBlocked,
+      hasBlocked: !!rows[0].hasBlocked,
+      isVerified: !!rows[0].isVerified,
       interests: []
     };
 
     // Get all interests
     for (const row of rows) {
       if (row.interestId && row.interestName) {
-        user.interests.push({ id: row.interestId, name: row.interestName });
+        user.interests.push(row.interestName);
       }
     }
 
     // Calculate distance
-    user.distance = Math.floor(Math.random() * 100) + 1; // ! Random for now
+    user.distance = Math.floor(Math.random() * 100) + 1; // TODO Random for now
 
-    // Close the connection
-    await db.end();
-
-    return user;
+    res.status(200).json(user);
   } catch (error) {
-    console.error('Error while getting user with ID', userId, ':', error);
-    return null;
+    const e = error as ThrownError;
+
+    const code = e?.code || "Unknown error";
+    const message = e?.message || "Unknown message";
+
+    console.error({ code, message });
+    
+    res.status(501).json({
+      error: 'Server error',
+      message: 'An error occurred while getting user infos',
+    });
   }
 }

@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response) => {
   // Clear cookie
   res.clearCookie('token');
-  
+
   await addUser(req.body, res);
 });
 

@@ -1,8 +1,3 @@
-export interface ITag {
-  id: number;
-	name: string;
-}
-
 export interface IPage {
   id: number;
 	visited_user_id: IUser;
@@ -19,9 +14,10 @@ export interface IUser {
   gender: string;
   sexualPreferences: string;
 	distance?: number; // Can be undefined
+	loc?: string; // Can be undefined
 	city?: string; // Can be undefined
   biography?: string; // Can be undefined
-	interests: ITag[];
+	interests: string[];
 	pictures?: string; // Can be undefined
   fameRating: number;
 	isMatch: boolean;
@@ -35,8 +31,9 @@ export interface IUser {
 	created_at: string;
 }
 
-export interface IUserSettings {
+interface IUserSettings {
   id: number;
+	isVerified: boolean;
 	isOnline: boolean; // Must be 'true'
 	lastConnection: string;
 	created_at: string;
@@ -50,7 +47,7 @@ export interface IUserSettings {
 	city: string; // Can be undefined
 	consentLocation: boolean;
   biography: string;
-	interests: ITag[];
+	interests: string[];
 	pictures: string;
   fameRating: number;
 	visitHistory: IPage[];
