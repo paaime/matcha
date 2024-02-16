@@ -3,6 +3,7 @@ import { connectToDatabase } from '../../../utils/db';
 
 export async function getUserWithId(userId: number): Promise<IUser | null>{
   const connectedUserId = 2; // TODO get from request auth
+
   try {
     const db = await connectToDatabase();
 
@@ -71,6 +72,9 @@ export async function getUserWithId(userId: number): Promise<IUser | null>{
     // Create the user object
     const user: IUser = {
       id: rows[0].id,
+      isOnline: rows[0].isOnline === 1,
+      lastConnection: rows[0].lastConnection,
+      created_at: rows[0].created_at,
       firstName: rows[0].firstName,
       lastName: rows[0].lastName,
       age: rows[0].age,
@@ -86,6 +90,7 @@ export async function getUserWithId(userId: number): Promise<IUser | null>{
       hasLiked: rows[0].hasLiked === 1,
       isBlocked: rows[0].isBlocked === 1,
       hasBlocked: rows[0].hasBlocked === 1,
+      isVerified: rows[0].isVerified === 1,
       interests: []
     };
 

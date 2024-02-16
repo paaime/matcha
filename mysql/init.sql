@@ -14,7 +14,11 @@ CREATE TABLE User (
   sexualPreferences ENUM('female', 'male', 'both') DEFAULT 'both' NOT NULL,
   biography TEXT DEFAULT NULL,
   pictures TEXT DEFAULT NULL,
-  fameRating FLOAT DEFAULT 150
+  fameRating FLOAT DEFAULT 150,
+  isVerified BOOLEAN DEFAULT 0,
+  isOnline BOOLEAN DEFAULT 0,
+  lastConnection TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table `Like`
