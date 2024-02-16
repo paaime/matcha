@@ -8,11 +8,17 @@ CREATE TABLE User (
   email VARCHAR(255) UNIQUE NOT NULL,
   emailToken VARCHAR(255) DEFAULT NULL,
   loc VARCHAR(255) DEFAULT NULL,
+  city VARCHAR(255) DEFAULT NULL,
+  consentLocation BOOLEAN DEFAULT 0,
   gender ENUM('female', 'male', 'other') DEFAULT 'other' NOT NULL,
   sexualPreferences ENUM('female', 'male', 'both') DEFAULT 'both' NOT NULL,
   biography TEXT DEFAULT NULL,
   pictures TEXT DEFAULT NULL,
-  fameRating FLOAT DEFAULT 0
+  fameRating FLOAT DEFAULT 150,
+  isVerified BOOLEAN DEFAULT 0,
+  isOnline BOOLEAN DEFAULT 0,
+  lastConnection TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table `Like`
@@ -26,7 +32,6 @@ CREATE TABLE UserLike (
   UNIQUE (user_id, liked_user_id),
   CHECK (user_id != liked_user_id)
 );
-
 
 -- Table Matchs
 CREATE TABLE Matchs (
@@ -77,8 +82,12 @@ CREATE TABLE Tags (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   tagName VARCHAR(255) NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
+  UNIQUE (user_id, tagName)
 );
+
+-- SQL command to update Tags table and add unique constraint
+ALTER TABLE Tags ADD UNIQUE (user_id, tagName);
 
 -- Table History
 CREATE TABLE History (
@@ -88,8 +97,11 @@ CREATE TABLE History (
   uri VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
-  FOREIGN KEY (visited_user_id) REFERENCES User(id)
+  FOREIGN KEY (visited_user_id) REFERENCES User(id) ON DELETE CASCADE
 );
+
+-- Update History table, add on delete cascade
+ALTER TABLE History ADD FOREIGN KEY (visited_user_id) REFERENCES User(id) ON DELETE CASCADE;
 
 -- Table Notification
 CREATE TABLE Notification (
@@ -100,9 +112,6 @@ CREATE TABLE Notification (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 );
-
--- -- Ajouter le champ match_id à la table Matchs
--- ALTER TABLE Matchs ADD COLUMN match_id INT NULL;
 
 -- Créer le déclencheur AFTER INSERT pour UserLike
 DELIMITER //
