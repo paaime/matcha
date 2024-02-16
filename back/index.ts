@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import cookieParser from 'cookie-parser';
+
 import userGet from './api/user/get';
 import userPost from './api/user/post';
 
@@ -21,6 +23,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Middlewares
 app.use(express.json());
+app.use(cookieParser());
 
 // User routes
 app.use('/user', userGet);
