@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { connectToDatabase } from '../../../utils/db';
 import { ageRegex, biographyRegex, genderEnum, nameRegex, picturesRegex, preferenceEnum } from '../../../types/regex';
 
-const checkIfFieldExist = (name: string, field: string, res: Response): number => {
+export const checkIfFieldExist = (name: string, field: string, res: Response): number => {
   if (!field || field === '') {
 
     res.status(400).json({
@@ -166,6 +166,8 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
     if (!id) {
       throw new Error('User not added');
     }
+
+    // TODO : Send email to verify the account
 
     res.status(200).json({
       id: id,

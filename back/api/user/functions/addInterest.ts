@@ -1,9 +1,28 @@
 import { Response } from 'express';
+import jwt from 'jsonwebtoken';
+
 import { connectToDatabase } from '../../../utils/db';
 import { interestRegex } from '../../../types/regex';
+import { JwtDatas, ThrownError } from '../../../types/type';
 
-export async function addInterest(body: any, res: Response): Promise<undefined>{
+export async function addInterest(body: any, token: string, res: Response): Promise<undefined>{
   try {
+    // Decryption of token
+    const tokenContent = token.trim();
+
+    // Get token JWT infos
+    const decoded = jwt.decode(tokenContent) as JwtDatas;
+
+    if (!decoded || !decoded.id || !Number.isInteger(decoded.id) || decoded.id < 1) {
+      res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Invalid token'
+      });
+      return;
+    }
+
+    const user_id = decoded.id;
+
     // Get infos from body
     const { interest } = body;
 
@@ -16,8 +35,6 @@ export async function addInterest(body: any, res: Response): Promise<undefined>{
     }
 
     const db = await connectToDatabase();
-
-    const user_id = 14; // TODO get from request auth
 
     const query = 'INSERT INTO Tags (user_id, tagName) VALUES (?, ?)';
 
@@ -34,10 +51,16 @@ export async function addInterest(body: any, res: Response): Promise<undefined>{
 
     res.status(200).json({
       tagName: interest,
+      user_id,
       added: true
     });
   } catch (error) {
-    console.error('Error while adding interest', ':', error);
+    const e = error as ThrownError;
+
+    const code = e?.code || "Unknown error";
+    const message = e?.message || "Unknown message";
+
+    console.error({ code, message });
     
     res.status(501).json({
       error: 'Server error',
