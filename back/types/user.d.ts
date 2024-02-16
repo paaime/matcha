@@ -57,8 +57,3 @@ export interface IUserSettings {
 	userVisited: IUser[]; // Il manque la date du coup
 	usersBlocked: IUser[];
 }
-
-export type ThrownError = {
-	code: string;
-	message: string;
-}
