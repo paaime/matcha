@@ -16,8 +16,8 @@ router.post('/login', async (req: Request, res: Response) => {
 });
 
 router.post('/interest', async (req: Request, res: Response) => {
-  // Get token from header
-  const token = req.headers.authorization;
+  // Get token from cookie
+  const token = req.cookies?.token;
 
   if (!token || token === 'Bearer undefined') {
     res.status(401).json({

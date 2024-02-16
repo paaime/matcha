@@ -92,6 +92,13 @@ export async function loginUser(body: any, res: Response): Promise<undefined>{
       }
     );
 
+    // Add token in httpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+
     // Send the token
     res.status(200).json({
       token: token,
