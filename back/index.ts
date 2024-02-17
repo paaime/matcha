@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import cookieParser from 'cookie-parser';
+
 import userGet from './api/user/get';
 import userPost from './api/user/post';
 
@@ -19,6 +21,10 @@ app.get('/', (req: Request, res: Response) => {
   res.send('API is running !');
 });
 
+// Middlewares
+app.use(express.json());
+app.use(cookieParser());
+
 // User routes
 app.use('/user', userGet);
 app.use('/user', userPost);
@@ -28,6 +34,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('A client has just left');
+  });
+
+  socket.on('message', (data) => {
+    console.log('Message from client:', data);
+    socket.emit('message', 'Hello from server');
   });
 });
 

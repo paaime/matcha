@@ -10,6 +10,7 @@ export default function Message({ isMe }) {
         height={50}
         className="rounded-full h-12 w-12 object-cover"
         alt="Profile Picture"
+        priority
       />
       <div className="rounded-3xl bg-white flex flex-col items-center py-3 px-5 shadow-sm">
         <p className="text-black">

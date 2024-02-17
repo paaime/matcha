@@ -10,6 +10,7 @@ const Chat = () => {
         width={200}
         height={300}
         className="rounded-full w-14 h-14 object-cover mr-5"
+        priority
       />
       <div className="max-w-[50%] flex flex-col text-dark justify-center">
         <p className="text-lg font-bold">Alfredo Calzoni</p>

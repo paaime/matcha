@@ -1,15 +1,24 @@
+export interface ITag {
+  id: number;
+	name: string;
+}
+
 export interface IUser {
-  id: string;
+  id: number;
+	firstName: string;
   lastName: string;
-  firstName: string;
-  email: string;
-  emailVerified: Date;
-  password: string;
-  image: string;
-  createdAt: Date;
-  active: boolean;
-  stripeCustomerId: string;
-  stripeSubscriptionId: string;
-  stripePriceId: string;
-  stripeCurrentPeriodEnd: Date;
+  age: number;
+  gender: string;
+  sexualPreferences: string;
+  distance?: number;
+  biography?: string;
+	interests: ITag[];
+	pictures?: string;
+  fameRating: number;
+	isMatch: boolean;
+	isLiked: boolean;
+	hasLiked: boolean;
+	isBlocked: boolean;
+	hasBlocked: boolean;
+	matchId?: string; // If isMatch = true
 }

@@ -3,9 +3,9 @@ import { HeartIcon, NavigationIcon } from 'lucide-react';
 import More from '@/components/Profile/More';
 import Informations from '@/components/Profile/Informations';
 import { fakeUsers } from '@/fakeUsers';
-import { IProfile } from '@/types/profile';
 import GoBack from '@/components/GoBack';
 import Gallery from '@/components/Profile/Gallery';
+import { IProfile } from '@/types/profile';
 
 export default function Page() {
   const user: IProfile = fakeUsers[0];

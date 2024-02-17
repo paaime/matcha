@@ -13,6 +13,7 @@ const Match = () => {
       width={200}
       height={300}
       className="rounded-lg w-24 h-28 object-cover"
+      priority
     />
   );
 };

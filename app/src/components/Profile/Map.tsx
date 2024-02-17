@@ -1,10 +1,14 @@
+'use client';
+
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import L from 'leaflet';
 import { IProfile } from '@/types/profile';
+import L from 'leaflet';
+import { useEffect, useState } from 'react';
 
 export default function Map({ user }: { user: IProfile }) {
+  const [isMounted, setIsMounted] = useState(false);
   const iconPerson = new L.Icon({
     iconUrl: user.image,
     iconRetinaUrl: user.image,
@@ -16,6 +20,10 @@ export default function Map({ user }: { user: IProfile }) {
     iconSize: new L.Point(60, 75),
     className: 'leaflet-marker',
   });
+
+  useEffect(() => setIsMounted(true), []);
+
+  if (!isMounted) return null;
 
   return (
     <MapContainer
