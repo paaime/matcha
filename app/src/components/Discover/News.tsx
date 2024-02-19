@@ -4,8 +4,27 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { fakeUsers } from '@/fakeUsers';
+import { useEffect, useState } from 'react';
+import { IUser } from '@/types/user';
+import customAxios from '@/utils/axios';
+import { toast } from 'sonner';
 
 export default function News() {
+  const [users, setUsers] = useState<IUser[]>([]);
+
+  const getUsers = async () => {
+    try {
+      const res = await customAxios.get('/user');
+      setUsers(res.data);
+    } catch (err) {
+      toast('Error', { description: 'An error occured while fetching users' });
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
   return (
     <div>
       <Swiper
@@ -18,7 +37,7 @@ export default function News() {
         }}
         className="shadow-scroll !-ml-[20px] !pl-[20px]"
       >
-        {fakeUsers.map((user, index) => {
+        {users?.map((user, index) => {
           return (
             <SwiperSlide key={index}>
               <ProfileCard small={true} user={user} />

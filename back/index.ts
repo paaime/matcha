@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
@@ -22,6 +23,12 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Middlewares
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -44,5 +51,7 @@ io.on('connection', (socket) => {
 
 // Start web server
 server.listen(PORT, () => {
-  console.log(`API and WebSocket server is running at http://localhost:${PORT}`);
+  console.log(
+    `API and WebSocket server is running at http://localhost:${PORT}`
+  );
 });
