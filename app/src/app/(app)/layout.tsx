@@ -5,9 +5,10 @@ import Menu from '@/components/Menu';
 import { useEffect, useState } from 'react';
 import customAxios from '@/utils/axios';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store';
+import { useSocketStore, useUserStore } from '@/store';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { connect } = useSocketStore();
   const [loading, setLoading] = useState(true);
   const setUser = useUserStore((state) => state.setUser);
   const { push } = useRouter();
@@ -25,6 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     getUser();
+    connect();
   }, []);
 
   return (

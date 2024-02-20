@@ -41,7 +41,7 @@ export default function Menu() {
   useEffect(() => setIsMounted(true), []);
 
   return (
-    <header className="flex w-full justify-center fixed bottom-5 h-16 z-50">
+    <header className="flex w-full justify-center fixed bottom-5 h-16 z-10">
       <nav className="flex items-center bg-white px-5 rounded-full gap-6 shadow-lg relative">
         {isMounted && (
           <div
