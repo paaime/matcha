@@ -41,7 +41,8 @@ CREATE TABLE Matchs (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
   FOREIGN KEY (other_user_id) REFERENCES User(id) ON DELETE CASCADE,
-  UNIQUE (user_id, other_user_id)
+  UNIQUE (user_id, other_user_id),
+  CHECK (user_id != other_user_id)
 );
 
 -- Table Blocked
@@ -52,7 +53,8 @@ CREATE TABLE Blocked (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
   FOREIGN KEY (blocked_user_id) REFERENCES User(id) ON DELETE CASCADE,
-  UNIQUE (user_id, blocked_user_id)
+  UNIQUE (user_id, blocked_user_id),
+  CHECK (user_id != blocked_user_id)
 );
 
 -- Table Reported
@@ -63,7 +65,8 @@ CREATE TABLE Reported (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
   FOREIGN KEY (reported_user_id) REFERENCES User(id) ON DELETE CASCADE,
-  UNIQUE (user_id, reported_user_id)
+  UNIQUE (user_id, reported_user_id),
+  CHECK (user_id != reported_user_id)
 );
 
 -- Table Chat
