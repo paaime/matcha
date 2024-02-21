@@ -5,8 +5,9 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 import Image from 'next/image';
+import { IUser } from '@/types/user';
 
-export default function Gallery() {
+export default function Gallery({ user }: { user: IUser }) {
   return (
     <Swiper
       direction={'vertical'}
@@ -18,7 +19,7 @@ export default function Gallery() {
     >
       <SwiperSlide>
         <Image
-          src={'/img/placeholder/users/1.jpg'}
+          src={user.pictures}
           alt={'Photo 1'}
           width={500}
           height={500}
@@ -31,7 +32,7 @@ export default function Gallery() {
       </SwiperSlide>
       <SwiperSlide>
         <Image
-          src={'/img/placeholder/users/1.jpg'}
+          src={user.pictures}
           alt={'Photo 2'}
           width={500}
           height={500}

@@ -1,4 +1,4 @@
-import { IProfile } from '@/types/profile';
+import { IUser } from '@/types/user';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -7,24 +7,27 @@ export default function ProfileCard({
   user,
 }: {
   small?: boolean;
-  user: IProfile;
+  user: IUser;
 }) {
   return (
     <Link
-      href="/profile"
+      href={`/profile/${user.id}`}
       className={clsx(
         !small && 'border-[5px] border-pink',
         small ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',
         'block'
       )}
       style={{
-        backgroundImage: `url(${user.image})`,
+        backgroundImage: `url(${user.pictures})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
       <div
-        className="flex flex-col justify-between items-center h-full rounded-3xl"
+        className={clsx(
+          small ? 'rounded-xl' : 'rounded-3xl',
+          'flex flex-col justify-between items-center h-full'
+        )}
         style={{
           background:
             'linear-gradient(to top, rgb(5 20 90 / 84%) 0%, transparent 35%)',
@@ -45,12 +48,14 @@ export default function ProfileCard({
           </div>
           <div className="flex items-center gap-2">
             <p className="font-extrabold text-white text-xl">
-              {user.name}, {user.age}
+              {user.firstName}, {user.age}
             </p>
-            <div className="bg-green-300 h-1.5 w-1.5 rounded-full" />
+            {user.isOnline && (
+              <div className="bg-green-300 h-1.5 w-1.5 rounded-full" />
+            )}
           </div>
           <p className="text-[#C0AFC0] font-semibold text-sm tracking-wider uppercase">
-            {user.location}
+            {user.city}
           </p>
         </div>
       </div>

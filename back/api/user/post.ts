@@ -16,6 +16,7 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.post('/login', async (req: Request, res: Response) => {
   // Clear cookie
+  console.log('clear cookie');
   res.clearCookie('token');
 
   await loginUser(req.body, res);
@@ -28,7 +29,7 @@ router.post('/interest', async (req: Request, res: Response) => {
   if (!token || token === 'Bearer undefined') {
     res.status(401).json({
       error: 'Unauthorized',
-      message: 'Token is missing'
+      message: 'Token is missing',
     });
     return;
   }

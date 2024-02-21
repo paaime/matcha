@@ -1,14 +1,36 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { HeartIcon, NavigationIcon } from 'lucide-react';
 import More from '@/components/Profile/More';
 import Informations from '@/components/Profile/Informations';
-import { fakeUsers } from '@/fakeUsers';
 import GoBack from '@/components/GoBack';
 import Gallery from '@/components/Profile/Gallery';
-import { IProfile } from '@/types/profile';
+import { IUser } from '@/types/user';
+import { useEffect, useState } from 'react';
+import customAxios from '@/utils/axios';
+import { toast } from 'sonner';
 
-export default function Page() {
-  const user: IProfile = fakeUsers[0];
+export default function Page({ params }) {
+  const id = params.id;
+
+  const [user, setUser] = useState<IUser>(null);
+
+  const getUser = async () => {
+    try {
+      const res = await customAxios.get(`/user/${id}`);
+      setUser(res.data);
+    } catch (err) {
+      toast('Error', { description: 'An error occured while fetching users' });
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  if (!user) return null;
+
   return (
     <>
       <div
@@ -20,7 +42,7 @@ export default function Page() {
           minHeight: '250px',
         }}
       >
-        <Gallery />
+        <Gallery user={user} />
         <div
           className="flex flex-col justify-between p-5 h-full love-card rounded-3xl relative pointer-events-none"
           style={{
@@ -33,7 +55,7 @@ export default function Page() {
             <div className="flex gap-3">
               <div className="flex gap-2 items-center border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
                 <NavigationIcon className="h-4 w-4" />
-                <p>{user.distance} km</p>
+                <p>{user?.distance} km</p>
               </div>
               <More />
             </div>
@@ -43,10 +65,10 @@ export default function Page() {
               <HeartIcon className="group-hover:fill-white" />
             </Button>
             <p className="font-extrabold text-white text-3xl">
-              {user.name}, {user.age}
+              {user?.firstName}, {user?.age}
             </p>
             <p className="text-[#C0AFC0] font-semibold tracking-wider uppercase">
-              {user.location}
+              {user?.city}
             </p>
           </div>
         </div>
