@@ -3,7 +3,6 @@ import ProfileCard from '../ProfileCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { fakeUsers } from '@/fakeUsers';
 import { useEffect, useState } from 'react';
 import { IUser } from '@/types/user';
 import customAxios from '@/utils/axios';
@@ -14,7 +13,7 @@ export default function News() {
 
   const getUsers = async () => {
     try {
-      const res = await customAxios.get('/user');
+      const res = await customAxios.get('/user/discovery');
       setUsers(res.data);
     } catch (err) {
       toast('Error', { description: 'An error occured while fetching users' });
@@ -24,6 +23,8 @@ export default function News() {
   useEffect(() => {
     getUsers();
   }, []);
+
+  if (!users || users.length === 0) return null;
 
   return (
     <div>

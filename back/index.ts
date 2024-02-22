@@ -6,6 +6,9 @@ import cors from 'cors';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
+import authPost from './api/auth/post';
+import searchGet from './api/search/get';
+import { authCheck } from './middlewares/authCheck';
 
 const PORT = 3001;
 
@@ -32,9 +35,15 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// Auth routes
+app.use('/auth', authPost);
+// Auth middleware
+app.use(authCheck);
 // User routes
 app.use('/user', userGet);
 app.use('/user', userPost);
+// Search routes
+app.use('/search', searchGet);
 
 io.on('connection', (socket) => {
   console.log('A client just arrived with id:', socket.id);

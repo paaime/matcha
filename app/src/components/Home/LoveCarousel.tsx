@@ -4,7 +4,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
 import { Button, buttonVariants } from '../ui/button';
 import CircleProgress from '../ui/CircleProgress';
-import React, { createRef, useMemo, useState } from 'react';
+import React, { createRef, useEffect, useMemo, useState } from 'react';
 import { fakeUsers } from '@/fakeUsers';
 import { IProfile } from '@/types/profile';
 import Link from 'next/link';
@@ -14,8 +14,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
+import { IUser } from '@/types/user';
+import customAxios from '@/utils/axios';
+import { toast } from 'sonner';
 
-const LoveCard = ({ user }: { user: IProfile }) => {
+const LoveCard = ({ user }: { user: IUser }) => {
   return (
     <div className="rounded-3xl block h-full w-full absolute">
       <Swiper
@@ -28,8 +31,8 @@ const LoveCard = ({ user }: { user: IProfile }) => {
       >
         <SwiperSlide>
           <Image
-            src={user.image}
-            alt={user.name}
+            src={user.pictures}
+            alt={user.firstName}
             width={500}
             height={500}
             className="absolute w-full h-full object-cover"
@@ -38,8 +41,8 @@ const LoveCard = ({ user }: { user: IProfile }) => {
         </SwiperSlide>
         <SwiperSlide>
           <Image
-            src={user.image}
-            alt={user.name}
+            src={user.pictures}
+            alt={user.firstName}
             width={500}
             height={500}
             className="absolute w-full h-full object-cover"
@@ -64,12 +67,12 @@ const LoveCard = ({ user }: { user: IProfile }) => {
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center gap-3">
             <p className="font-extrabold text-white text-3xl">
-              {user.name}, {user.age}
+              {user.firstName}, {user.age}
             </p>
             <div className="bg-green-300 h-2.5 w-2.5 rounded-full" />
           </div>
           <p className="text-[#C0AFC0] font-semibold tracking-wider uppercase">
-            {user.location}
+            {user.city}
           </p>
         </div>
       </div>
@@ -85,15 +88,32 @@ interface API {
 }
 
 export default function LoveCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(fakeUsers.length - 1);
-  const cardRefs = useMemo(
-    () =>
-      Array(fakeUsers.length)
-        .fill(0)
-        .map((i) => createRef<HTMLDivElement>()),
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [controlsArray, setControlsArray] = useState<any[]>([]);
+  const [cardRefs, setCardsRefs] = useState<React.RefObject<HTMLDivElement>[]>(
     []
   );
-  const controlsArray = fakeUsers.map(useAnimation);
+
+  const getUsers = async () => {
+    try {
+      const res = await customAxios.get('/user/getlove');
+      setUsers(res.data);
+      setCardsRefs(
+        Array(users.length)
+          .fill(0)
+          .map((i) => createRef<HTMLDivElement>())
+      );
+      setCurrentIndex(res.data.length - 1);
+    } catch (err) {
+      console.log(err);
+      toast('Error', { description: 'An error occured while fetching data.' });
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   const swipeLeft = () => {
     if (currentIndex < 0) return;
@@ -128,10 +148,10 @@ export default function LoveCarousel() {
     <>
       <div
         className="flex flex-col bg-white rounded-3xl shadow-xl p-3 z-10"
-        style={{ height: 'calc(100vh - 335px)', minHeight: '250px' }}
+        style={{ height: 'calc(100vh - 205px)', minHeight: '250px' }}
       >
         <div className="relative w-full h-full">
-          {fakeUsers.map((user, index) => (
+          {users?.map((user, index) => (
             <motion.div
               key={index}
               ref={cardRefs[index]}
@@ -148,7 +168,7 @@ export default function LoveCarousel() {
             <div
               className="flex flex-col items-center justify-center"
               style={{
-                height: 'calc(100vh - 450px)',
+                height: 'calc(100vh - 325px)',
                 minHeight: '250px',
               }}
             >
