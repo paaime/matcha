@@ -22,13 +22,13 @@ export default function Header() {
         </div>
       )}
       <div className="flex gap-3 items-center">
-        <Button
+        {/* <Button
           variant="outline"
           className="h-12 w-12 rounded-full"
           onClick={() => setSearchOpen(!searchOpen)}
         >
           <SearchIcon />
-        </Button>
+        </Button> */}
         <Filters />
       </div>
     </div>

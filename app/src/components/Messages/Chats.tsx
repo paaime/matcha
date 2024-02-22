@@ -5,7 +5,7 @@ const Chat = () => {
   return (
     <Link href="/chat" className="borber border-b flex py-5 cursor-pointer">
       <Image
-        src="/img/placeholder/LoveCard1.jpg"
+        src="/img/placeholder/users/1.jpg"
         alt="LoveCard1"
         width={200}
         height={300}

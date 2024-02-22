@@ -21,6 +21,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
 export const useSocketStore = create<SocketStore>((set, get) => ({
   socket: null,
+  // Connect to the WebSocket server
   connect: () => {
     const socket = io('http://localhost:3001', {
       auth: {
@@ -31,6 +32,7 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
       set({ socket });
     });
   },
+  // Disconnect from the WebSocket server
   disconnect: () => {
     const { socket } = get();
     if (socket) {
@@ -38,6 +40,7 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
       set({ socket: null });
     }
   },
+  // Send a message
   sendMessage: (value: string) => {
     const { socket } = get();
     if (socket) {

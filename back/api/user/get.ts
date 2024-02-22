@@ -7,11 +7,21 @@ import { JwtDatas } from '../../types/type';
 import { getUserConnected } from './functions/getUserConnected';
 import { getAllUsers } from './functions/getAllUsers';
 import { addRandom } from './functions/addRandom';
+import { getDiscovery } from './functions/getDiscovery';
+import { getLove } from './functions/getLove';
 
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
   await getAllUsers(res);
+});
+
+router.get('/discovery', async (req: Request, res: Response) => {
+  await getDiscovery(req, res);
+});
+
+router.get('/getlove', async (req: Request, res: Response) => {
+  await getLove(req, res);
 });
 
 router.get('/random', async (req: Request, res: Response) => {

@@ -40,7 +40,7 @@ export default function SignInForm({
     const { email, password } = data;
     try {
       const response = await axios.post(
-        'http://localhost:3001/user/login',
+        'http://localhost:3001/auth/login',
         {
           email,
           password,
