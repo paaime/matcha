@@ -1,12 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { motion, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
-import { Button, buttonVariants } from '../ui/button';
+import { buttonVariants } from '../ui/button';
 import CircleProgress from '../ui/CircleProgress';
-import React, { createRef, useEffect, useMemo, useState } from 'react';
-import { fakeUsers } from '@/fakeUsers';
-import { IProfile } from '@/types/profile';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
 import Image from 'next/image';
@@ -17,6 +16,8 @@ import { Pagination } from 'swiper/modules';
 import { IUser } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
+
+const easeOutExpo = [0.16, 1, 0.3, 1];
 
 const LoveCard = ({ user }: { user: IUser }) => {
   return (
@@ -80,30 +81,15 @@ const LoveCard = ({ user }: { user: IUser }) => {
   );
 };
 
-type Direction = 'left' | 'right' | 'up' | 'down';
-
-interface API {
-  swipe(dir?: Direction): Promise<void>;
-  restoreCard(): Promise<void>;
-}
-
 export default function LoveCarousel() {
   const [users, setUsers] = useState<IUser[]>([]);
+  const [direction, setDirection] = useState<'left' | 'right' | ''>('');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [controlsArray, setControlsArray] = useState<any[]>([]);
-  const [cardRefs, setCardsRefs] = useState<React.RefObject<HTMLDivElement>[]>(
-    []
-  );
 
   const getUsers = async () => {
     try {
       const res = await customAxios.get('/user/getlove');
       setUsers(res.data);
-      setCardsRefs(
-        Array(users.length)
-          .fill(0)
-          .map((i) => createRef<HTMLDivElement>())
-      );
       setCurrentIndex(res.data.length - 1);
     } catch (err) {
       console.log(err);
@@ -115,33 +101,50 @@ export default function LoveCarousel() {
     getUsers();
   }, []);
 
+  useEffect(() => {
+    if (['left', 'right'].includes(direction)) {
+      setUsers(users.slice(0, -1));
+    }
+    setDirection('');
+  }, [direction]);
+
   const swipeLeft = () => {
-    if (currentIndex < 0) return;
-    controlsArray[currentIndex].start({
-      x: '-150vw',
-      y: 50,
-      rotate: -50,
-      transition: { duration: 1, ease: 'easeInOut' },
-    });
-    // delete the dom element of the current index
-    setTimeout(() => {
-      cardRefs[currentIndex].current?.remove();
-    }, 1000);
+    if (currentIndex === -1) return;
     setCurrentIndex(currentIndex - 1);
+    setDirection('left');
   };
 
   const swipeRight = () => {
-    if (currentIndex < 0) return;
-    controlsArray[currentIndex].start({
-      x: '150vw',
-      y: 50,
-      rotate: 50,
-      transition: { duration: 1, ease: 'easeInOut' },
-    });
-    setTimeout(() => {
-      cardRefs[currentIndex].current?.remove();
-    }, 1000);
+    if (currentIndex === -1) return;
     setCurrentIndex(currentIndex - 1);
+    setDirection('right');
+  };
+
+  const cardVariants = {
+    current: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.6, ease: easeOutExpo },
+    },
+    upcoming: {
+      opacity: 0,
+      y: 67,
+      scale: 0.9,
+      transition: { duration: 0.6, ease: easeOutExpo, delay: 0 },
+    },
+    remainings: {
+      opacity: 0,
+      y: 20,
+      scale: 0.9,
+    },
+    exit: {
+      opacity: 0,
+      x: direction === 'left' ? -300 : 300,
+      y: 40,
+      rotate: direction === 'left' ? -20 : 20,
+      transition: { duration: 0.8, ease: easeOutExpo },
+    },
   };
 
   return (
@@ -151,61 +154,81 @@ export default function LoveCarousel() {
         style={{ height: 'calc(100vh - 205px)', minHeight: '250px' }}
       >
         <div className="relative w-full h-full">
-          {users?.map((user, index) => (
-            <motion.div
-              key={index}
-              ref={cardRefs[index]}
-              className="h-full absolute w-full"
-              animate={controlsArray[index]}
-              transition={{
-                duration: 1,
-              }}
-            >
-              <LoveCard user={user} key={index} />
-            </motion.div>
-          ))}
-          {currentIndex === -1 && (
-            <div
-              className="flex flex-col items-center justify-center"
-              style={{
-                height: 'calc(100vh - 325px)',
-                minHeight: '250px',
-              }}
-            >
-              <p className="text-lg font-bold">No more suggestions</p>
-              <p className="text-gray-400">
-                You can still discover other profile
-              </p>
-              <Link
-                href="/discover"
-                className={clsx(
-                  '!rounded-full !font-bold mt-3 ',
-                  buttonVariants({ variant: 'default' })
-                )}
+          <AnimatePresence>
+            {users?.map((user, index) => (
+              <motion.div
+                key={index}
+                className="h-full absolute w-full"
+                variants={cardVariants}
+                initial="remainings"
+                animate={
+                  index === users.length - 1
+                    ? 'current'
+                    : index === users.length - 2
+                    ? 'upcoming'
+                    : 'remainings'
+                }
+                exit="exit"
               >
-                Discover
-              </Link>
-            </div>
-          )}
+                <LoveCard user={user} key={index} />
+              </motion.div>
+            ))}
+            {currentIndex === -1 && (
+              <div
+                className="flex flex-col items-center justify-center"
+                style={{
+                  height: 'calc(100vh - 325px)',
+                  minHeight: '250px',
+                }}
+              >
+                <p className="text-lg font-bold">No more suggestions</p>
+                <p className="text-gray-400">
+                  You can still discover other profile
+                </p>
+                <Link
+                  href="/discover"
+                  className={clsx(
+                    '!rounded-full !font-bold mt-3 ',
+                    buttonVariants({ variant: 'default' })
+                  )}
+                >
+                  Discover
+                </Link>
+              </div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="flex gap-8 justify-center pb-4 pt-6 mt-auto">
-          <Button
-            className="h-14 w-14 rounded-full bg-white shadow-xl text-black"
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={swipeLeft}
-            variant="secondary"
+            className={clsx(
+              '!h-14 !w-14 !rounded-full bg-white shadow-xl text-black',
+              buttonVariants({ variant: 'secondary' })
+            )}
           >
             <XIcon />
-          </Button>
-          <Button className="h-14 w-14 rounded-full bg-primary shadow-xl text-white">
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            className={clsx(
+              '!h-14 !w-14 !rounded-full !bg-primary shadow-xl text-white',
+              buttonVariants({ variant: 'secondary' })
+            )}
+          >
             <StarIcon className="fill-white" />
-          </Button>
-          <Button
-            className="h-14 w-14 rounded-full bg-pink shadow-xl text-white"
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={swipeRight}
+            className={clsx(
+              '!h-14 !w-14 !rounded-full !bg-pink shadow-xl text-white',
+              buttonVariants({ variant: 'secondary' })
+            )}
           >
             <HeartIcon className="fill-white" />
-          </Button>
+          </motion.button>
         </div>
       </div>
       <div className="mx-auto w-11/12 bg-white rounded-3xl shadow-2xl h-[60px] mt-[-70px]"></div>
