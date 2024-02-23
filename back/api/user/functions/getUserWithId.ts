@@ -6,6 +6,26 @@ import { connectToDatabase } from '../../../utils/db';
 
 export async function getUserWithId(userId: number, connectedUserId: number, res: Response): Promise<undefined>{
   try {
+    if (!Number.isInteger(userId) || userId < 1) {
+      console.error('Invalid user id:', userId);
+
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid user id'
+      });
+      return;
+    }
+
+    if (!Number.isInteger(connectedUserId) || connectedUserId < 1) {
+      console.error('Invalid connected user id:', connectedUserId);
+
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid connected user id'
+      });
+      return;
+    }
+
     const db = await connectToDatabase();
 
     const query = `

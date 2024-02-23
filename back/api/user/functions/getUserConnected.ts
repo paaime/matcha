@@ -1,11 +1,24 @@
 import { Response } from 'express';
 
 import { ThrownError } from '../../../types/type';
-import { IUser, IUserSettings } from '../../../types/user';
+import { IUserSettings } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
+import { RequestUser } from '../../../types/express';
 
-export async function getUserConnected(userId: number, res: Response): Promise<undefined>{
+export async function getUserConnected(req: RequestUser, res: Response): Promise<undefined>{
   try {
+    const userId = (req.user?.id as number) || -1;
+
+    if (!Number.isInteger(userId) || userId < 1) {
+      console.error('Invalid user id:', userId);
+
+      res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Invalid user id'
+      });
+      return;
+    }
+    
     const db = await connectToDatabase();
 
     const query = `

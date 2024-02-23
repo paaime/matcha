@@ -6,6 +6,7 @@ import cors from 'cors';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
+import authGet from './api/auth/get';
 import authPost from './api/auth/post';
 import searchGet from './api/search/get';
 import { authCheck } from './middlewares/authCheck';
@@ -36,6 +37,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Auth routes
+app.use('/auth', authGet);
 app.use('/auth', authPost);
 // Auth middleware
 app.use(authCheck);
