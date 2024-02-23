@@ -75,6 +75,7 @@ CREATE TABLE Chat (
   match_id INT NOT NULL,
   user_id INT NOT NULL,
   content TEXT NOT NULL,
+  type ENUM('text', 'image', 'video', 'audio') DEFAULT 'text' NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (match_id) REFERENCES Matchs(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
