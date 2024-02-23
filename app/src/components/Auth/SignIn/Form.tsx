@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
@@ -30,6 +30,7 @@ export default function SignInForm({
     type: string;
   };
 }) {
+  const { push } = useRouter();
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(SignInSchema),
@@ -49,8 +50,7 @@ export default function SignInForm({
           withCredentials: true,
         }
       );
-
-      const data = response.data;
+      push('/');
     } catch (err) {
       if (err instanceof AxiosError) {
         toast('Error', { description: err.response?.data?.message });
