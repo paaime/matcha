@@ -24,4 +24,4 @@ export const picturesRegex = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
 
 /* === ENUM === */
 export const genderEnum = ['male', 'female', 'other'];
-export const preferenceEnum = ['male', 'female', 'both'];
+export const preferenceEnum = ['male', 'female', 'other'];
