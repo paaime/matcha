@@ -34,6 +34,7 @@ export interface IUser {
 
 export interface ILove {
   id: number;
+  isOnline: boolean;
   firstName: string;
   age: number;
   gender: string;

@@ -1,55 +1,112 @@
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
-import { IUser } from '../../../types/user';
+import { ILove, IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
+import { RequestUser } from '../../../types/express';
 
-export async function getLove(req: Request, res: Response): Promise<void> {
+const MIN_AGE = 18;
+const MAX_AGE = 99;
+
+const MIN_FAME = 0;
+const MAX_FAME = 1000;
+
+const MAX_DISTANCE = 10000e3; // 10 000 km
+
+export async function getLove(req: RequestUser, res: Response): Promise<void> {
   try {
     const db = await connectToDatabase();
 
+    // Get my sexual preferences
+    const [rowsPreferences] = (await db.query("SELECT age, loc, gender, sexualPreferences FROM User WHERE id = ?",
+      [req.user.id]
+    )) as any;
+
+    if (!rowsPreferences || rowsPreferences.length === 0) {
+      res.status(404).json({
+        error: 'User not found',
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const myAge = rowsPreferences[0].age;
+    const myLoc = rowsPreferences[0].loc;
+    const myGender = rowsPreferences[0].gender;
+    const myPreferences = rowsPreferences[0].sexualPreferences;
+
+    console.log({ myLoc, myGender, myPreferences });
+
     const query = `
-      SELECT
-        u.id,
-        u.firstName,
-        u.lastName,
-        u.age,
-        u.gender,
-        u.sexualPreferences,
-        u.loc,
-        u.city,
-        u.biography,
-        u.pictures,
-        u.fameRating,
-        t.id AS interestId,
-        t.tagName AS interestName
-      FROM
-        User u
-      LEFT JOIN
-        Tags t
-      ON
-        u.id = t.user_id
-      WHERE
-        u.id != ? AND
-        NOT EXISTS (
-          SELECT 1
-          FROM UserLike ul
-          WHERE ul.user_id = ? AND ul.liked_user_id = u.id
-        ) AND
-        NOT EXISTS (
-          SELECT 1
-          FROM Blocked ub
-          WHERE ub.user_id = ? AND ub.blocked_user_id = u.id
+    SELECT
+      u.firstName,
+      u.lastName,
+      u.age,
+      u.loc,
+      u.city,
+      u.pictures,
+      u.fameRating,
+      u.isOnline,
+      (
+        6371 * 
+        acos(
+          cos(radians(?)) * 
+          cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+          cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(?)) + 
+          sin(radians(?)) * 
+          sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
         )
-      ORDER BY
-        u.fameRating DESC
-      LIMIT 10
+      ) AS distance,
+      (
+        (100 - ABS(u.age - ?)) + (u.fameRating / 100)
+      ) AS compatibilityScore
+    FROM
+      User u
+    WHERE
+      u.id != ?
+      AND u.gender = ?
+      AND u.sexualPreferences = ?
+      AND u.id NOT IN (
+        SELECT
+          ul.liked_user_id
+        FROM
+          UserLike ul
+        WHERE
+          ul.user_id = ?
+      )
+      AND u.id NOT IN (
+        SELECT
+          ul.user_id
+        FROM
+          UserLike ul
+        WHERE
+          ul.liked_user_id = ?
+      )
+    HAVING
+      distance <= ?
+      AND age >= ?
+      AND age <= ?
+      AND fameRating >= ?
+      AND fameRating <= ?
+    ORDER BY
+      compatibilityScore ASC
     `;
 
     // Execute the query
     const [rows] = (await db.query(query, [
+      myLoc,
+      myLoc,
+      myLoc,
+      myAge,
+      req.user.id,
+      myPreferences,
+      myGender,
       req.user.id,
       req.user.id,
-      req.user.id,
+      MAX_DISTANCE,
+      MIN_AGE,
+      MAX_AGE,
+      MIN_FAME,
+      MAX_FAME,
     ])) as any;
 
     // Close the connection
@@ -61,50 +118,26 @@ export async function getLove(req: Request, res: Response): Promise<void> {
     }
 
     // Create an array to store users
-    const users: IUser[] = [];
+    const users: ILove[] = [];
 
     // Iterate over the rows and create user objects
     for (const row of rows) {
-      const user: IUser = {
+      const user: ILove = {
         id: row.id,
-        isOnline: row.isOnline === 1,
-        lastConnection: row.lastConnection,
-        created_at: row.created_at,
+        isOnline: row.isOnline,
         firstName: row.firstName,
-        lastName: row.lastName,
         age: row.age,
         gender: row.gender,
-        sexualPreferences: row.sexualPreferences,
-        loc: row.loc,
         city: row.city,
-        biography: row.biography,
         pictures: row.pictures,
-        fameRating: row.fameRating,
-        isMatch: !!row.isMatch,
-        matchId: row.matchId || undefined,
-        isLiked: !!row.isLiked,
-        hasLiked: !!row.hasLiked,
-        isBlocked: !!row.isBlocked,
-        hasBlocked: !!row.hasBlocked,
-        isVerified: !!row.isVerified,
-        interests: [],
+        distance: Math.round(row.distance),
+        compatibilityScore: row.compatibilityScore,
       };
+
+      console.log(user.firstName, user.compatibilityScore);
 
       // Push user object to the array
       users.push(user);
-    }
-
-    // Iterate over the rows again to get interests
-    for (const row of rows) {
-      const user = users.find((u) => u.id === row.id);
-      if (user && row.interestId && row.interestName) {
-        user.interests.push(row.interestName);
-      }
-    }
-
-    // Calculate distance for each user (random for now)
-    for (const user of users) {
-      user.distance = Math.floor(Math.random() * 100) + 1;
     }
 
     // Send the array of users as JSON response
