@@ -3,8 +3,10 @@ import { ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { sendNotification } from '../../../websocket/functions/initializeIo';
 
 export async function addLike(liked_id: number, req: RequestUser, res: Response): Promise<void> {
+  console.log('addLike', liked_id);
   try {
     const user_id = getAuthId(req);
 
@@ -77,6 +79,12 @@ export async function addLike(liked_id: number, req: RequestUser, res: Response)
     await db.end();
 
     if (rowsMatch && rowsMatch.length > 0) {
+      await sendNotification(liked_id.toString(), {
+        content: 'You have a new match',
+        redirect: '/likes',
+        related_user_id: user_id,
+      });
+
       res.status(200).json({
         liked: true,
         match: true,
@@ -84,11 +92,16 @@ export async function addLike(liked_id: number, req: RequestUser, res: Response)
       return;
     }
 
-    res.status(200).json({
-      liked: true,
-      match: false,
+    await sendNotification(liked_id.toString(), {
+      content: 'You have a new like',
+      redirect: '/likes',
+      related_user_id: user_id,
     });
 
+    res.status(200).json({
+      liked: true,
+      match: false
+    });
   } catch (error) {
     const e = error as ThrownError;
 

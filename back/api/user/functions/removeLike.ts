@@ -3,6 +3,7 @@ import { ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { sendNotification } from '../../../websocket/functions/initializeIo';
 
 export async function removeLike(liked_id: number, req: RequestUser, res: Response): Promise<void> {
   try {
@@ -52,26 +53,30 @@ export async function removeLike(liked_id: number, req: RequestUser, res: Respon
 
     // Remove the like
     const query = 'DELETE FROM UserLike WHERE user_id = ? AND liked_user_id = ?';
-    const [rowsLikes] = await db.query(query, [user_id, liked_id]) as any;
+    await db.query(query, [user_id, liked_id]) as any;
 
-    if (!rowsLikes || rowsLikes.affectedRows === 0) {
-      // Close the connection
-      await db.end();
-
-      res.status(501).json({
-        error: 'Server error',
-        message: 'Like not added',
-      });
-      return;
-    }
+    // Close the connection
+    await db.end();
 
     if (rowsMatch && rowsMatch.length > 0) {
+      await sendNotification(liked_id.toString(), {
+        content: 'You lost a match',
+        redirect: '/profile',
+        related_user_id: user_id,
+      });
+
       res.status(200).json({
         unliked: true,
         hadMatch: true
       });
       return;
     }
+
+    await sendNotification(liked_id.toString(), {
+      content: 'Someone unliked you',
+      redirect: '/likes',
+      related_user_id: user_id,
+    });
 
     res.status(200).json({
       unliked: true,
