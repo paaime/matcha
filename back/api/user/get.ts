@@ -6,7 +6,6 @@ import { getUserWithId } from './functions/getUserWithId';
 import { JwtDatas } from '../../types/type';
 import { getUserConnected } from './functions/getUserConnected';
 import { getAllUsers } from './functions/getAllUsers';
-import { addRandom } from './functions/addRandom';
 import { getDiscovery } from './functions/getDiscovery';
 import { getLove } from './functions/getLove';
 
@@ -22,13 +21,6 @@ router.get('/discovery', async (req: Request, res: Response) => {
 
 router.get('/getlove', async (req: Request, res: Response) => {
   await getLove(req, res);
-});
-
-router.get('/random', async (req: Request, res: Response) => {
-  // Clear cookie
-  res.clearCookie('token');
-
-  await addRandom(res);
 });
 
 router.get('/me', async (req: Request, res: Response) => {
