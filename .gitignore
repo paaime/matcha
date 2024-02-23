@@ -7,7 +7,7 @@ app/.pnpm-store
 
 back/.next/
 back/.vercel/
-back/node_modules/
+back/node_modules
 back/.pnpm-store
 
 # dependencies
