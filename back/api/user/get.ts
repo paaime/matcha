@@ -1,9 +1,7 @@
 import { Response } from 'express';
 import express from 'express';
-import jwt from 'jsonwebtoken';
 
 import { getUserWithId } from './functions/getUserWithId';
-import { JwtDatas } from '../../types/type';
 import { getUserConnected } from './functions/getUserConnected';
 import { getAllUsers } from './functions/getAllUsers';
 import { getDiscovery } from './functions/getDiscovery';
@@ -31,7 +29,7 @@ router.get('/me', async (req: RequestUser, res: Response) => {
 
 router.get('/:id', async (req: RequestUser, res: Response) => {
   // Get user info by id
-  const userId = (req.params?.id as unknown as number) || -1;
+  const userId = parseInt(req.params?.id) || -1;
 
   if (!userId || userId < 1) {
     res.status(400).json({
