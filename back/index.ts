@@ -37,14 +37,14 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Auth routes
-app.use('/auth', authGet);
-app.use('/auth', authPost);
-app.use('/auth', authGet);
+app.use('/auth', authGet, authPost);
+
 // Auth middleware
 app.use(authCheck);
+
 // User routes
-app.use('/user', userGet);
-app.use('/user', userPost);
+app.use('/user', userGet, userPost);
+
 // Search routes
 app.use('/search', searchGet);
 
