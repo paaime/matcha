@@ -1,6 +1,10 @@
 import Chats from '@/components/Messages/Chats';
 import Matches from '@/components/Messages/Matches';
 
+export const metadata = {
+  title: 'Matcha | Messages',
+};
+
 export default function Page() {
   return (
     <div>
