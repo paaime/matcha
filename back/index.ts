@@ -2,9 +2,13 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
+import authPost from './api/auth/post';
+import searchGet from './api/search/get';
+import { authCheck } from './middlewares/authCheck';
 
 const PORT = 3001;
 
@@ -22,12 +26,24 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Middlewares
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
+// Auth routes
+app.use('/auth', authPost);
+// Auth middleware
+app.use(authCheck);
 // User routes
 app.use('/user', userGet);
 app.use('/user', userPost);
+// Search routes
+app.use('/search', searchGet);
 
 io.on('connection', (socket) => {
   console.log('A client just arrived with id:', socket.id);
@@ -44,5 +60,7 @@ io.on('connection', (socket) => {
 
 // Start web server
 server.listen(PORT, () => {
-  console.log(`API and WebSocket server is running at http://localhost:${PORT}`);
+  console.log(
+    `API and WebSocket server is running at http://localhost:${PORT}`
+  );
 });

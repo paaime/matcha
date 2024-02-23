@@ -6,12 +6,12 @@ import { Interest } from '../Discover/Interests';
 import clsx from 'clsx';
 import { CalendarDaysIcon, FlameIcon } from 'lucide-react';
 import { useState } from 'react';
-import { IProfile } from '@/types/profile';
 import dynamic from 'next/dynamic';
+import { IUser } from '@/types/user';
 
 const Map = dynamic(() => import('./Map'), { ssr: false });
 
-export default function Informations({ user }: { user: IProfile }) {
+export default function Informations({ user }: { user: IUser }) {
   const [snap, setSnap] = useState<number | string | null>(0.35);
   return (
     <Drawer
@@ -35,7 +35,7 @@ export default function Informations({ user }: { user: IProfile }) {
         >
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">About</p>
-            <p className="font-semibold text-dark">{user.about}</p>
+            <p className="font-semibold text-dark">{user.biography}</p>
           </div>
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">Interest</p>

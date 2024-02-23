@@ -16,6 +16,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useSearchParams } from 'next/navigation';
+import axios, { AxiosError } from 'axios';
+import { toast } from 'sonner';
 
 type FormFields = z.infer<typeof SignInSchema>;
 
@@ -28,9 +30,6 @@ export default function SignInForm({
     type: string;
   };
 }) {
-  const searchParams = useSearchParams();
-
-  const callbackUrl = searchParams.get('callbackUrl');
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(SignInSchema),
@@ -38,38 +37,25 @@ export default function SignInForm({
 
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
     console.log(data);
-    // const { email, password } = data;
-    // try {
-    //   const response = await signIn('credentials', {
-    //     email: email,
-    //     password: password,
-    //     callbackUrl: '/default',
-    //     redirect: false,
-    //   });
+    const { email, password } = data;
+    try {
+      const response = await axios.post(
+        'http://localhost:3001/auth/login',
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-    //   if (response.error) {
-    //     switch (response.error) {
-    //       case 'CredentialsSignin':
-    //         toast('Error', { description: 'Invalid credentials.' });
-    //         break;
-    //       case 'NotActivated':
-    //         toast('Error', { description: 'Account not activated.' });
-    //         break;
-    //       default:
-    //         toast('Error', { description: 'An error occured.' });
-    //         break;
-    //     }
-    //   }
-
-    //   if (response.ok) {
-    //     toast('Success', { description: 'Logged in successfully.' });
-    //     if (callbackUrl) {
-    //       window.location.href = callbackUrl;
-    //     } else window.location.href = '/dashboard';
-    //   }
-    // } catch (err) {
-    //   toast('Error', { description: err.message });
-    // }
+      const data = response.data;
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast('Error', { description: err.response?.data?.message });
+      } else toast('Error', { description: 'Something went wrong' });
+    }
   };
 
   return (
