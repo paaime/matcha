@@ -4,7 +4,7 @@ import { connectToDatabase } from '../../../utils/db';
 
 // TODO: temporary, remove when the real api is ready
 
-export async function addRandom( res: Response): Promise<undefined>{
+export async function addRandom(res: Response, withResponse: boolean = true): Promise<undefined>{
   try {
     const password = "password";
     const email = Math.random().toString(36).substring(2, 15) + "@gmail.com";
@@ -63,19 +63,23 @@ export async function addRandom( res: Response): Promise<undefined>{
 
     // TODO : Send email to verify the account
 
-    res.status(200).json({
-      id: id,
-      lastName: lastName,
-      firstName: firstName,
-      email: email,
-      password: password,
-    });
+    if (withResponse) {
+      res.status(200).json({
+        id: id,
+        lastName: lastName,
+        firstName: firstName,
+        email: email,
+        password: password,
+      });
+    }
   } catch (error) {
     console.error('Error while adding user', ':', error);
 
-    res.status(501).json({
-      error: 'Server error',
-      message: 'An error occurred while adding the user'
-    });
+    if (withResponse) {
+      res.status(501).json({
+        error: 'Server error',
+        message: 'An error occurred while adding the user'
+      });
+    }
   }
 }

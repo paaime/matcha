@@ -1,9 +1,12 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import SignInForm from '@/components/Auth/SignIn/Form';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import clsx from 'clsx';
+
+export const metadata = {
+  title: 'Matcha | Sign in',
+};
 
 export default async function SignIn({
   searchParams,

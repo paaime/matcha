@@ -7,6 +7,10 @@ import Other from '@/components/Settings/Names';
 import Email from '@/components/Settings/Email';
 import Password from '@/components/Settings/Password';
 
+export const metadata = {
+  title: 'Matcha | Settings',
+};
+
 export default function Page() {
   return (
     <div>

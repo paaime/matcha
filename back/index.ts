@@ -37,6 +37,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Auth routes
+app.use('/auth', authGet);
 app.use('/auth', authPost);
 app.use('/auth', authGet);
 // Auth middleware

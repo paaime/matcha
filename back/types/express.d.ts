@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { JwtDatas } from './type';
 
 declare global {
@@ -6,4 +7,8 @@ declare global {
       user: JwtDatas;
     }
   }
+}
+
+export interface RequestUser extends Request {
+  user: JwtDatas;
 }
