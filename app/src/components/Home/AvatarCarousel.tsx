@@ -5,22 +5,44 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { IUser } from '@/types/user';
+import { toast } from 'sonner';
+import customAxios from '@/utils/axios';
 
-const AvatarCard = () => {
+const AvatarCard = ({ user }: { user: IUser }) => {
   return (
-    <Link href="/profile" className="flex gap-1 flex-col items-center">
+    <Link
+      href={`/profile/${user.id}`}
+      className="flex gap-1 flex-col items-center"
+    >
       <div className="border-2 border-blue-400 rounded-full p-1">
         <Avatar className="h-14 w-14">
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src={user?.pictures} />
+          <AvatarFallback>{user.firstName}</AvatarFallback>
         </Avatar>
       </div>
-      <p className="text-sm">Selena</p>
+      <p className="text-sm">{user.firstName}</p>
     </Link>
   );
 };
 
 export default function AvatarCarousel() {
+  const [users, setUsers] = useState<IUser[]>([]);
+
+  const getUsers = async () => {
+    try {
+      const res = await customAxios.get('/user');
+      setUsers(res.data);
+    } catch (err) {
+      toast('Error', { description: 'An error occured while fetching users' });
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
   return (
     <div>
       <Swiper
@@ -36,27 +58,11 @@ export default function AvatarCarousel() {
           },
         }}
       >
-        <SwiperSlide>
-          <AvatarCard />
-        </SwiperSlide>
-        <SwiperSlide>
-          <AvatarCard />
-        </SwiperSlide>
-        <SwiperSlide>
-          <AvatarCard />
-        </SwiperSlide>
-        <SwiperSlide>
-          <AvatarCard />
-        </SwiperSlide>
-        <SwiperSlide>
-          <AvatarCard />
-        </SwiperSlide>
-        <SwiperSlide>
-          <AvatarCard />
-        </SwiperSlide>
-        <SwiperSlide>
-          <AvatarCard />
-        </SwiperSlide>
+        {users?.map((user, index) => (
+          <SwiperSlide key={index}>
+            <AvatarCard user={user} />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );

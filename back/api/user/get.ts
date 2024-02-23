@@ -7,6 +7,8 @@ import { JwtDatas } from '../../types/type';
 import { getUserConnected } from './functions/getUserConnected';
 import { getAllUsers } from './functions/getAllUsers';
 import { addRandom } from './functions/addRandom';
+import { getDiscovery } from './functions/getDiscovery';
+import { getLove } from './functions/getLove';
 
 const router = express.Router();
 
@@ -14,21 +16,29 @@ router.get('/', async (req: Request, res: Response) => {
   await getAllUsers(res);
 });
 
+router.get('/discovery', async (req: Request, res: Response) => {
+  await getDiscovery(req, res);
+});
+
+router.get('/getlove', async (req: Request, res: Response) => {
+  await getLove(req, res);
+});
+
 router.get('/random', async (req: Request, res: Response) => {
   // Clear cookie
   res.clearCookie('token');
-  
+
   await addRandom(res);
 });
 
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/me', async (req: Request, res: Response) => {
   // Get token from cookie
   const token = req.cookies?.token;
 
   if (!token || token === 'Bearer undefined') {
     res.status(401).json({
       error: 'Unauthorized',
-      message: 'Token is missing'
+      message: 'Token is missing',
     });
     return;
   }
@@ -39,21 +49,60 @@ router.get('/:id', async (req: Request, res: Response) => {
   // Get token JWT infos
   const decoded = jwt.decode(tokenContent) as JwtDatas;
 
-  if (!decoded || !decoded.id || !Number.isInteger(decoded.id) || decoded.id < 1) {
+  if (
+    !decoded ||
+    !decoded.id ||
+    !Number.isInteger(decoded.id) ||
+    decoded.id < 1
+  ) {
     res.status(401).json({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
+    });
+    return;
+  }
+
+  await getUserConnected(decoded.id, res);
+});
+
+router.get('/:id', async (req: Request, res: Response) => {
+  // Get token from cookie
+  const token = req.cookies?.token;
+
+  if (!token || token === 'Bearer undefined') {
+    res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Token is missing',
+    });
+    return;
+  }
+
+  // Decryption of token
+  const tokenContent = token.trim();
+
+  // Get token JWT infos
+  const decoded = jwt.decode(tokenContent) as JwtDatas;
+
+  if (
+    !decoded ||
+    !decoded.id ||
+    !Number.isInteger(decoded.id) ||
+    decoded.id < 1
+  ) {
+    res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Invalid token',
     });
     return;
   }
 
   // Get user info by id
-  const userId = parseInt((req.params?.id || "0"), 10);
+  const userId = parseInt(req.params?.id || '0', 10);
 
   if (!userId || userId < 1) {
     res.status(400).json({
       error: 'Bad request',
-      message: 'Invalid user id'
+      message: 'Invalid user id',
     });
     return;
   }
