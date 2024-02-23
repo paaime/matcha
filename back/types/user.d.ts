@@ -31,6 +31,19 @@ export interface IUser {
   created_at: string;
 }
 
+
+export interface ILove {
+  id: number;
+  isOnline: boolean;
+  firstName: string;
+  age: number;
+  gender: string;
+  distance?: number; // Can be undefined
+  city?: string; // Can be undefined
+  pictures?: string; // Can be undefined
+  compatibilityScore: number;
+}
+
 interface IUserSettings {
   id: number;
   isVerified: boolean;

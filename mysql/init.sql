@@ -11,7 +11,7 @@ CREATE TABLE User (
   city VARCHAR(255) DEFAULT NULL,
   consentLocation BOOLEAN DEFAULT 0,
   gender ENUM('female', 'male', 'other') DEFAULT 'other' NOT NULL,
-  sexualPreferences ENUM('female', 'male', 'both') DEFAULT 'both' NOT NULL,
+  sexualPreferences ENUM('female', 'male', 'other') DEFAULT 'other' NOT NULL,
   biography TEXT DEFAULT NULL,
   pictures TEXT DEFAULT NULL,
   fameRating FLOAT DEFAULT 150,
