@@ -3,7 +3,10 @@ import express from 'express';
 
 import { addUser } from './functions/addUser';
 import { addInterest } from './functions/addInterest';
-import { loginUser } from './functions/loginUser';
+import { getAuthId, safeUserId } from '../../middlewares/authCheck';
+import { RequestUser } from '../../types/express';
+import { addLike } from './functions/addLike';
+import { removeLike } from './functions/removeLike';
 
 const router = express.Router();
 
@@ -14,27 +17,36 @@ router.post('/', async (req: Request, res: Response) => {
   await addUser(req.body, res);
 });
 
-router.post('/login', async (req: Request, res: Response) => {
-  // Clear cookie
-  console.log('clear cookie');
-  res.clearCookie('token');
-
-  await loginUser(req.body, res);
+router.post('/interest', async (req: RequestUser, res: Response) => {
+  await addInterest(req.body, req, res);
 });
 
-router.post('/interest', async (req: Request, res: Response) => {
-  // Get token from cookie
-  const token = req.cookies?.token;
+router.post('/like/:liked_id', async (req: RequestUser, res: Response) => {
+  const liked_id = parseInt(req.params.liked_id, 10);
 
-  if (!token || token === 'Bearer undefined') {
-    res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Token is missing',
+  if (!safeUserId(liked_id)) {
+    res.status(400).json({
+      error: 'Bad request',
+      message: 'Invalid liked_id',
     });
     return;
   }
 
-  await addInterest(req.body, token, res);
+  await addLike(liked_id, req, res);
+});
+
+router.post('/unlike/:liked_id', async (req: RequestUser, res: Response) => {
+  const liked_id = parseInt(req.params.liked_id, 10);
+
+  if (!safeUserId(liked_id)) {
+    res.status(400).json({
+      error: 'Bad request',
+      message: 'Invalid liked_id',
+    });
+    return;
+  }
+
+  await removeLike(liked_id, req, res);
 });
 
 export default router;
