@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -9,17 +8,14 @@ import userPost from './api/user/post';
 import authGet from './api/auth/get';
 import authPost from './api/auth/post';
 import searchGet from './api/search/get';
+import socketws from './websocket/post';
 import { authCheck } from './middlewares/authCheck';
+import { initializeIO } from './websocket/functions/initializeIo';
 
 const PORT = 3001;
 
 const app = express();
 const server = http.createServer(app);
-const io = new SocketIOServer(server, {
-  cors: {
-    origin: '*',
-  },
-});
 
 // Default message
 app.get('/', (req: Request, res: Response) => {
@@ -36,30 +32,25 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+
+  
+// Route de notification
+app.use('/notification', socketws); // Utilisez votre route de notification ici
+
 // Auth routes
-app.use('/auth', authGet);
-app.use('/auth', authPost);
-app.use('/auth', authGet);
+app.use('/auth', authGet, authPost);
+
 // Auth middleware
 app.use(authCheck);
+
 // User routes
-app.use('/user', userGet);
-app.use('/user', userPost);
+app.use('/user', userGet, userPost);
+
 // Search routes
 app.use('/search', searchGet);
 
-io.on('connection', (socket) => {
-  console.log('A client just arrived with id:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('A client has just left');
-  });
-
-  socket.on('message', (data) => {
-    console.log('Message from client:', data);
-    socket.emit('message', 'Hello from server');
-  });
-});
+// Initialiser IO
+initializeIO(server);
 
 // Start web server
 server.listen(PORT, () => {

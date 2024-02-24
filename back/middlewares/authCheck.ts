@@ -46,3 +46,11 @@ export const getAuthId = (req: RequestUser): number => {
 
   return decodedId;
 }
+
+export const safeUserId = (id: number): boolean => {
+  // Checl if is a positive finite integer
+  if (!id || !Number.isInteger(id) || id < 1) {
+    return false;
+  }
+  return true;
+}

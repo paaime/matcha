@@ -75,6 +75,7 @@ CREATE TABLE Chat (
   match_id INT NOT NULL,
   user_id INT NOT NULL,
   content TEXT NOT NULL,
+  type ENUM('text', 'image', 'video', 'audio') DEFAULT 'text' NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (match_id) REFERENCES Matchs(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
@@ -112,8 +113,11 @@ CREATE TABLE Notification (
   user_id INT NOT NULL,
   content TEXT NOT NULL,
   redirect VARCHAR(255) DEFAULT NULL,
+  related_user_id INT DEFAULT NULL,
+  isRead BOOLEAN DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
+  FOREIGN KEY (related_user_id) REFERENCES User(id) ON DELETE CASCADE
 );
 
 -- Créer le déclencheur AFTER INSERT pour UserLike

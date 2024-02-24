@@ -4,24 +4,21 @@ import jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../../../utils/db';
 import { interestRegex } from '../../../types/regex';
 import { JwtDatas, ThrownError } from '../../../types/type';
+import { RequestUser } from '../../../types/express';
+import { getAuthId } from '../../../middlewares/authCheck';
 
-export async function addInterest(body: any, token: string, res: Response): Promise<undefined>{
+export async function addInterest(body: any, req: RequestUser, res: Response): Promise<undefined>{
   try {
-    // Decryption of token
-    const tokenContent = token.trim();
+    const user_id = getAuthId(req);
 
-    // Get token JWT infos
-    const decoded = jwt.decode(tokenContent) as JwtDatas;
-
-    if (!decoded || !decoded.id || !Number.isInteger(decoded.id) || decoded.id < 1) {
-      res.status(401).json({
-        error: 'Unauthorized',
-        message: 'Invalid token'
+    // Check user_id
+    if (!user_id || user_id < 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid user id',
       });
       return;
     }
-
-    const user_id = decoded.id;
 
     // Get infos from body
     const { interest } = body;
@@ -60,11 +57,20 @@ export async function addInterest(body: any, token: string, res: Response): Prom
     const code = e?.code || "Unknown error";
     const message = e?.message || "Unknown message";
 
+    // Check if duplicate entry
+    if (code === 'ER_DUP_ENTRY') {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Interest already added: ' + body.interest
+      });
+      return;
+    }
+
     console.error({ code, message });
     
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while adding the interest',
+      message: 'An error occurred while adding the interest'
     });
   }
 }
