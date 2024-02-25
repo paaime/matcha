@@ -67,10 +67,10 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
         IF(u.consentLocation = 1, (
           6371 * 
           acos(
-            cos(radians(?)) * 
+            cos(radians(:lat)) * 
             cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
-            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(?)) + 
-            sin(radians(?)) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:lon)) + 
+            sin(radians(:lat)) * 
             sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
           )
         ), -1) AS distance,
@@ -89,42 +89,37 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       LEFT JOIN
         Matchs m
       ON
-        (u.id = m.user_id AND m.other_user_id = ?)
+        (u.id = m.user_id AND m.other_user_id = :userId)
       OR
-        (u.id = m.other_user_id AND m.user_id = ?)
+        (u.id = m.other_user_id AND m.user_id = :connectedUserId)
       LEFT JOIN
         UserLike l
       ON
-        l.user_id = ? AND l.liked_user_id = u.id
+        l.user_id = :connectedUserId AND l.liked_user_id = u.id
       LEFT JOIN
         UserLike hl
       ON
-        hl.user_id = u.id AND hl.liked_user_id = ?
+        hl.user_id = u.id AND hl.liked_user_id = :connectedUserId
       LEFT JOIN
         Blocked b
       ON
-        b.user_id = ? AND b.blocked_user_id = u.id
+        b.user_id = :connectedUserId AND b.blocked_user_id = u.id
       LEFT JOIN
         Blocked hb
       ON
-        hb.user_id = u.id AND hb.blocked_user_id = ?
+        hb.user_id = u.id AND hb.blocked_user_id = :connectedUserId
       WHERE
-        u.id = ?
+        u.id = :userId
     `;
 
     // Execute the query and check the result
-    const [rows] = await db.query(query, [
+    const [rows] = await db.query(query, {
       lat,
       lon,
-      lat,
       userId,
-      connectedUserId,
-      connectedUserId,
-      userId,
-      connectedUserId,
-      connectedUserId,
-      userId
-    ]) as any;
+      connectedUserId
+    }) as any;
+
 
     // Close the connection
     await db.end();
@@ -161,7 +156,7 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       isBlocked: !!rows[0].isBlocked,
       hasBlocked: !!rows[0].hasBlocked,
       isVerified: !!rows[0].isVerified,
-      distance: connectedUserConsent ? rows[0].distance : -1,
+      distance: connectedUserConsent ? Math.round(rows[0].distance) : -1,
       loc: rows[0].loc,
       interests: []
     };
