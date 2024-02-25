@@ -29,12 +29,8 @@ export async function addRandom(res: Response, withResponse: boolean = true): Pr
 
     // Hash password
     const passwordHashed = bcrypt.hashSync(password, 10);
-
-    // Generate token to verify email
-    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    const tokenHashed = bcrypt.hashSync(token, 10);
     
-    const query = 'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, loc, city, gender, sexualPreferences, biography, pictures) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, loc, city, gender, sexualPreferences, biography, pictures, isVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
     // Insert the user into the database and return the id
     const [rows] = await db.query(query, [
@@ -43,13 +39,14 @@ export async function addRandom(res: Response, withResponse: boolean = true): Pr
       age,
       passwordHashed,
       email,
-      tokenHashed,
+      null,
       loc,
       city,
       gender,
       sexualPreferences,
       biography,
-      pictures
+      pictures,
+      1
     ]) as any;
 
     const id = rows.insertId;
@@ -60,8 +57,6 @@ export async function addRandom(res: Response, withResponse: boolean = true): Pr
     if (!id) {
       throw new Error('User not added');
     }
-
-    // TODO : Send email to verify the account
 
     if (withResponse) {
       res.status(200).json({

@@ -21,6 +21,7 @@ export const locationRegex = /^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/;
 
 // Pictures regex : url separated by a comma
 export const picturesRegex = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
+export const urlRegex = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
 
 /* === ENUM === */
 export const genderEnum = ['male', 'female', 'other'];

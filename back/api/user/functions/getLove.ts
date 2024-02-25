@@ -14,12 +14,21 @@ const MAX_DISTANCE = 10000e3; // 10 000 km
 
 export async function getLove(req: RequestUser, res: Response): Promise<void> {
   try {
+    const userId = req.user.id;
+
+    if (!userId || !Number.isInteger(userId) || userId < 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid user id',
+      });
+      return;
+    }
+
     const db = await connectToDatabase();
 
     // Get my sexual preferences
-    const [rowsPreferences] = (await db.query(
-      'SELECT age, loc, gender, sexualPreferences FROM User WHERE id = ?',
-      [req.user.id]
+    const [rowsPreferences] = (await db.query("SELECT age, loc, consentLocation, gender, sexualPreferences FROM User WHERE id = ?",
+      [userId]
     )) as any;
 
     if (!rowsPreferences || rowsPreferences.length === 0) {
@@ -30,86 +39,88 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
       return;
     }
 
+    const myConsent = rowsPreferences[0].consentLocation;
     const myAge = rowsPreferences[0].age;
     const myLoc = rowsPreferences[0].loc;
     const myGender = rowsPreferences[0].gender;
     const myPreferences = rowsPreferences[0].sexualPreferences;
 
-    console.log({ myLoc, myGender, myPreferences });
+    const myLat = myConsent ? myLoc?.split(',')[0] : 0;
+    const myLon = myConsent ? myLoc?.split(',')[1] : 0;
+
+    // console.log({ myLoc, myGender, myPreferences });
 
     const query = `
-    SELECT
-      u.id,
-      u.firstName,
-      u.lastName,
-      u.age,
-      u.loc,
-      u.city,
-      u.pictures,
-      u.fameRating,
-      u.isOnline,
-      (
-        6371 * 
-        acos(
-          cos(radians(?)) * 
-          cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
-          cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(?)) + 
-          sin(radians(?)) * 
-          sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+      SELECT
+        u.firstName,
+        u.lastName,
+        u.age,
+        u.loc,
+        u.consentLocation,
+        u.city,
+        u.pictures,
+        u.fameRating,
+        u.isOnline,
+        IF(u.consentLocation = 1, (
+          6371 * 
+          acos(
+            cos(radians(:myLat)) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:myLon)) + 
+            sin(radians(:myLat)) * 
+            sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+          )
+        ), -1) AS distance,
+        (
+          (100 - ABS(u.age - :myAge)) + (u.fameRating / 100)
+        ) AS compatibilityScore
+      FROM
+        User u
+      WHERE
+        u.id != :userId
+        AND u.gender = :myPreferences
+        AND u.sexualPreferences = :myGender
+        AND u.id NOT IN (
+          SELECT
+            ul.liked_user_id
+          FROM
+            UserLike ul
+          WHERE
+            ul.user_id = :userId
         )
-      ) AS distance,
-      (
-        (100 - ABS(u.age - ?)) + (u.fameRating / 100)
-      ) AS compatibilityScore
-    FROM
-      User u
-    WHERE
-      u.id != ?
-      AND u.gender = ?
-      AND u.sexualPreferences = ?
-      AND u.id NOT IN (
-        SELECT
-          ul.liked_user_id
-        FROM
-          UserLike ul
-        WHERE
-          ul.user_id = ?
-      )
-      AND u.id NOT IN (
-        SELECT
-          ul.user_id
-        FROM
-          UserLike ul
-        WHERE
-          ul.liked_user_id = ?
-      )
-    HAVING
-      distance <= ?
-      AND age >= ?
-      AND age <= ?
-      AND fameRating >= ?
-      AND fameRating <= ?
-    ORDER BY
-      compatibilityScore ASC
+        AND u.id NOT IN (
+          SELECT
+            ul.user_id
+          FROM
+            UserLike ul
+          WHERE
+            ul.liked_user_id = :userId
+        )
+      HAVING
+        distance <= :maxDistance
+        AND age >= :minAge
+        AND age <= :maxAge
+        AND fameRating >= :minFame
+        AND fameRating <= :maxFame
+      ORDER BY
+        compatibilityScore ASC
     `;
 
     // Execute the query
-    const [rows] = (await db.query(query, [
-      myLoc,
-      myLoc,
-      myLoc,
+    const [rows] = (await db.query(query, {
+      myLat,
+      myLon,
       myAge,
-      req.user.id,
-      myPreferences,
+      userId,
       myGender,
-      req.user.id,
-      req.user.id,
-      MAX_DISTANCE,
-      MIN_AGE,
-      MAX_AGE,
-      MIN_FAME,
-      MAX_FAME,
-    ])) as any;
+      myPreferences,
+      maxDistance: MAX_DISTANCE,
+      minAge: MIN_AGE,
+      maxAge: MAX_AGE,
+      minFame: MIN_FAME,
+      maxFame: MAX_FAME,
+    })) as any;
+
 
     // Close the connection
     await db.end();
@@ -130,13 +141,13 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
         firstName: row.firstName,
         age: row.age,
         gender: row.gender,
-        city: row.city,
-        pictures: row.pictures,
+        city: row.city || '',
+        pictures: row.pictures || '',
         distance: Math.round(row.distance),
         compatibilityScore: row.compatibilityScore,
       };
 
-      console.log(user.firstName, user.compatibilityScore);
+      // console.log(user.firstName, user.compatibilityScore);
 
       // Push user object to the array
       users.push(user);

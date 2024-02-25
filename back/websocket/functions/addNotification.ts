@@ -1,5 +1,3 @@
-import { Response } from 'express';
-import { checkIfFieldExist } from '../../api/user/functions/addUser';
 import { connectToDatabase } from '../../utils/db';
 import { ThrownError } from '../../types/type';
 

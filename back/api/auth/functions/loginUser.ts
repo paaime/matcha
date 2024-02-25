@@ -45,7 +45,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const db = await connectToDatabase();
 
     const query =
-      'SELECT id, firstName, lastName, email, passwordHashed, isVerified FROM User WHERE email = ?';
+      'SELECT id, firstName, lastName, email, passwordHashed, isVerified FROM User WHERE email = ? AND isVerified = 1';
 
     // Execute the query and check the result
     const [rows] = (await db.execute(query, [datas.email])) as any;

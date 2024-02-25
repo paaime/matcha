@@ -28,6 +28,27 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
 
     const db = await connectToDatabase();
 
+    // Get user infos
+    const userInfos = 'SELECT id, loc, consentLocation FROM User WHERE id = ?';
+    const [rowsUserInfos] = await db.query(userInfos, [connectedUserId]) as any;
+
+    if (!rowsUserInfos || rowsUserInfos.length === 0) {
+      console.error('No user found with id:', connectedUserId);
+
+      db.end();
+
+      res.status(404).json({
+        error: 'Not found',
+        message: 'User not found'
+      });
+      return;
+    }
+
+    const connectedUserConsent = rowsUserInfos[0].consentLocation;
+
+    const lat = connectedUserConsent ? rowsUserInfos[0].loc?.split(',')[0] : 0;
+    const lon = connectedUserConsent ? rowsUserInfos[0].loc?.split(',')[1] : 0;
+
     const query = `
       SELECT
         u.id,
@@ -36,12 +57,23 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
         u.age,
         u.gender,
         u.sexualPreferences,
+        u.loc,
+        u.consentLocation,
         u.city,
         u.biography,
         u.pictures,
         u.fameRating,
-        t.id AS interestId,
         t.tagName AS interestName,
+        IF(u.consentLocation = 1, (
+          6371 * 
+          acos(
+            cos(radians(:lat)) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:lon)) + 
+            sin(radians(:lat)) * 
+            sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+          )
+        ), -1) AS distance,
         IF(m.id IS NOT NULL, true, false) AS isMatch,
         m.id AS matchId,
         IF(l.id IS NOT NULL, true, false) AS isLiked,
@@ -57,31 +89,37 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       LEFT JOIN
         Matchs m
       ON
-        (u.id = m.user_id AND m.other_user_id = ?)
+        (u.id = m.user_id AND m.other_user_id = :userId)
       OR
-        (u.id = m.other_user_id AND m.user_id = ?)
+        (u.id = m.other_user_id AND m.user_id = :connectedUserId)
       LEFT JOIN
         UserLike l
       ON
-        l.user_id = ? AND l.liked_user_id = u.id
+        l.user_id = :connectedUserId AND l.liked_user_id = u.id
       LEFT JOIN
         UserLike hl
       ON
-        hl.user_id = u.id AND hl.liked_user_id = ?
+        hl.user_id = u.id AND hl.liked_user_id = :connectedUserId
       LEFT JOIN
         Blocked b
       ON
-        b.user_id = ? AND b.blocked_user_id = u.id
+        b.user_id = :connectedUserId AND b.blocked_user_id = u.id
       LEFT JOIN
         Blocked hb
       ON
-        hb.user_id = u.id AND hb.blocked_user_id = ?
+        hb.user_id = u.id AND hb.blocked_user_id = :connectedUserId
       WHERE
-        u.id = ?
+        u.id = :userId
     `;
 
     // Execute the query and check the result
-    const [rows] = await db.query(query, [connectedUserId, connectedUserId, connectedUserId, userId, connectedUserId, userId, userId]) as any;
+    const [rows] = await db.query(query, {
+      lat,
+      lon,
+      userId,
+      connectedUserId
+    }) as any;
+
 
     // Close the connection
     await db.end();
@@ -118,18 +156,17 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       isBlocked: !!rows[0].isBlocked,
       hasBlocked: !!rows[0].hasBlocked,
       isVerified: !!rows[0].isVerified,
+      distance: connectedUserConsent ? Math.round(rows[0].distance) : -1,
+      loc: rows[0].loc,
       interests: []
     };
 
     // Get all interests
     for (const row of rows) {
-      if (row.interestId && row.interestName) {
+      if (row.interestName) {
         user.interests.push(row.interestName);
       }
     }
-
-    // Calculate distance
-    user.distance = Math.floor(Math.random() * 100) + 1; // TODO Random for now
 
     res.status(200).json(user);
   } catch (error) {
