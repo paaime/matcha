@@ -29,10 +29,6 @@ export async function addRandom(res: Response, withResponse: boolean = true): Pr
 
     // Hash password
     const passwordHashed = bcrypt.hashSync(password, 10);
-
-    // Generate token to verify email
-    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    const tokenHashed = bcrypt.hashSync(token, 10);
     
     const query = 'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, loc, city, gender, sexualPreferences, biography, pictures, isVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
@@ -43,7 +39,7 @@ export async function addRandom(res: Response, withResponse: boolean = true): Pr
       age,
       passwordHashed,
       email,
-      tokenHashed,
+      null,
       loc,
       city,
       gender,

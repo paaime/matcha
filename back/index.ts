@@ -7,6 +7,7 @@ import nodemailer from 'nodemailer';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
+import userPut from './api/user/put';
 import authGet from './api/auth/get';
 import authPost from './api/auth/post';
 import searchGet from './api/search/get';
@@ -43,7 +44,7 @@ app.use('/auth', authGet, authPost);
 app.use(authCheck);
 
 // User routes
-app.use('/user', userGet, userPost);
+app.use('/user', userGet, userPost, userPut);
 
 // Search routes
 app.use('/search', searchGet);
