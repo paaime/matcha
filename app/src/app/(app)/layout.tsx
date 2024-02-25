@@ -18,15 +18,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       const response = await customAxios.get('/user/me');
       setUser(response.data);
       setLoading(false);
+      connect();
     } catch (error) {
-      setLoading(false);
       push('/auth/sign-in');
     }
   };
 
   useEffect(() => {
     getUser();
-    connect();
   }, []);
 
   return (

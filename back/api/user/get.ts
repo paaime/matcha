@@ -8,6 +8,8 @@ import { getDiscovery } from './functions/getDiscovery';
 import { getLove } from './functions/getLove';
 import { RequestUser } from '../../types/express';
 import { getAuthId } from '../../middlewares/authCheck';
+import { getLikes } from './functions/getLikes';
+import { getLikesSent } from './functions/getLikesSent';
 
 const router = express.Router();
 
@@ -25,6 +27,14 @@ router.get('/getlove', async (req: RequestUser, res: Response) => {
 
 router.get('/me', async (req: RequestUser, res: Response) => {
   await getUserConnected(req, res);
+});
+
+router.get('/getLikes', async (req: RequestUser, res: Response) => {
+  await getLikes(req, res);
+});
+
+router.get('/getLikesSent', async (req: RequestUser, res: Response) => {
+  await getLikesSent(req, res);
 });
 
 router.get('/:id', async (req: RequestUser, res: Response) => {

@@ -32,13 +32,13 @@ export function initializeIO(server: any) {
       console.log('No token');
       return;
     }
-  
+
     // Decryption of token
     const tokenContent = token.trim();
-  
+
     // Get token JWT infos
     const decoded = jwt.decode(tokenContent) as JwtDatas;
-  
+
     if (
       !decoded ||
       !decoded.id ||
@@ -68,14 +68,17 @@ export function initializeIO(server: any) {
 }
 
 // Fonction pour envoyer une notification
-export const sendNotification = async (userId: string, body: Notification):Promise<boolean> => {
+export const sendNotification = async (
+  userId: string,
+  body: Notification
+): Promise<boolean> => {
   const { content } = body;
 
   if (!content || content.length < 1) {
     return false;
   }
 
-  io.to(userId).emit('notification', body.content);
+  io.to(userId).emit('notification', JSON.stringify(body));
 
   return await addNotification(Number(userId), body);
-}
+};

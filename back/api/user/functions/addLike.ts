@@ -5,7 +5,11 @@ import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { sendNotification } from '../../../websocket/functions/initializeIo';
 
-export async function addLike(liked_id: number, req: RequestUser, res: Response): Promise<void> {
+export async function addLike(
+  liked_id: number,
+  req: RequestUser,
+  res: Response
+): Promise<void> {
   console.log('addLike', liked_id);
   try {
     const user_id = getAuthId(req);
@@ -38,7 +42,9 @@ export async function addLike(liked_id: number, req: RequestUser, res: Response)
     const db = await connectToDatabase();
 
     // Check if the user exists
-    const [rows] = (await db.query('SELECT id FROM User WHERE id = ?', [liked_id])) as any;
+    const [rows] = (await db.query('SELECT id FROM User WHERE id = ?', [
+      liked_id,
+    ])) as any;
 
     if (!rows || rows.length === 0) {
       res.status(404).json({
@@ -50,7 +56,7 @@ export async function addLike(liked_id: number, req: RequestUser, res: Response)
 
     // Add the like
     const query = 'INSERT INTO UserLike (user_id, liked_user_id) VALUES (?, ?)';
-    const [rowsLikes] = await db.query(query, [user_id, liked_id]) as any;
+    const [rowsLikes] = (await db.query(query, [user_id, liked_id])) as any;
 
     if (!rowsLikes || rowsLikes.affectedRows === 0) {
       // Close the connection
@@ -64,16 +70,16 @@ export async function addLike(liked_id: number, req: RequestUser, res: Response)
     }
 
     // Check if a match is created
-    const [rowsMatch] = (await db.query(`
+    const [rowsMatch] = (await db.query(
+      `
       SELECT id
       FROM Matchs
       WHERE
         user_id IN (?, ?)
         AND other_user_id IN (?, ?)
-      `, [
-        user_id, liked_id,
-        user_id, liked_id,
-      ])) as any;
+      `,
+      [user_id, liked_id, user_id, liked_id]
+    )) as any;
 
     // Close the connection
     await db.end();
@@ -100,7 +106,7 @@ export async function addLike(liked_id: number, req: RequestUser, res: Response)
 
     res.status(200).json({
       liked: true,
-      match: false
+      match: false,
     });
   } catch (error) {
     const e = error as ThrownError;
@@ -112,7 +118,7 @@ export async function addLike(liked_id: number, req: RequestUser, res: Response)
     if (code === 'ER_DUP_ENTRY') {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Like already added'
+        message: 'Like already added',
       });
       return;
     }

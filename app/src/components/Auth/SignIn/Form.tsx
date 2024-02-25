@@ -40,8 +40,8 @@ export default function SignInForm({
     console.log(data);
     const { email, password } = data;
     try {
-      const response = await axios.post(
-        'http://localhost:3001/auth/login',
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API}/auth/login`,
         {
           email,
           password,

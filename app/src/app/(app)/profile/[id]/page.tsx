@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { HeartIcon, NavigationIcon } from 'lucide-react';
+import { HeartIcon, HeartOffIcon, NavigationIcon } from 'lucide-react';
 import More from '@/components/Profile/More';
 import Informations from '@/components/Profile/Informations';
 import GoBack from '@/components/GoBack';
@@ -22,6 +22,26 @@ export default function Page({ params }) {
       setUser(res.data);
     } catch (err) {
       toast('Error', { description: 'An error occured while fetching users' });
+    }
+  };
+
+  const likeUser = async () => {
+    try {
+      if (user.isLiked) {
+        await customAxios.post(`/user/unlike/${user.id}`);
+        setUser({ ...user, isLiked: false });
+      } else {
+        await customAxios.post(`/user/like/${user.id}`);
+        setUser({ ...user, isLiked: true });
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else
+        toast('An error occured', {
+          description: 'Error',
+        });
     }
   };
 
@@ -61,8 +81,15 @@ export default function Page({ params }) {
             </div>
           </div>
           <div className="flex flex-col items-center gap-1 pb-10">
-            <Button className="h-12 w-12 mb-1 rounded-full bg-pink shadow-xl text-white group pointer-events-auto">
-              <HeartIcon className="group-hover:fill-white" />
+            <Button
+              className="h-12 w-12 mb-1 rounded-full bg-pink shadow-xl text-white group pointer-events-auto"
+              onClick={likeUser}
+            >
+              {user?.isLiked ? (
+                <HeartOffIcon className="group-hover:fill-white" />
+              ) : (
+                <HeartIcon className="group-hover:fill-white" />
+              )}
             </Button>
             <p className="font-extrabold text-white text-3xl">
               {user?.firstName}, {user?.age}

@@ -1,6 +1,20 @@
+import { Notification } from './type';
+
 export interface ITag {
   id: number;
   name: string;
+}
+
+export interface ILove {
+  id: number;
+  isOnline: boolean;
+  firstName: string;
+  age: number;
+  gender: string;
+  distance?: number; // Can be undefined
+  city?: string; // Can be undefined
+  pictures?: string; // Can be undefined
+  compatibilityScore: number;
 }
 
 export interface IUser {
@@ -51,4 +65,5 @@ export interface IUserSettings {
   visitHistory: IPage[];
   userVisited: IUser[]; // Il manque la date du coup
   usersBlocked: IUser[];
+  notifications: Notification[];
 }
