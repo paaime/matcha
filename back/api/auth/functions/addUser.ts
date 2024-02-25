@@ -2,6 +2,8 @@ import { Response } from 'express';
 import bcrypt from 'bcrypt';
 import { connectToDatabase } from '../../../utils/db';
 import { ageRegex, biographyRegex, genderEnum, nameRegex, picturesRegex, preferenceEnum } from '../../../types/regex';
+import { getEmailData } from '../../../utils/emails';
+import { transporter } from '../../..';
 
 export const checkIfFieldExist = (name: string, field: string, res: Response): number => {
   if (!field || field === '') {
@@ -46,16 +48,6 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       biography: biography?.trim(),
       pictures: pictures?.trim()
     };
-
-    // Check if fields exist
-    if (checkIfFieldExist("lastName", lastName, res)) return;
-    if (checkIfFieldExist("firstName", firstName, res)) return;
-    if (checkIfFieldExist("age", age, res)) return;
-    if (checkIfFieldExist("password", password, res)) return;
-    if (checkIfFieldExist("email", email, res)) return;
-    if (checkIfFieldExist("gender", gender, res)) return;
-    if (checkIfFieldExist("sexualPreferences", sexualPreferences, res)) return;
-    if (checkIfFieldExist("biography", biography, res)) return;
 
     // Test values with regex
     if (!nameRegex.test(newUser.firstName)) {
@@ -139,7 +131,7 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
     const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     const tokenHashed = bcrypt.hashSync(token, 10);
     
-    const query = 'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, loc, city, consentLocation, gender, sexualPreferences, biography, pictures) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, gender, sexualPreferences, biography, pictures) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
     // Insert the user into the database and return the id
     const [rows] = await db.query(query, [
@@ -149,9 +141,6 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       passwordHashed,
       newUser.email,
       tokenHashed,
-      newUser.loc || null,
-      newUser.city || null,
-      newUser.loc ? 1 : 0,
       newUser.gender,
       newUser.sexualPreferences,
       newUser.biography,
@@ -167,7 +156,28 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       throw new Error('User not added');
     }
 
-    // TODO : Send email to verify the account
+    const confirmLink = process.env.NEXT_PUBLIC_API + '/auth/confirm/' + newUser.email + '/' + token;
+    const emailData = getEmailData("verifyEmail");
+
+    if (!emailData) {
+      throw new Error('Email template not found');
+    }
+
+    const mailData = {
+      from: process.env.MAIL_USER,
+      to: newUser.email,
+      subject: emailData.subject,
+      text: emailData.text,
+      html: emailData.html
+        .replace('[FIRST_NAME]', newUser.firstName)
+        .replaceAll('[CONFIRM_LINK]', confirmLink)
+    };
+
+    transporter.sendMail(mailData, function (err, info) {
+      if (err) {
+        throw new Error('Email not sent');
+      }
+    });
 
     res.status(200).json({
       id: id,
@@ -176,7 +186,7 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       email: newUser.email
     });
   } catch (error) {
-    console.error('Error while adding user', ':', error);
+    console.error('Error while adding user:', error);
 
     res.status(501).json({
       error: 'Server error',

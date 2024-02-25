@@ -7,7 +7,8 @@ export async function connectToDatabase() {
       user: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      port: parseInt(process.env.MYSQL_PORT || '3306', 10)
+      port: parseInt(process.env.MYSQL_PORT || '3306', 10),
+      namedPlaceholders: true
     });
     return connection;
   } catch (error) {
