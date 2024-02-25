@@ -141,8 +141,8 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
         firstName: row.firstName,
         age: row.age,
         gender: row.gender,
-        city: row.city,
-        pictures: row.pictures,
+        city: row.city || '',
+        pictures: row.pictures || '',
         distance: Math.round(row.distance),
         compatibilityScore: row.compatibilityScore,
       };
