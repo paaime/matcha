@@ -12,8 +12,8 @@ export function initializeIO(server: any) {
   io = new SocketIOServer(server, {
     cors: {
       origin: process.env.DOMAIN,
-      credentials: true
-    }
+      credentials: true,
+    },
   });
 
   // Gérer la connexion des sockets
@@ -52,7 +52,14 @@ export function initializeIO(server: any) {
     socket.join(decoded.id.toString());
     console.log('User', decoded.id, 'just joined');
 
-    io.emit('notification', 'Hello from server');
+    io.emit(
+      'notification',
+      JSON.stringify({
+        content: 'Hello from server',
+        redirect: '/',
+        related_user_id: decoded.id,
+      })
+    );
 
     socket.on('disconnect', () => {
       console.log('A client has just left');
