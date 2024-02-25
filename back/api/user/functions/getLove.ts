@@ -27,7 +27,8 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
     const db = await connectToDatabase();
 
     // Get my sexual preferences
-    const [rowsPreferences] = (await db.query("SELECT age, loc, consentLocation, gender, sexualPreferences FROM User WHERE id = ?",
+    const [rowsPreferences] = (await db.query(
+      'SELECT age, loc, consentLocation, gender, sexualPreferences FROM User WHERE id = ?',
       [userId]
     )) as any;
 
@@ -52,6 +53,7 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
 
     const query = `
       SELECT
+        u.id,
         u.firstName,
         u.lastName,
         u.age,
@@ -120,7 +122,6 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
       minFame: MIN_FAME,
       maxFame: MAX_FAME,
     })) as any;
-
 
     // Close the connection
     await db.end();
