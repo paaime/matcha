@@ -2,7 +2,6 @@ import { Response } from 'express';
 import bcrypt from 'bcrypt';
 
 import { connectToDatabase } from '../../../utils/db';
-import { checkIfFieldExist } from './addUser';
 import { emailRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 
@@ -12,27 +11,23 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
     const { email, token } = params;
 
     // Check if fields exist
-    if (checkIfFieldExist('email', email, res)) return;
-    if (checkIfFieldExist('token', token, res)) return;
+    if (!email || email === '' || !token || token === '') {
+      res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=notValid');
+      return;
+    }
 
     const safeEmail = email.trim().toLowerCase();
     const safeToken = token.trim();
 
     // Check if email is valid
     if (!emailRegex.test(safeEmail)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Email is not valid',
-      });
+      res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=notValid');
       return;
     }
 
     // Check if token is valid
     if (!/[a-z0-9]/.test(safeToken)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Token is not valid',
-      });
+      res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=notValid');
       return;
     }
 
@@ -47,10 +42,7 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
       // Close the connection
       db.end();
 
-      res.status(404).json({
-        error: 'Not found',
-        message: 'User not found',
-      });
+      res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=notFound');
       return;
     }
 
@@ -60,10 +52,7 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
       // Close the connection
       db.end();
 
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'User is already verified',
-      });
+      res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=alreadyVerified');
       return;
     }
 
@@ -72,10 +61,7 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
       // Close the connection
       db.end();
 
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Token is not valid',
-      });
+      res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=tokenNotValid');
       return;
     }
 
@@ -86,9 +72,7 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
     // Close the connection
     db.end();
 
-    res.status(200).json({
-      message: 'Email confirmed',
-    });
+    res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=true');
   } catch (error) {
     const e = error as ThrownError;
 
@@ -97,9 +81,6 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
 
     console.error({ code, message });
 
-    res.status(501).json({
-      error: 'Server error',
-      message: 'An error occurred while confirming the email. Please try again later.',
-    });
+    res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=serverError');
   }
 }

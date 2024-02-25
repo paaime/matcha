@@ -156,7 +156,7 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       throw new Error('User not added');
     }
 
-    const confirmLink = process.env.NEXT_PUBLIC_API + '/auth/confirm/' + id + '/' + token;
+    const confirmLink = process.env.NEXT_PUBLIC_API + '/auth/confirm/' + newUser.email + '/' + token;
     const emailData = getEmailData("verifyEmail");
 
     if (!emailData) {

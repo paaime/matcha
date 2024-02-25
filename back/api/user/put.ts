@@ -8,6 +8,8 @@ import { upGender } from './functions/upGender';
 import { upPreference } from './functions/upPreference';
 import { upName } from './functions/upName';
 import { upAge } from './functions/upAge';
+import { upEmail } from './functions/upEmail';
+import { upPassword } from './functions/upPassword';
 
 const router = express.Router();
 
@@ -33,6 +35,14 @@ router.put('/name', async (req: RequestUser, res: Response) => {
 
 router.put('/age', async (req: RequestUser, res: Response) => {
   await upAge(req, res);
+});
+
+router.put('/email', async (req: RequestUser, res: Response) => {
+  await upEmail(req, res);
+});
+
+router.put('/password', async (req: RequestUser, res: Response) => {
+  await upPassword(req, res);
 });
 
 export default router;
