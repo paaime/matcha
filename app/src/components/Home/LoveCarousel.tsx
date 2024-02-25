@@ -4,85 +4,20 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
 import { buttonVariants } from '../ui/button';
-import CircleProgress from '../ui/CircleProgress';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import Image from 'next/image';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
-import { IUser } from '@/types/user';
+import { ILove } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
+import LoveCard from './LoveCard';
 
 const easeOutExpo = [0.16, 1, 0.3, 1];
 
-const LoveCard = ({ user }: { user: IUser }) => {
-  return (
-    <div className="rounded-3xl block h-full w-full absolute">
-      <Swiper
-        direction={'vertical'}
-        pagination={{
-          clickable: true,
-        }}
-        modules={[Pagination]}
-        className="!absolute w-full rounded-3xl h-full !z-0"
-      >
-        <SwiperSlide>
-          <Image
-            src={user.pictures}
-            alt={user.firstName}
-            width={500}
-            height={500}
-            className="absolute w-full h-full object-cover"
-            priority
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image
-            src={user.pictures}
-            alt={user.firstName}
-            width={500}
-            height={500}
-            className="absolute w-full h-full object-cover"
-            priority
-          />
-        </SwiperSlide>
-      </Swiper>
-      <div
-        className="flex flex-col justify-between p-5 h-full love-card rounded-3xl relative pointer-events-none"
-        style={{
-          background:
-            'linear-gradient(to top, rgb(5 20 90 / 84%) 0%, transparent 30%)',
-        }}
-      >
-        <div className="flex justify-between items-start">
-          <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
-            <p>{user.distance} km away</p>
-          </div>
-          <CircleProgress />
-        </div>
-
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex items-center gap-3">
-            <p className="font-extrabold text-white text-3xl">
-              {user.firstName}, {user.age}
-            </p>
-            <div className="bg-green-300 h-2.5 w-2.5 rounded-full" />
-          </div>
-          <p className="text-[#C0AFC0] font-semibold tracking-wider uppercase">
-            {user.city}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function LoveCarousel() {
-  const [users, setUsers] = useState<IUser[]>([]);
+  const [users, setUsers] = useState<ILove[]>([]);
   const [direction, setDirection] = useState<'left' | 'right' | ''>('');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
@@ -108,16 +43,27 @@ export default function LoveCarousel() {
     setDirection('');
   }, [direction]);
 
-  const swipeLeft = () => {
+  const swipeLeft = async () => {
     if (currentIndex === -1) return;
     setCurrentIndex(currentIndex - 1);
     setDirection('left');
   };
 
-  const swipeRight = () => {
+  const swipeRight = async () => {
     if (currentIndex === -1) return;
-    setCurrentIndex(currentIndex - 1);
-    setDirection('right');
+    try {
+      await customAxios.post(`/user/like/${users[currentIndex].id}`);
+      setCurrentIndex(currentIndex - 1);
+      setDirection('right');
+    } catch (err) {
+      console.log(err);
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else
+        toast('An error occured', {
+          description: 'Error',
+        });
+    }
   };
 
   const cardVariants = {

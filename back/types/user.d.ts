@@ -1,3 +1,5 @@
+import { Notification } from "./type";
+
 export interface IPage {
   id: number;
   visited_user_id: IUser;
@@ -66,4 +68,5 @@ interface IUserSettings {
   visitHistory: IPage[];
   userVisited: IUser[]; // Il manque la date du coup
   usersBlocked: IUser[];
+  notifications: Notification[];
 }

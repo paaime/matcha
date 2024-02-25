@@ -3,6 +3,7 @@ import express from 'express';
 
 import { addUser } from './functions/addUser';
 import { loginUser } from './functions/loginUser';
+import { logoutUser } from './functions/logoutUser';
 
 const router = express.Router();
 
@@ -19,6 +20,11 @@ router.post('/login', async (req: Request, res: Response) => {
   res.clearCookie('token');
 
   await loginUser(req.body, res);
+});
+
+router.post('/logout', async (req: Request, res: Response) => {
+  // Clear cookie
+  await logoutUser(req, res);
 });
 
 export default router;

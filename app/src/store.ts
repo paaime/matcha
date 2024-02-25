@@ -24,13 +24,10 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
   // Connect to the WebSocket server
   connect: () => {
     const socket = io('http://localhost:3001', {
-      withCredentials: true
+      withCredentials: true,
     });
     socket.on('connect', () => {
       set({ socket });
-    });
-    socket.on('notification', (data) => {
-      console.log('Notification from server:', data);
     });
   },
   // Disconnect from the WebSocket server

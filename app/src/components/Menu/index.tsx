@@ -26,8 +26,8 @@ export default function Menu() {
       case '/discover':
         setX(25);
         break;
-      case '/home':
-        setX(50);
+      case '/likes':
+        setX(43.8);
         break;
       case '/messages':
         setX(63);
@@ -72,10 +72,13 @@ export default function Menu() {
           <CompassIcon />
         </Link>
         <Link
-          href="/home"
-          className="h-10 w-10 rounded-full flex items-center justify-center text-gray-400"
+          href="/likes"
+          className={clsx(
+            isMounted && pathname === '/likes' ? 'text-white' : 'text-gray-400',
+            'h-10 w-10 rounded-full flex items-center justify-center z-10'
+          )}
         >
-          <PlusIcon />
+          <UsersIcon />
         </Link>
         <Link
           href="/messages"
