@@ -11,7 +11,7 @@ let io: SocketIOServer;
 export function initializeIO(server: any) {
   io = new SocketIOServer(server, {
     cors: {
-      origin: 'http://localhost:3000', // TODO : Remplacez par env.domain
+      origin: process.env.DOMAIN,
       credentials: true
     }
   });
@@ -51,6 +51,8 @@ export function initializeIO(server: any) {
 
     socket.join(decoded.id.toString());
     console.log('User', decoded.id, 'just joined');
+
+    io.emit('notification', 'Hello from server');
 
     socket.on('disconnect', () => {
       console.log('A client has just left');

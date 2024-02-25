@@ -47,16 +47,6 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       pictures: pictures?.trim()
     };
 
-    // Check if fields exist
-    if (checkIfFieldExist("lastName", lastName, res)) return;
-    if (checkIfFieldExist("firstName", firstName, res)) return;
-    if (checkIfFieldExist("age", age, res)) return;
-    if (checkIfFieldExist("password", password, res)) return;
-    if (checkIfFieldExist("email", email, res)) return;
-    if (checkIfFieldExist("gender", gender, res)) return;
-    if (checkIfFieldExist("sexualPreferences", sexualPreferences, res)) return;
-    if (checkIfFieldExist("biography", biography, res)) return;
-
     // Test values with regex
     if (!nameRegex.test(newUser.firstName)) {
       res.status(400).json({
