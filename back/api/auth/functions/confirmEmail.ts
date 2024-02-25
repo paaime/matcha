@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 import { connectToDatabase } from '../../../utils/db';
 import { checkIfFieldExist } from './addUser';
