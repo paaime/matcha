@@ -28,6 +28,27 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
 
     const db = await connectToDatabase();
 
+    // Get user infos
+    const userInfos = 'SELECT id, loc, consentLocation FROM User WHERE id = ?';
+    const [rowsUserInfos] = await db.query(userInfos, [connectedUserId]) as any;
+
+    if (!rowsUserInfos || rowsUserInfos.length === 0) {
+      console.error('No user found with id:', connectedUserId);
+
+      db.end();
+
+      res.status(404).json({
+        error: 'Not found',
+        message: 'User not found'
+      });
+      return;
+    }
+
+    const connectedUserConsent = rowsUserInfos[0].consentLocation;
+
+    const lat = connectedUserConsent ? rowsUserInfos[0].loc?.split(',')[0] : 0;
+    const lon = connectedUserConsent ? rowsUserInfos[0].loc?.split(',')[1] : 0;
+
     const query = `
       SELECT
         u.id,
@@ -36,12 +57,23 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
         u.age,
         u.gender,
         u.sexualPreferences,
+        u.loc,
+        u.consentLocation,
         u.city,
         u.biography,
         u.pictures,
         u.fameRating,
-        t.id AS interestId,
         t.tagName AS interestName,
+        IF(u.consentLocation = 1, (
+          6371 * 
+          acos(
+            cos(radians(?)) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(?)) + 
+            sin(radians(?)) * 
+            sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+          )
+        ), -1) AS distance,
         IF(m.id IS NOT NULL, true, false) AS isMatch,
         m.id AS matchId,
         IF(l.id IS NOT NULL, true, false) AS isLiked,
@@ -81,7 +113,18 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
     `;
 
     // Execute the query and check the result
-    const [rows] = await db.query(query, [connectedUserId, connectedUserId, connectedUserId, userId, connectedUserId, userId, userId]) as any;
+    const [rows] = await db.query(query, [
+      lat,
+      lon,
+      lat,
+      userId,
+      connectedUserId,
+      connectedUserId,
+      userId,
+      connectedUserId,
+      connectedUserId,
+      userId
+    ]) as any;
 
     // Close the connection
     await db.end();
@@ -118,18 +161,17 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       isBlocked: !!rows[0].isBlocked,
       hasBlocked: !!rows[0].hasBlocked,
       isVerified: !!rows[0].isVerified,
+      distance: connectedUserConsent ? rows[0].distance : -1,
+      loc: rows[0].loc,
       interests: []
     };
 
     // Get all interests
     for (const row of rows) {
-      if (row.interestId && row.interestName) {
+      if (row.interestName) {
         user.interests.push(row.interestName);
       }
     }
-
-    // Calculate distance
-    user.distance = Math.floor(Math.random() * 100) + 1; // TODO Random for now
 
     res.status(200).json(user);
   } catch (error) {
