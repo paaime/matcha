@@ -9,6 +9,7 @@ back/.next/
 back/.vercel/
 back/node_modules
 back/.pnpm-store
+back/.dist/
 
 # dependencies
 /node_modules
