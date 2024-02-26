@@ -2,7 +2,7 @@
 
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { AiOutlineMan } from 'react-icons/ai';
-import { Interest } from '../Discover/Interests';
+import { Interest, StaticInterest } from '../Discover/Interests';
 import clsx from 'clsx';
 import { CalendarDaysIcon, FlameIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -13,6 +13,35 @@ const Map = dynamic(() => import('./Map'), { ssr: false });
 
 export default function Informations({ user }: { user: IUser }) {
   const [snap, setSnap] = useState<number | string | null>(0.35);
+
+  // Function to calculate elapsed time (ex: 10 minutes ago)
+  const timeSince = (date: string) => {
+    const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+
+    let interval = seconds / 31536000;
+
+    if (interval > 1) {
+      return Math.floor(interval) + ' year' + (Math.floor(interval) > 1 ? 's' : '');
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+      return Math.floor(interval) + ' month' + (Math.floor(interval) > 1 ? 's' : '');
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + ' day' + (Math.floor(interval) > 1 ? 's' : '');
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + ' hour' + (Math.floor(interval) > 1 ? 's' : '');
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + ' minute' + (Math.floor(interval) > 1 ? 's' : '');
+    }
+    return Math.floor(seconds) + ' second' + (Math.floor(seconds) > 1 ? 's' : '');
+  }
+
   return (
     <Drawer
       shouldScaleBackground={true}
@@ -38,14 +67,17 @@ export default function Informations({ user }: { user: IUser }) {
             <p className="font-semibold text-dark">{user.biography}</p>
           </div>
           <div className="flex flex-col gap-3">
-            <p className="text-gray-400 font-semibold">Interest</p>
+            <p className="text-gray-400 font-semibold">Interests</p>
             <div className="flex flex-wrap gap-3">
-              <Interest value="🎵 Music" />
-              <Interest value="🚀 Travel" />
-              <Interest value="🍔 Food" />
-              <Interest value="💙 Fashion" />
-              <Interest value="💻 Technology" />
-              <Interest value="🕹️ Gaming" />
+              {user.interests?.map((interest, i) => (
+                <StaticInterest value={interest} key={i} />
+              ))}
+
+              {user.interests?.length === 0 && (
+                <p className="text-gray-400 font-semibold">
+                  No interests to show
+                </p>
+              )}
             </div>
           </div>
           <div className="flex justify-around bg-light-pink -mx-10 py-5">
@@ -79,12 +111,23 @@ export default function Informations({ user }: { user: IUser }) {
           </div>
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">Location</p>
-            <Map user={user} />
+
+            {user.consentLocation && user.loc ? (
+              <Map user={user} />
+            ) : (
+              <p className="font-semibold text-dark">Location hidden</p>
+            )}
+
           </div>
-          <div className="flex flex-col gap-3">
-            <p className="text-gray-400 font-semibold">Last seen</p>
-            <p className="font-semibold text-dark">10 minutes ago</p>
-          </div>
+
+          {user.isOnline === false && (
+            <div className="flex flex-col gap-3">
+              <p className="text-gray-400 font-semibold">Last seen</p>
+              <p className="font-semibold text-dark">
+                {timeSince(user.lastConnection)} ago
+              </p>
+            </div>
+          )}
         </div>
       </DrawerContent>
     </Drawer>

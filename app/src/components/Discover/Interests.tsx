@@ -27,6 +27,17 @@ export const Interest = ({ value }: { value: string }) => {
   );
 };
 
+export const StaticInterest = ({ value }: { value: string }) => {
+  return (
+    <Label className="border border-gray-300 flex min-w-max rounded-full py-2 px-4">
+      <Checkbox className="sr-only" value={value} />
+      <p className="font-semibold text-primary text-base">
+        {value}
+      </p>
+    </Label>
+  );
+};
+
 export default function Interests() {
   return (
     <div className="flex flex-col">

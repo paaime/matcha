@@ -73,6 +73,13 @@ export default function Page({ params }) {
           <div className="flex justify-between items-start pointer-events-auto">
             <GoBack white={true} />
             <div className="flex gap-3">
+              {user.isOnline && (
+                <div className="flex gap-2 items-center border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
+                  <div className="bg-green-300 h-2.5 w-2.5 rounded-full" />
+                  <p>Online</p>
+                </div>
+              )}
+
               <div className="flex gap-2 items-center border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
                 <NavigationIcon className="h-4 w-4" />
                 <p>{user?.distance} km</p>
