@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import SimpleModal from '@/components/ui/Modals/SimpleModal';
-import { SignUpSchema } from '@/utils/validator';
+import { PasswordSchema, SignUpSchema } from '@/utils/validator';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -16,33 +16,45 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import customAxios from '@/utils/axios';
+import { toast } from 'sonner';
 
-type FormFields = z.infer<typeof SignUpSchema>;
+type FormFields = z.infer<typeof PasswordSchema>;
 
 export default function Password() {
   // Form
   const form = useForm<FormFields>({
-    resolver: zodResolver(SignUpSchema),
+    resolver: zodResolver(PasswordSchema),
   });
 
-  const handleRegister = () => {};
+  const handleSubmit: SubmitHandler<FormFields> = async (data) => {
+    try {
+      const { password, newPassword } = data;
+      await customAxios.put('/user/password', {
+        current: password,
+        newPass: newPassword,
+      });
+      toast.success('Updated');
+    } catch (err) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else toast.error('An error occurred');
+    }
+  };
 
   return (
     <div className="flex flex-col border-t mt-10 pt-5">
       <h3 className="text-xl font-extrabold mb-5">Your password</h3>
       <Form {...form}>
-        <form
-          className="space-y-6"
-          onSubmit={form.handleSubmit(handleRegister)}
-        >
+        <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
           <FormField
             control={form.control}
-            name="email"
+            name="password"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Current Password</FormLabel>
                 <FormControl>
-                  <Input {...field} autoComplete="first-name" />
+                  <Input {...field} autoComplete="password" type="password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -50,12 +62,12 @@ export default function Password() {
           />
           <FormField
             control={form.control}
-            name="email"
+            name="newPassword"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>New Password</FormLabel>
                 <FormControl>
-                  <Input {...field} autoComplete="first-name" />
+                  <Input {...field} type="password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -63,20 +75,25 @@ export default function Password() {
           />
           <FormField
             control={form.control}
-            name="email"
+            name="confirmNewPassword"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Confirm New Password</FormLabel>
                 <FormControl>
-                  <Input {...field} autoComplete="first-name" />
+                  <Input {...field} type="password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <Button
+            isLoading={form.formState.isSubmitting}
+            className="mt-10 w-full"
+          >
+            Save
+          </Button>
         </form>
       </Form>
-      <Button className="mt-10">Save</Button>
     </div>
   );
 }

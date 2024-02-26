@@ -1,11 +1,12 @@
 // Emoji, space, and 1-20 letters. Example: "🍔 Burger" or "📸 Photographe"
-export const interestRegex = /^[\u{1F000}-\u{1FFFF}\u{2000}-\u{2BFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}]\s[a-zA-Z]{1,20}$/u;
+export const interestRegex = /^\p{Emoji}\s[a-zA-Z]{1,20}$/u;
 
 // Email regex
 export const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 // Password regex : 6-20 characters, at least one uppercase, one lowercase, one number and one special character :;.,!?@#$%^&*()_+-=
-export const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[:;.,!?@#$%^&*()_+-=]).{6,20}$/;
+export const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[:;.,!?@#$%^&*()_+-=]).{6,20}$/;
 
 // Firstname and Lastname regex : 1-40 letters, space, hyphen, apostrophe
 export const nameRegex = /^[a-zA-Z\s'-]{1,40}$/;

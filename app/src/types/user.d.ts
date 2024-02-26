@@ -1,4 +1,4 @@
-import { Notification } from './type';
+import { Gender, Notification, SexualPreferences } from './type';
 
 export interface ITag {
   id: number;
@@ -43,18 +43,19 @@ export interface IUser {
   created_at: string;
 }
 
-export interface IUserSettings {
+interface IUserSettings {
   id: number;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'
+  isComplete: boolean;
   lastConnection: string;
   created_at: string;
   firstName: string;
   lastName: string;
   email: string;
   age: number;
-  gender: string;
-  sexualPreferences: string;
+  gender: Gender;
+  sexualPreferences: SexualPreferences;
   loc: string;
   city: string; // Can be undefined
   consentLocation: boolean;

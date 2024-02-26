@@ -15,18 +15,33 @@ export default async function SignIn({
 }) {
   let modalContent = null;
 
-  if (searchParams?.success) {
+  if (searchParams?.mailConfirm === 'true') {
     modalContent = {
       title: 'Verification successful.',
       description: 'Your email address has been verified. You can now login.',
       type: 'success',
     };
-  } else if (searchParams?.error) {
+  } else if (searchParams?.mailConfirm === 'false') {
     modalContent = {
       title: 'Verification failed.',
       description: 'Your email address could not be verified.',
       type: 'error',
     };
+    switch (searchParams?.error) {
+      case 'notValid':
+        modalContent.description = 'The email or token is not valid.';
+        break;
+      case 'notFound':
+        modalContent.description =
+          'The email address or the token could not be found.';
+        break;
+      case 'alreadyVerified':
+        modalContent.description = 'The email address has already been verified.';
+        break;
+      case 'tokenNotValid':
+        modalContent.description = 'The token is not valid.';
+        break;
+    }
   }
 
   return (

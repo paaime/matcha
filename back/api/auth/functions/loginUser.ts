@@ -6,6 +6,8 @@ import { connectToDatabase } from '../../../utils/db';
 import { checkIfFieldExist } from './addUser';
 import { emailRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
+import { getEmailData } from '../../../utils/emails';
+import { transporter } from '../../..';
 
 export async function loginUser(body: any, res: Response): Promise<undefined> {
   try {
@@ -78,14 +80,59 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
 
     if (user.isVerified === 0) {
       // TODO : Send a new email to verify the account
-      // res.status(403).json({
-      //   error: 'Forbidden',
-      //   message: 'User is not verified'
-      // });
+      const db = await connectToDatabase();
 
-      // return;
+      const token =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+      const tokenHashed = bcrypt.hashSync(token, 10);
 
-      console.log('User is not verified, but we will continue for now.');
+      // Update the token in the database
+      const query = 'UPDATE User SET emailToken = ? WHERE email = ?';
+
+      // Execute the query and check the result
+      const row = await db.execute(query, [tokenHashed, user.email]);
+
+      // TODO : Check if the query is correct
+
+      // Close the connection
+      await db.end();
+
+      const confirmLink =
+        process.env.NEXT_PUBLIC_API +
+        '/auth/confirm/' +
+        user.email +
+        '/' +
+        token;
+      const emailData = getEmailData('verifyEmail');
+
+      if (!emailData) {
+        throw new Error('Email template not found');
+      }
+
+      const mailData = {
+        from: process.env.MAIL_USER,
+        to: user.email,
+        subject: emailData.subject,
+        text: emailData.text,
+        html: emailData.html
+          .replace('[FIRST_NAME]', user.firstName)
+          .replaceAll('[CONFIRM_LINK]', confirmLink),
+      };
+
+      transporter.sendMail(mailData, function (err, info) {
+        if (err) {
+          throw new Error('Email not sent');
+        }
+      });
+
+      res.status(403).json({
+        error: 'Forbidden',
+        message:
+          'User is not verified, a new email has been sent to verify the account.',
+      });
+
+      return;
     }
 
     // Generate token

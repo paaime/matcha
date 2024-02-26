@@ -4,14 +4,18 @@ import { ThrownError } from '../../../types/type';
 import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 
-export async function getUserWithId(userId: number, connectedUserId: number, res: Response): Promise<undefined>{
+export async function getUserWithId(
+  userId: number,
+  connectedUserId: number,
+  res: Response
+): Promise<undefined> {
   try {
     if (!Number.isInteger(userId) || userId < 1) {
       console.error('Invalid user id:', userId);
 
       res.status(400).json({
         error: 'Bad request',
-        message: 'Invalid user id'
+        message: 'Invalid user id',
       });
       return;
     }
@@ -21,7 +25,7 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
 
       res.status(400).json({
         error: 'Bad request',
-        message: 'Invalid connected user id'
+        message: 'Invalid connected user id',
       });
       return;
     }
@@ -30,7 +34,9 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
 
     // Get user infos
     const userInfos = 'SELECT id, loc, consentLocation FROM User WHERE id = ?';
-    const [rowsUserInfos] = await db.query(userInfos, [connectedUserId]) as any;
+    const [rowsUserInfos] = (await db.query(userInfos, [
+      connectedUserId,
+    ])) as any;
 
     if (!rowsUserInfos || rowsUserInfos.length === 0) {
       console.error('No user found with id:', connectedUserId);
@@ -39,7 +45,7 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
 
       res.status(404).json({
         error: 'Not found',
-        message: 'User not found'
+        message: 'User not found',
       });
       return;
     }
@@ -63,6 +69,7 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
         u.biography,
         u.pictures,
         u.fameRating,
+        u.isComplete,
         t.tagName AS interestName,
         IF(u.consentLocation = 1, (
           6371 * 
@@ -110,16 +117,16 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
         hb.user_id = u.id AND hb.blocked_user_id = :connectedUserId
       WHERE
         u.id = :userId
+        AND u.isComplete = 1
     `;
 
     // Execute the query and check the result
-    const [rows] = await db.query(query, {
+    const [rows] = (await db.query(query, {
       lat,
       lon,
       userId,
-      connectedUserId
-    }) as any;
-
+      connectedUserId,
+    })) as any;
 
     // Close the connection
     await db.end();
@@ -129,7 +136,7 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
 
       res.status(404).json({
         error: 'Not found',
-        message: 'User not found'
+        message: 'User not found',
       });
       return;
     }
@@ -158,7 +165,7 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       isVerified: !!rows[0].isVerified,
       distance: connectedUserConsent ? Math.round(rows[0].distance) : -1,
       loc: rows[0].loc,
-      interests: []
+      interests: [],
     };
 
     // Get all interests
@@ -172,11 +179,11 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
+    const code = e?.code || 'Unknown error';
+    const message = e?.message || 'Unknown message';
 
     console.error({ code, message });
-    
+
     res.status(501).json({
       error: 'Server error',
       message: 'An error occurred while getting user infos',

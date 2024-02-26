@@ -21,6 +21,7 @@ export async function searchUsers(res: Response): Promise<void> {
         u.biography,
         u.pictures,
         u.fameRating,
+        u.isComplete,
         t.id AS interestId,
         t.tagName AS interestName
       FROM
@@ -29,6 +30,8 @@ export async function searchUsers(res: Response): Promise<void> {
         Tags t
       ON
         u.id = t.user_id
+      WHERE
+        u.isComplete = 1
     `;
 
     // Execute the query

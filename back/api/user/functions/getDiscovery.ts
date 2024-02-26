@@ -4,7 +4,10 @@ import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 
-export async function getDiscovery(req: RequestUser, res: Response): Promise<void> {
+export async function getDiscovery(
+  req: RequestUser,
+  res: Response
+): Promise<void> {
   try {
     const db = await connectToDatabase();
 
@@ -21,6 +24,7 @@ export async function getDiscovery(req: RequestUser, res: Response): Promise<voi
         u.biography,
         u.pictures,
         u.fameRating,
+        u.isComplete,
         t.id AS interestId,
         t.tagName AS interestName
       FROM
@@ -40,7 +44,8 @@ export async function getDiscovery(req: RequestUser, res: Response): Promise<voi
           SELECT 1
           FROM Blocked ub
           WHERE ub.user_id = ? AND ub.blocked_user_id = u.id
-        )
+        ) AND
+        u.isComplete = 1
       ORDER BY
         u.fameRating DESC
       LIMIT 10
