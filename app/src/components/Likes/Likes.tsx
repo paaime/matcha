@@ -4,13 +4,13 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { buttonVariants } from '../ui/button';
 import { useEffect, useState } from 'react';
-import { IUser } from '@/types/user';
+import { ILove, IUser } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 import ProfileCard from '../ProfileCard';
 
 export default function Likes() {
-  const [users, setUsers] = useState<IUser[]>([]);
+  const [users, setUsers] = useState<ILove[]>([]);
 
   const getUsers = async () => {
     try {
