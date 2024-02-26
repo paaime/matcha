@@ -120,6 +120,7 @@ export async function getUserWithId(
         hb.user_id = u.id AND hb.blocked_user_id = :connectedUserId
       WHERE
         u.id = :userId
+        AND u.isVerified = 1
         AND u.isComplete = 1
     `;
 
@@ -172,12 +173,17 @@ export async function getUserWithId(
       interests: []
     };
 
+    const interestsSet = new Set<string>();
+
     // Get all interests
     for (const row of rows) {
       if (row.interestName) {
-        user.interests.push(row.interestName);
+        interestsSet.add(row.interestName);
       }
     }
+
+    // Set interests
+    user.interests = Array.from(interestsSet);
 
     res.status(200).json(user);
   } catch (error) {

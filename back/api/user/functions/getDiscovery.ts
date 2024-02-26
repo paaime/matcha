@@ -70,6 +70,7 @@ export async function getDiscovery(
       WHERE
         u.id != :userId
         AND u.isVerified = 1
+        AND u.isComplete = 1
         AND u.created_at >= DATE_SUB(NOW(), INTERVAL ${MAX_DAYS} DAY)
         AND u.id NOT IN (
           SELECT

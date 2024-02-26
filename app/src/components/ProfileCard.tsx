@@ -9,6 +9,8 @@ export default function ProfileCard({
   small?: boolean;
   user: ILove;
 }) {
+  const pictures = user.pictures?.split(',') || [];
+
   return (
     <Link
       href={`/profile/${user.id}`}
@@ -19,7 +21,7 @@ export default function ProfileCard({
         'block'
       )}
       style={{
-        backgroundImage: `url(${user.pictures})`,
+        backgroundImage: `url(${pictures[0]})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
