@@ -6,6 +6,14 @@ export type Notification = {
   created_at?: Date;
 };
 
+export type Filters = {
+  interests: string[];
+  minAge: number;
+  maxAge: number;
+  minFameRating: number;
+  maxFameRating: number;
+}
+
 export type Gender = 'female' | 'male' | 'other';
 export type SexualPreferences = 'female' | 'male' | 'other';
 

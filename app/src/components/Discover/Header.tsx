@@ -19,6 +19,7 @@ export default function Header() {
             <span className="text-sm font-semibold">Lyon</span>
           </div>
           <h2 className="text-3xl font-extrabold text-black">Discover</h2>
+          <p className="text-gray-400">Our lastest members</p>
         </div>
       )}
       <div className="flex gap-3 items-center">

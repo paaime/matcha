@@ -18,6 +18,7 @@ export interface IUser {
   distance?: number; // Can be undefined
   loc?: string; // Can be undefined
   city?: string; // Can be undefined
+  consentLocation: boolean;
   biography?: string; // Can be undefined
   interests: string[];
   pictures?: string; // Can be undefined
@@ -43,6 +44,17 @@ export interface ILove {
   city?: string; // Can be undefined
   pictures?: string; // Can be undefined
   compatibilityScore: number;
+  isMatch?: boolean;
+}
+
+export interface IDiscovery {
+  id: number;
+  isOnline: boolean;
+  firstName: string;
+  age: number;
+  distance?: number; // Can be undefined
+  city?: string; // Can be undefined
+  pictures?: string; // Can be undefined
 }
 
 interface IUserSettings {

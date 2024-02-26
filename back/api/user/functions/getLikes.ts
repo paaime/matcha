@@ -1,13 +1,39 @@
 // Import necessary modules and types
 import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
-import { ILove, IUser } from '../../../types/user';
+import { ILove } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 
 export async function getLikes(req: RequestUser, res: Response): Promise<void> {
   try {
+    const userId = req.user.id;
+
+    if (!userId || !Number.isInteger(userId) || userId < 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid user id',
+      });
+      return;
+    }
+
     const db = await connectToDatabase();
+
+    // Get my sexual preferences
+    const [rowsPreferences] = (await db.query(
+      'SELECT age FROM User WHERE id = ?',
+      [userId]
+    )) as any;
+
+    if (!rowsPreferences || rowsPreferences.length === 0) {
+      res.status(404).json({
+        error: 'User not found',
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const myAge = rowsPreferences[0].age;
 
     // Query to get users who liked the current user
     const query = `
@@ -16,20 +42,35 @@ export async function getLikes(req: RequestUser, res: Response): Promise<void> {
         u.firstName,
         u.isOnline,
         u.age,
+        u.consentLocation,
+        u.loc,
         u.gender,
         u.city,
         u.pictures,
-        u.fameRating
+        u.fameRating,
+        (
+          (100 - ABS(u.age - :myAge)) + (u.fameRating / 100)
+        ) AS compatibilityScore,
+        m.user_id IS NOT NULL AS isMatch
       FROM
         User u
+      LEFT JOIN
+        Matchs m
+      ON
+        (u.id = m.user_id AND m.other_user_id = :userId)
+      OR
+        (u.id = m.other_user_id AND m.user_id = :userId)
       INNER JOIN
         UserLike ul ON u.id = ul.user_id
       WHERE
-        ul.liked_user_id = ?
+        ul.liked_user_id = :userId
     `;
 
     // Execute the query
-    const [rows] = (await db.query(query, [req.user.id])) as any;
+    const [rows] = await db.query(query, {
+      userId,
+      myAge,
+    }) as any;
 
     // Close the connection
     await db.end();
@@ -40,33 +81,21 @@ export async function getLikes(req: RequestUser, res: Response): Promise<void> {
     }
 
     // Create an array to store users who liked
-    const users: IUser[] = [];
+    const users: ILove[] = [];
 
     // Iterate over the rows and create user objects
     for (const row of rows) {
-      const user: IUser = {
+      const user: ILove = {
         id: row.id,
         isOnline: row.isOnline === 1,
-        lastConnection: row.lastConnection,
-        created_at: row.created_at,
         firstName: row.firstName,
-        lastName: row.lastName,
         age: row.age,
         gender: row.gender,
-        sexualPreferences: row.sexualPreferences,
-        loc: row.loc,
         city: row.city,
-        biography: row.biography,
         pictures: row.pictures,
-        fameRating: row.fameRating,
+        distance: -1,
         isMatch: !!row.isMatch,
-        matchId: row.matchId || undefined,
-        isLiked: !!row.isLiked,
-        hasLiked: !!row.hasLiked,
-        isBlocked: !!row.isBlocked,
-        hasBlocked: !!row.hasBlocked,
-        isVerified: !!row.isVerified,
-        interests: [],
+        compatibilityScore: row.compatibilityScore
       };
 
       // Push liked user object to the array

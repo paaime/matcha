@@ -1,62 +1,134 @@
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
-import { IUser } from '../../../types/user';
+import { IDiscovery } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+
+const MAX_DAYS = 7;
 
 export async function getDiscovery(
   req: RequestUser,
   res: Response
 ): Promise<void> {
   try {
+    const userId = req.user.id;
+
+    if (!userId || !Number.isInteger(userId) || userId < 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid user id',
+      });
+      return;
+    }
+
     const db = await connectToDatabase();
+
+    // Get my sexual preferences
+    const [rowsPreferences] = (await db.query(
+      'SELECT loc, consentLocation FROM User WHERE id = ?',
+      [userId]
+    )) as any;
+
+    if (!rowsPreferences || rowsPreferences.length === 0) {
+      res.status(404).json({
+        error: 'User not found',
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const myConsent = rowsPreferences[0].consentLocation;
+    const myLoc = rowsPreferences[0].loc;
+
+    const myLat = myConsent ? myLoc?.split(',')[0] : 0;
+    const myLon = myConsent ? myLoc?.split(',')[1] : 0;
 
     const query = `
       SELECT
         u.id,
         u.firstName,
-        u.lastName,
         u.age,
-        u.gender,
-        u.sexualPreferences,
         u.loc,
+        u.consentLocation,
         u.city,
-        u.biography,
         u.pictures,
-        u.fameRating,
+        u.isOnline,
+        u.isVerified,
         u.isComplete,
-        t.id AS interestId,
-        t.tagName AS interestName
+        IF(u.consentLocation = 1, (
+          6371 * 
+          acos(
+            cos(radians(:myLat)) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:myLon)) + 
+            sin(radians(:myLat)) * 
+            sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+          )
+        ), -1) AS distance
       FROM
         User u
-      LEFT JOIN
-        Tags t
-      ON
-        u.id = t.user_id
       WHERE
-        u.id != ? AND
-        NOT EXISTS (
-          SELECT 1
-          FROM UserLike ul
-          WHERE ul.user_id = ? AND ul.liked_user_id = u.id
-        ) AND
-        NOT EXISTS (
-          SELECT 1
-          FROM Blocked ub
-          WHERE ub.user_id = ? AND ub.blocked_user_id = u.id
-        ) AND
-        u.isComplete = 1
+        u.id != :userId
+        AND u.isVerified = 1
+        AND u.created_at >= DATE_SUB(NOW(), INTERVAL ${MAX_DAYS} DAY)
+        AND u.id NOT IN (
+          SELECT
+            ul.liked_user_id
+          FROM
+            UserLike ul
+          WHERE
+            ul.user_id = :userId
+        )
+        AND u.id NOT IN (
+          SELECT
+            ul.user_id
+          FROM
+            UserLike ul
+          WHERE
+            ul.liked_user_id = :userId
+        )
+        AND u.id NOT IN (
+          SELECT
+            ub.blocked_user_id
+          FROM
+            Blocked ub
+          WHERE
+            ub.user_id = :userId
+        )
+        AND u.id NOT IN (
+          SELECT
+            ub.user_id
+          FROM
+            Blocked ub
+          WHERE
+            ub.blocked_user_id = :userId
+        )
+        AND u.id NOT IN (
+          SELECT
+            r.reported_user_id
+          FROM
+            Reported r
+          WHERE
+            r.user_id = :userId
+        )
+        AND u.id NOT IN (
+          SELECT
+            r.user_id
+          FROM
+            Reported r
+          WHERE
+            r.reported_user_id = :userId
+        )
       ORDER BY
-        u.fameRating DESC
-      LIMIT 10
+        created_at DESC
     `;
 
     // Execute the query
-    const [rows] = (await db.query(query, [
-      req.user.id,
-      req.user.id,
-      req.user.id,
-    ])) as any;
+    const [rows] = (await db.query(query, {
+      userId,
+      myLat,
+      myLon
+    })) as any;
 
     // Close the connection
     await db.end();
@@ -67,50 +139,22 @@ export async function getDiscovery(
     }
 
     // Create an array to store users
-    const users: IUser[] = [];
+    const users: IDiscovery[] = [];
 
     // Iterate over the rows and create user objects
     for (const row of rows) {
-      const user: IUser = {
+      const user: IDiscovery = {
         id: row.id,
-        isOnline: row.isOnline === 1,
-        lastConnection: row.lastConnection,
-        created_at: row.created_at,
+        isOnline: row.isOnline,
         firstName: row.firstName,
-        lastName: row.lastName,
         age: row.age,
-        gender: row.gender,
-        sexualPreferences: row.sexualPreferences,
-        loc: row.loc,
-        city: row.city,
-        biography: row.biography,
-        pictures: row.pictures,
-        fameRating: row.fameRating,
-        isMatch: !!row.isMatch,
-        matchId: row.matchId || undefined,
-        isLiked: !!row.isLiked,
-        hasLiked: !!row.hasLiked,
-        isBlocked: !!row.isBlocked,
-        hasBlocked: !!row.hasBlocked,
-        isVerified: !!row.isVerified,
-        interests: [],
+        city: row.city || '',
+        pictures: row.pictures || '',
+        distance: myConsent ? Math.round(row.distance) : -1,
       };
 
       // Push user object to the array
       users.push(user);
-    }
-
-    // Iterate over the rows again to get interests
-    for (const row of rows) {
-      const user = users.find((u) => u.id === row.id);
-      if (user && row.interestId && row.interestName) {
-        user.interests.push(row.interestName);
-      }
-    }
-
-    // Calculate distance for each user (random for now)
-    for (const user of users) {
-      user.distance = Math.floor(Math.random() * 100) + 1;
     }
 
     // Send the array of users as JSON response
@@ -125,7 +169,7 @@ export async function getDiscovery(
 
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while getting user information',
+      message: 'An error occurred while getting user discovery information',
     });
   }
 }

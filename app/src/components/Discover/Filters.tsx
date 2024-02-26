@@ -19,8 +19,33 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Button } from '../ui/button';
 import { Settings2Icon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Filters } from '@/types/type';
+import customAxios from '@/utils/axios';
+import { toast } from 'sonner';
 
 export default function Filters() {
+  const [results, setResults] = useState<Filters>({
+    interests: [],
+    minAge: 18,
+    maxAge: 100,
+    minFameRating: 0,
+    maxFameRating: 500,
+  });
+
+  const getInterests = async () => {
+    try {
+      const res = await customAxios.get('/user/filtersInfos');
+      setResults(res.data);
+    } catch (err) {
+      toast('Error', { description: 'An error occured while gettings filters' });
+    }
+  };
+
+  useEffect(() => {
+    getInterests();
+  }, []);
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -56,16 +81,30 @@ export default function Filters() {
           <div className="flex flex-col gap-5 border-b pt-6 pb-8">
             <div className="flex justify-between">
               <p className="text-lg font-bold text-black">Age</p>
-              <p className="text-pink">20-25</p>
+              <p className="text-pink">
+                {results.minAge} - {results.maxAge}
+              </p>
             </div>
-            <Slider defaultValue={[33, 50]} max={100} step={1} />
+            <Slider
+              defaultValue={[results.minAge,results.maxAge]}
+              min={results.minAge}
+              max={results.maxAge}
+              step={1}
+            />
           </div>
           <div className="flex flex-col gap-5 border-b pt-6 pb-8">
             <div className="flex justify-between">
               <p className="text-lg font-bold text-black">Fame Rating</p>
-              <p className="text-pink">20-25</p>
+              <p className="text-pink">
+                {results.minFameRating} - {results.maxFameRating}
+              </p>
             </div>
-            <Slider defaultValue={[33, 50]} max={100} step={1} />
+            <Slider
+              defaultValue={[results.minFameRating, results.maxFameRating]}
+              min={results.minFameRating}
+              max={results.maxFameRating}
+              step={1}
+            />
           </div>
         </div>
         <DrawerFooter className="flex-row">

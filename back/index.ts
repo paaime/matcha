@@ -10,7 +10,6 @@ import userPost from './api/user/post';
 import userPut from './api/user/put';
 import authGet from './api/auth/get';
 import authPost from './api/auth/post';
-import searchGet from './api/search/get';
 import socketws from './websocket/post';
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
@@ -45,9 +44,6 @@ app.use(authCheck);
 
 // User routes
 app.use('/user', userGet, userPost, userPut);
-
-// Search routes
-app.use('/search', searchGet);
 
 // Initialiser IO
 initializeIO(server);

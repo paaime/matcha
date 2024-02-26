@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { Server as SocketIOServer } from 'socket.io';
 import { JwtDatas, Notification } from '../../types/type';
 import { addNotification } from './addNotification';
+import { setOnline } from '../../utils/setOnline';
 
 // Définir une variable globale io
 let io: SocketIOServer;
@@ -17,7 +18,7 @@ export function initializeIO(server: any) {
   });
 
   // Gérer la connexion des sockets
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     console.log('A client just arrived with id:', socket.id);
 
     if (!socket.request.headers.cookie) {
@@ -52,6 +53,8 @@ export function initializeIO(server: any) {
     socket.join(decoded.id.toString());
     console.log('User', decoded.id, 'just joined');
 
+    await setOnline(decoded.id, true);
+
     io.emit(
       'notification',
       JSON.stringify({
@@ -61,8 +64,10 @@ export function initializeIO(server: any) {
       })
     );
 
-    socket.on('disconnect', () => {
-      console.log('A client has just left');
+    socket.on('disconnect', async() => {
+      console.log('A client has just left:', decoded.id);
+
+      await setOnline(decoded.id, false);
 
       socket.leave(decoded.id.toString());
     });
