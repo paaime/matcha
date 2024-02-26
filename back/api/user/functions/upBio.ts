@@ -28,14 +28,14 @@ export async function upBio(
     if (!biographyRegex.test(bio)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Invalid age',
+        message: 'Invalid biography',
       });
       return;
     }
 
     const db = await connectToDatabase();
 
-    // Update the user's age
+    // Update the user's biography
     const updateQuery = 'UPDATE User SET biography = ? WHERE id = ?';
     await db.query(updateQuery, [bio, user_id]);
 

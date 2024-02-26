@@ -1,6 +1,6 @@
 'use client';
 
-import CircleProgress from '../ui/CircleProgress';
+import { CircleProgress } from '../ui/CircleProgress';
 import React from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -10,6 +10,8 @@ import { Pagination } from 'swiper/modules';
 import { ILove } from '@/types/user';
 
 export default function LoveCard({ user }: { user: ILove }) {
+  const pictures = user.pictures?.split(',') || [];
+
   return (
     <div className="rounded-3xl block h-full w-full absolute">
       <Swiper
@@ -20,26 +22,18 @@ export default function LoveCard({ user }: { user: ILove }) {
         modules={[Pagination]}
         className="!absolute w-full rounded-3xl h-full !z-0"
       >
-        <SwiperSlide>
-          <Image
-            src={user.pictures}
-            alt={user.firstName}
-            width={500}
-            height={500}
-            className="absolute w-full h-full object-cover"
-            priority
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image
-            src={user.pictures}
-            alt={user.firstName}
-            width={500}
-            height={500}
-            className="absolute w-full h-full object-cover"
-            priority
-          />
-        </SwiperSlide>
+        {pictures?.map((picture, index) => (
+          <SwiperSlide key={index}>
+            <Image
+              src={picture}
+              alt={user.firstName}
+              width={500}
+              height={500}
+              className="absolute w-full h-full object-cover"
+              priority
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
       <div
         className="flex flex-col justify-between p-5 h-full love-card rounded-3xl relative pointer-events-none"
@@ -49,10 +43,16 @@ export default function LoveCard({ user }: { user: ILove }) {
         }}
       >
         <div className="flex justify-between items-start">
-          <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
-            <p>{user.distance} km away</p>
-          </div>
-          <CircleProgress />
+
+          {user.distance && user.distance >= 0 ? (
+            <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
+              <p>{user.distance} km away</p>
+            </div>
+          ) : (
+            <span></span>
+          )}
+
+          <CircleProgress percent={user.compatibilityScore} />
         </div>
 
         <div className="flex flex-col items-center gap-1">

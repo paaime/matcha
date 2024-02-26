@@ -4,13 +4,13 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
+import requestIp from 'request-ip';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
 import userPut from './api/user/put';
 import authGet from './api/auth/get';
 import authPost from './api/auth/post';
-import socketws from './websocket/post';
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
 
@@ -18,6 +18,9 @@ const PORT = process.env.BACK_PORT;
 
 const app = express();
 const server = http.createServer(app);
+
+app.set('trust proxy', true);
+
 
 // Default message
 app.get('/', (req: Request, res: Response) => {
@@ -36,6 +39,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(requestIp.mw()); // TODO test if it works
+
+
 // Auth routes
 app.use('/auth', authGet, authPost);
 
@@ -47,9 +53,6 @@ app.use('/user', userGet, userPost, userPut);
 
 // Initialiser IO
 initializeIO(server);
-
-// Notification route (WebSocket)
-app.use('/notification', socketws);
 
 // Start web server
 server.listen(PORT, () => {

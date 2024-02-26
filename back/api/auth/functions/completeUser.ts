@@ -106,6 +106,9 @@ export async function completeUser(
         return;
       }
     }
+
+    // TODO: upload pictures to the server
+    
     // if (pictures.length > 0 && !picturesRegex.test(pictures)) {
     //   res.status(400).json({
     //     error: 'Bad request',
