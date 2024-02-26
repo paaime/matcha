@@ -4,16 +4,16 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useEffect, useState } from 'react';
-import { IUser } from '@/types/user';
+import { ILove } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 
 export default function News() {
-  const [users, setUsers] = useState<IUser[]>([]);
+  const [users, setUsers] = useState<ILove[]>([]);
 
   const getUsers = async () => {
     try {
-      const res = await customAxios.get('/user/discovery');
+      const res = await customAxios.get('/user/discovery/news');
       setUsers(res.data);
     } catch (err) {
       toast('Error', { description: 'An error occured while fetching users' });
