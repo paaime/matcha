@@ -90,14 +90,6 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
           WHERE
             ul.user_id = :userId
         )
-        AND u.id NOT IN (
-          SELECT
-            ul.user_id
-          FROM
-            UserLike ul
-          WHERE
-            ul.liked_user_id = :userId
-        )
       HAVING
         distance <= :maxDistance
         AND age >= :minAge

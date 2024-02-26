@@ -66,6 +66,8 @@ export const updateFame = async (userId: number, fameName: FameName): Promise<bo
     const updateQuery = 'UPDATE User SET fameRating = fameRating + ? WHERE id = ?';
     await db.query(updateQuery, [fameValue, userId]);
 
+    console.log(`User ${userId} fame updated by ${fameValue} for ${fameName}`);
+
     // Close the connection
     db.end();
 

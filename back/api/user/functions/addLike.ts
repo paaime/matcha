@@ -99,8 +99,15 @@ export async function addLike(
         related_user_id: user_id,
       });
 
+      await sendNotification(user_id.toString(), {
+        content: 'You have a new match',
+        redirect: '/likes',
+        related_user_id: liked_id,
+      });
+
       // Update fame
-    await updateFame(liked_id, 'newMatch');
+      await updateFame(liked_id, 'newMatch');
+      await updateFame(user_id, 'newMatch');
 
       res.status(200).json({
         liked: true,
