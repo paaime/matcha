@@ -16,7 +16,7 @@ export default function Informations({ user }: { user: IUser }) {
 
   // Function to calculate elapsed time (ex: 10 minutes ago)
   const timeSince = (date: string) => {
-    const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+    const seconds = Math.abs(Math.floor((new Date().getTime() - new Date(date).getTime())) / 1000);
 
     let interval = seconds / 31536000;
 
@@ -40,6 +40,17 @@ export default function Informations({ user }: { user: IUser }) {
       return Math.floor(interval) + ' minute' + (Math.floor(interval) > 1 ? 's' : '');
     }
     return Math.floor(seconds) + ' second' + (Math.floor(seconds) > 1 ? 's' : '');
+  }
+
+  const getGender = (gender: string) => {
+    switch (gender) {
+      case 'male':
+        return 'Man';
+      case 'female':
+        return 'Woman';
+      default:
+        return 'Other';
+    }
   }
 
   return (
@@ -87,7 +98,7 @@ export default function Informations({ user }: { user: IUser }) {
               </div>
               <p className="text-gray-400 mt-3">Gender</p>
               <p className="text-primary font-semibold text-lg">
-                {user.gender}
+                {getGender(user.gender)}
               </p>
             </div>
             <div className="flex flex-col items-center">
@@ -115,7 +126,9 @@ export default function Informations({ user }: { user: IUser }) {
             {user.consentLocation && user.loc ? (
               <Map user={user} />
             ) : (
-              <p className="font-semibold text-dark">Location hidden</p>
+              <p className="font-semibold text-dark">
+                {user.firstName} has disabled location or you don{"'"}t have consent
+              </p>
             )}
 
           </div>

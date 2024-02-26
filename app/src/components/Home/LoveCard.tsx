@@ -10,7 +10,7 @@ import { Pagination } from 'swiper/modules';
 import { ILove } from '@/types/user';
 
 export default function LoveCard({ user }: { user: ILove }) {
-  const pictures = user.pictures.split(',');
+  const pictures = user.pictures?.split(',') || [];
 
   return (
     <div className="rounded-3xl block h-full w-full absolute">
@@ -22,7 +22,7 @@ export default function LoveCard({ user }: { user: ILove }) {
         modules={[Pagination]}
         className="!absolute w-full rounded-3xl h-full !z-0"
       >
-        {pictures.map((picture, index) => (
+        {pictures?.map((picture, index) => (
           <SwiperSlide key={index}>
             <Image
               src={picture}

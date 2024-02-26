@@ -80,11 +80,13 @@ export default function Page({ params }) {
                 </div>
               )}
 
-              <div className="flex gap-2 items-center border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
-                <NavigationIcon className="h-4 w-4" />
-                <p>{user?.distance} km</p>
-              </div>
-              <More />
+              {user.distance && user.distance >= 0 && (
+                <div className="flex gap-2 items-center border border-[#ffffff1a] backdrop-blur-sm rounded-full py-2 px-4 text-white bg-white/30 font-semibold w-fit">
+                  <NavigationIcon className="h-4 w-4" />
+                  <p>{user.distance} km</p>
+                </div>
+              )}
+              <More user_id={user.id} isBlocked={user.isBlocked} />
             </div>
           </div>
           <div className="flex flex-col items-center gap-1 pb-10">

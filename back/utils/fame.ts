@@ -35,11 +35,11 @@ export const fameUpdaters: Fame[] = [
     value: 1,
   },
   {
-    name: 'newBlock', // TODO: implement
+    name: 'newBlock',
     value: -5,
   },
   {
-    name: 'newReport', // TODO: implement
+    name: 'newReport',
     value: -10,
   }
 ];

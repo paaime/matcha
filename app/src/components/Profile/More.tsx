@@ -2,14 +2,40 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { FlagIcon, MoreHorizontalIcon, ShieldBanIcon } from 'lucide-react';
 import { Button } from '../ui/button';
+import customAxios from '@/utils/axios';
+import { toast } from 'sonner';
 
-export default function More() {
+type Props = {
+  user_id: number;
+  isBlocked: boolean;
+};
+
+export default function More ({ user_id, isBlocked }: Props) {
+
+  console.log(user_id, isBlocked);
+
+  const blockUser = async () => {
+    try {
+      if (isBlocked) {
+        await customAxios.post(`/user/unblock/${user_id}`);
+      } else {
+        await customAxios.post(`/user/block/${user_id}`);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else
+        toast('An error occured', {
+          description: 'Error',
+        });
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -18,15 +44,13 @@ export default function More() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="mt-2">
-        {/* <DropdownMenuLabel>More actions</DropdownMenuLabel>
-        <DropdownMenuSeparator /> */}
         <DropdownMenuItem>
           <FlagIcon className="h-4 w-4 mr-2" />
           Report
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={blockUser}>
           <ShieldBanIcon className="h-4 w-4 mr-2" />
-          Block
+          {isBlocked ? 'Unblock' : 'Block'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
