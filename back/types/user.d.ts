@@ -44,6 +44,17 @@ export interface ILove {
   city?: string; // Can be undefined
   pictures?: string; // Can be undefined
   compatibilityScore: number;
+  isMatch?: boolean;
+}
+
+export interface IDiscovery {
+  id: number;
+  isOnline: boolean;
+  firstName: string;
+  age: number;
+  distance?: number; // Can be undefined
+  city?: string; // Can be undefined
+  pictures?: string; // Can be undefined
 }
 
 interface IUserSettings {

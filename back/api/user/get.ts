@@ -17,8 +17,12 @@ router.get('/', async (req: RequestUser, res: Response) => {
   await getAllUsers(res);
 });
 
-router.get('/discovery', async (req: RequestUser, res: Response) => {
+router.get('/discovery/news', async (req: RequestUser, res: Response) => {
   await getDiscovery(req, res);
+});
+
+router.get('/discovery/results', async (req: RequestUser, res: Response) => {
+  await getLove(req, res, true);
 });
 
 router.get('/getlove', async (req: RequestUser, res: Response) => {

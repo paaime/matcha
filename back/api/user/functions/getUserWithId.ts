@@ -64,7 +64,7 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
         u.pictures,
         u.fameRating,
         t.tagName AS interestName,
-        IF(u.consentLocation = 1, (
+        IF(u.consentLocation = 1 AND :myLat != 0 AND :myLon != 0 AND u.loc != '', (
           6371 * 
           acos(
             cos(radians(:lat)) * 
