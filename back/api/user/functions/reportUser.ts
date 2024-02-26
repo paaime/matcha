@@ -65,7 +65,7 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
       content: 'Someone reported you'
     });
     await sendNotification(user_id.toString(), {
-      content: `You reported ${firstName}`
+      content: `You have reported ${firstName}`
     });
 
     // Update fame
@@ -84,7 +84,7 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
     if (code === 'ER_DUP_ENTRY') {
       res.status(400).json({
         error: 'Bad request',
-        message: 'You already reported this user',
+        message: 'You have already reported this user',
       });
       return;
     }

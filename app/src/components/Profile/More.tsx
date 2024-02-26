@@ -15,9 +15,6 @@ type Props = {
 };
 
 export default function More ({ user_id, isBlocked }: Props) {
-
-  console.log(user_id, isBlocked);
-
   const blockUser = async () => {
     try {
       if (isBlocked) {
@@ -25,6 +22,20 @@ export default function More ({ user_id, isBlocked }: Props) {
       } else {
         await customAxios.post(`/user/block/${user_id}`);
       }
+    } catch (err) {
+      console.log(err);
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else
+        toast('An error occured', {
+          description: 'Error',
+        });
+    }
+  };
+
+  const reportUser = async () => {
+    try {
+      await customAxios.post(`/user/report/${user_id}`);
     } catch (err) {
       console.log(err);
       if (err.response?.data?.message)
@@ -44,7 +55,7 @@ export default function More ({ user_id, isBlocked }: Props) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="mt-2">
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={reportUser}>
           <FlagIcon className="h-4 w-4 mr-2" />
           Report
         </DropdownMenuItem>

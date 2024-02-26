@@ -52,9 +52,29 @@ export async function addLike(
     ])) as any;
 
     if (!rows || rows.length === 0) {
+      // Close the connection
+      await db.end();
+
       res.status(404).json({
         error: 'User not found',
         message: 'User not found',
+      });
+      return;
+    }
+
+    // Check if the user is blocked
+    const [rowsBlocked] = (await db.query(
+      'SELECT id FROM Blocked WHERE user_id = ? AND blocked_user_id = ?',
+      [user_id, liked_id]
+    )) as any;
+
+    if (rowsBlocked && rowsBlocked.length > 0) {
+      // Close the connection
+      await db.end();
+
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'You cannot like a blocked user',
       });
       return;
     }
