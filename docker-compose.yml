@@ -79,6 +79,7 @@ services:
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - MAIL_HOST=${MAIL_HOST}
       - MAIL_PORT=${MAIL_PORT}
+      - IP_INFO_TOKEN=${IP_INFO_TOKEN}
     env_file:
       - .env
     depends_on:

@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
+import requestIp from 'request-ip';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
@@ -17,6 +18,9 @@ const PORT = process.env.BACK_PORT;
 
 const app = express();
 const server = http.createServer(app);
+
+app.set('trust proxy', true);
+
 
 // Default message
 app.get('/', (req: Request, res: Response) => {
@@ -34,6 +38,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(requestIp.mw()); // TODO test if it works
+
 
 // Auth routes
 app.use('/auth', authGet, authPost);

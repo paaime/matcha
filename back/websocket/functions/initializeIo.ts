@@ -53,6 +53,11 @@ export function initializeIO(server: any) {
     socket.join(decoded.id.toString());
     console.log('User', decoded.id, 'just joined');
 
+    // Get IP address
+    const ip = socket.handshake.address;
+
+    console.log('IP address:', ip);
+
     await setOnline(decoded.id, true);
 
     io.emit(
