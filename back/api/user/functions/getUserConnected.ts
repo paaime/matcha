@@ -106,12 +106,17 @@ export async function getUserConnected(
       notifications: [],
     };
 
+    const interestsSet = new Set<string>();
+
     // Get all interests
     for (const row of rows) {
       if (row.interestName) {
-        user.interests.push(row.interestName);
+        interestsSet.add(row.interestName);
       }
     }
+
+    // Set interests
+    user.interests = Array.from(interestsSet);
 
     // Get all notifications
     for (const row of rows) {
