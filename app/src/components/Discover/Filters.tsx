@@ -19,31 +19,45 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Button } from '../ui/button';
 import { Settings2Icon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Filters } from '@/types/type';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
+import { useDiscoverStore, useFiltersStore } from '@/store';
+
+const getResultsLink = (filters: Filters) => {
+  const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
+
+  return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFameRating=${minFameRating}&maxFameRating=${maxFameRating}&maxDistance=${maxDistance}`;
+};
 
 export default function Filters() {
-  const [results, setResults] = useState<Filters>({
-    interests: [],
-    minAge: 18,
-    maxAge: 100,
-    minFameRating: 0,
-    maxFameRating: 500,
-  });
+  const { setDiscover } = useDiscoverStore();
+  const { filters, setFilters } = useFiltersStore();
 
-  const getInterests = async () => {
+  const getDiscover = async () => {
+    try {
+      const res = await customAxios.get(`${getResultsLink(filters)}`);
+      setDiscover(res.data);
+    } catch (err) {
+      toast('Error', { description: 'An error occured while fetching users' });
+    }
+  };
+
+  const getFiltersInfos = async () => {
     try {
       const res = await customAxios.get('/user/filtersInfos');
-      setResults(res.data);
+      setFilters(res.data);
     } catch (err) {
-      toast('Error', { description: 'An error occured while gettings filters' });
+      toast('Error', {
+        description: 'An error occured while gettings filters',
+      });
     }
   };
 
   useEffect(() => {
-    getInterests();
+    getFiltersInfos();
+    getDiscover();
   }, []);
 
   return (
@@ -62,18 +76,22 @@ export default function Filters() {
         <div className="flex flex-col p-4">
           <div className="flex justify-between items-center gap-5 border-b pb-2">
             <p className="text-lg font-bold text-black">Location</p>
-            <Select>
+            <Select
+              onValueChange={(value) =>
+                setFilters({ ...filters, maxDistance: parseInt(value) })
+              }
+              value={filters?.maxDistance?.toString()}
+            >
               <SelectTrigger className="w-[180px] text-gray-400 font-bold border-0 text-md">
                 <SelectValue placeholder="People nearby" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Location</SelectLabel>
-                  <SelectItem value="apple">People nearby</SelectItem>
-                  <SelectItem value="banana">10 km +</SelectItem>
-                  <SelectItem value="blueberry">20 km +</SelectItem>
-                  <SelectItem value="grapes">50 km +</SelectItem>
-                  <SelectItem value="pineapple">100 km +</SelectItem>
+                  <SelectItem value="0">People nearby</SelectItem>
+                  <SelectItem value="10">10 km +</SelectItem>
+                  <SelectItem value="50">50 km +</SelectItem>
+                  <SelectItem value="100">100 km +</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -82,13 +100,16 @@ export default function Filters() {
             <div className="flex justify-between">
               <p className="text-lg font-bold text-black">Age</p>
               <p className="text-pink">
-                {results.minAge} - {results.maxAge}
+                {filters.minAge} - {filters.maxAge}
               </p>
             </div>
             <Slider
-              defaultValue={[results.minAge,results.maxAge]}
-              min={results.minAge}
-              max={results.maxAge}
+              onValueChange={(value) =>
+                setFilters({ ...filters, minAge: value[0], maxAge: value[1] })
+              }
+              value={[filters.minAge, filters.maxAge]}
+              min={filters.minAge}
+              max={filters.maxAge}
               step={1}
             />
           </div>
@@ -96,24 +117,37 @@ export default function Filters() {
             <div className="flex justify-between">
               <p className="text-lg font-bold text-black">Fame Rating</p>
               <p className="text-pink">
-                {results.minFameRating} - {results.maxFameRating}
+                {filters.minFameRating} - {filters.maxFameRating}
               </p>
             </div>
             <Slider
-              defaultValue={[results.minFameRating, results.maxFameRating]}
-              min={results.minFameRating}
-              max={results.maxFameRating}
+              onValueChange={(value) =>
+                setFilters({
+                  ...filters,
+                  minFameRating: value[0],
+                  maxFameRating: value[1],
+                })
+              }
+              value={[filters.minFameRating, filters.maxFameRating]}
+              min={filters.minFameRating}
+              max={filters.maxFameRating}
               step={1}
             />
           </div>
         </div>
         <DrawerFooter className="flex-row">
+          <Button
+            variant="secondary"
+            className="w-full h-12 text-md"
+            onClick={getFiltersInfos}
+          >
+            Reset
+          </Button>
           <DrawerClose asChild>
-            <Button variant="secondary" className="w-full h-12 text-md">
-              Reset
+            <Button onClick={getDiscover} className="w-full h-12 text-md">
+              Apply
             </Button>
           </DrawerClose>
-          <Button className="w-full h-12 text-md">Apply</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

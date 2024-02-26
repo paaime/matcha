@@ -69,7 +69,7 @@ export function initializeIO(server: any) {
       })
     );
 
-    socket.on('disconnect', async() => {
+    socket.on('disconnect', async () => {
       console.log('A client has just left:', decoded.id);
 
       await setOnline(decoded.id, false);

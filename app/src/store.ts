@@ -1,6 +1,17 @@
 import { create } from 'zustand';
-import { IUserSettings } from './types/user';
+import { ILove, IUserSettings } from './types/user';
 import io, { Socket } from 'socket.io-client';
+import { Filters } from './types/type';
+
+type DiscoverStore = {
+  discover: ILove[];
+  setDiscover: (discovers: ILove[]) => void;
+};
+
+type FiltersStore = {
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+};
 
 type UserStore = {
   user: IUserSettings | null;
@@ -13,6 +24,23 @@ type SocketStore = {
   disconnect: () => void;
   sendMessage: (value: string) => void;
 };
+
+export const useDiscoverStore = create<DiscoverStore>((set) => ({
+  discover: [],
+  setDiscover: (discover) => set({ discover }),
+}));
+
+export const useFiltersStore = create<FiltersStore>((set) => ({
+  filters: {
+    interests: [],
+    minAge: 18,
+    maxAge: 100,
+    minFameRating: 0,
+    maxFameRating: 500,
+    maxDistance: 100,
+  },
+  setFilters: (filters) => set({ filters }),
+}));
 
 export const useUserStore = create<UserStore>((set) => ({
   user: null,

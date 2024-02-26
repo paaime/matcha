@@ -18,7 +18,7 @@ const getMinAge = (customFilter: boolean, newValue: string) => {
   }
 
   return defaultValue;
-}
+};
 
 const getMaxAge = (customFilter: boolean, newValue: string) => {
   const defaultValue = 99;
@@ -34,7 +34,7 @@ const getMaxAge = (customFilter: boolean, newValue: string) => {
   }
 
   return defaultValue;
-}
+};
 
 const getMinFame = (customFilter: boolean, newValue: string) => {
   const defaultValue = 0;
@@ -50,7 +50,7 @@ const getMinFame = (customFilter: boolean, newValue: string) => {
   }
 
   return defaultValue;
-}
+};
 
 const getMaxFame = (customFilter: boolean, newValue: string) => {
   const defaultValue = 400;
@@ -66,7 +66,7 @@ const getMaxFame = (customFilter: boolean, newValue: string) => {
   }
 
   return defaultValue;
-}
+};
 
 const getMaxDistance = (customFilter: boolean, newValue: string) => {
   const defaultValue = 500000; // 500 000
@@ -90,9 +90,13 @@ const getMaxDistance = (customFilter: boolean, newValue: string) => {
   }
 
   return defaultValue;
-}
+};
 
-export async function getLove(req: RequestUser, res: Response, customFilter: boolean = false): Promise<void> {
+export async function getLove(
+  req: RequestUser,
+  res: Response,
+  customFilter: boolean = false
+): Promise<void> {
   try {
     const userId = req.user.id;
 
@@ -108,7 +112,10 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
     let maxAge = getMaxAge(customFilter, req.query.maxAge as string);
     let minFame = getMinFame(customFilter, req.query.minFame as string);
     let maxFame = getMaxFame(customFilter, req.query.maxFame as string);
-    let maxDistance = getMaxDistance(customFilter, req.query.maxDistance as string);
+    let maxDistance = getMaxDistance(
+      customFilter,
+      req.query.maxDistance as string
+    );
 
     console.log({ minAge, maxAge, minFame, maxFame, maxDistance });
 
@@ -262,7 +269,7 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
       minAge,
       maxAge,
       minFame,
-      maxFame
+      maxFame,
     })) as any;
 
     // Close the connection
