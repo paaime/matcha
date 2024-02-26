@@ -12,7 +12,7 @@ const MAX_FAME = 1000;
 
 const MAX_DISTANCE = 10000e3; // 10 000 km
 
-export async function getLove(req: RequestUser, res: Response): Promise<void> {
+export async function getLove(req: RequestUser, res: Response, customFilter: boolean = false): Promise<void> {
   try {
     const userId = req.user.id;
 
@@ -55,7 +55,6 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
       SELECT
         u.id,
         u.firstName,
-        u.lastName,
         u.age,
         u.loc,
         u.consentLocation,
@@ -63,7 +62,8 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
         u.pictures,
         u.fameRating,
         u.isOnline,
-        IF(u.consentLocation = 1, (
+        u.isVerified,
+        IF(u.consentLocation = 1 AND :myLat != 0 AND :myLon != 0 AND u.loc != '', (
           6371 * 
           acos(
             cos(radians(:myLat)) * 
@@ -80,6 +80,7 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
         User u
       WHERE
         u.id != :userId
+        AND u.isVerified = 1
         AND u.gender = :myPreferences
         AND u.sexualPreferences = :myGender
         AND u.id NOT IN (
@@ -89,14 +90,6 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
             UserLike ul
           WHERE
             ul.user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
-            ul.user_id
-          FROM
-            UserLike ul
-          WHERE
-            ul.liked_user_id = :userId
         )
       HAVING
         distance <= :maxDistance
@@ -144,7 +137,7 @@ export async function getLove(req: RequestUser, res: Response): Promise<void> {
         gender: row.gender,
         city: row.city || '',
         pictures: row.pictures || '',
-        distance: Math.round(row.distance),
+        distance: myConsent ? Math.round(row.distance) : -1,
         compatibilityScore: row.compatibilityScore,
       };
 

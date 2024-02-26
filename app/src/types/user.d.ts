@@ -15,6 +15,7 @@ export interface ILove {
   city?: string; // Can be undefined
   pictures?: string; // Can be undefined
   compatibilityScore: number;
+  isMatch?: boolean;
 }
 
 export interface IUser {
@@ -28,6 +29,7 @@ export interface IUser {
   distance?: number; // Can be undefined
   loc?: string; // Can be undefined
   city?: string; // Can be undefined
+  consentLocation: boolean;
   biography?: string; // Can be undefined
   interests: string[];
   pictures?: string; // Can be undefined

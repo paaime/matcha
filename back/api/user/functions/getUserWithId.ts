@@ -63,8 +63,11 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
         u.biography,
         u.pictures,
         u.fameRating,
+        u.isOnline,
+        u.isVerified,
+        u.lastConnection,
         t.tagName AS interestName,
-        IF(u.consentLocation = 1, (
+        IF(u.consentLocation = 1 AND :lat != 0 AND :lon != 0 AND u.loc != '', (
           6371 * 
           acos(
             cos(radians(:lat)) * 
@@ -145,7 +148,9 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       age: rows[0].age,
       gender: rows[0].gender,
       sexualPreferences: rows[0].sexualPreferences,
+      loc: rows[0].loc,
       city: rows[0].city,
+      consentLocation: !!rows[0].consentLocation,
       biography: rows[0].biography,
       pictures: rows[0].pictures,
       fameRating: rows[0].fameRating,
@@ -157,7 +162,6 @@ export async function getUserWithId(userId: number, connectedUserId: number, res
       hasBlocked: !!rows[0].hasBlocked,
       isVerified: !!rows[0].isVerified,
       distance: connectedUserConsent ? Math.round(rows[0].distance) : -1,
-      loc: rows[0].loc,
       interests: []
     };
 

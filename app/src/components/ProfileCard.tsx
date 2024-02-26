@@ -1,4 +1,4 @@
-import { IUser } from '@/types/user';
+import { ILove } from '@/types/user';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -7,13 +7,14 @@ export default function ProfileCard({
   user,
 }: {
   small?: boolean;
-  user: IUser;
+  user: ILove;
 }) {
   return (
     <Link
       href={`/profile/${user.id}`}
       className={clsx(
         !small && 'border-[5px] border-pink',
+        user.isMatch && 'border-[5px] border-blue-500',
         small ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',
         'block'
       )}
@@ -38,21 +39,31 @@ export default function ProfileCard({
             <p className="text-white font-semibold text-sm">NEW</p>
           </div>
         ) : (
-          <div className="bg-pink text-white font-bold px-5 pb-1 rounded-b-2xl text-sm">
-            <p>100% Match</p>
+          <div className={clsx(
+            "bg-pink text-white font-bold px-5 pb-1 rounded-b-2xl text-sm",
+            user.isMatch && "bg-blue-500"
+          )}>
+            <p>
+              {user.isMatch
+                ? "It's a match!"
+                : user.compatibilityScore + "% Match" }
+            </p>
           </div>
         )}
         <div className="flex flex-col items-center mb-3 mt-auto">
-          <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-1 px-3 text-white text-sm bg-white/30 font-semibold w-fit mb-1">
-            <p>{user.distance} km away</p>
-          </div>
+          {user.distance && user.distance > 0 ? (
+            <div className="border border-[#ffffff1a] backdrop-blur-sm rounded-full py-1 px-3 text-white text-sm bg-white/30 font-semibold w-fit mb-1">
+              <p>{user.distance} km away</p>
+            </div>
+          ) : null}
+
           <div className="flex items-center gap-2">
             <p className="font-extrabold text-white text-xl">
               {user.firstName}, {user.age}
             </p>
-            {user.isOnline && (
+            {user.isOnline ? (
               <div className="bg-green-300 h-1.5 w-1.5 rounded-full" />
-            )}
+            ) : null}
           </div>
           <p className="text-[#C0AFC0] font-semibold text-sm tracking-wider uppercase">
             {user.city}
