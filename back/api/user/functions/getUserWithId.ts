@@ -120,6 +120,7 @@ export async function getUserWithId(
         hb.user_id = u.id AND hb.blocked_user_id = :connectedUserId
       WHERE
         u.id = :userId
+        AND u.isVerified = 1
         AND u.isComplete = 1
     `;
 

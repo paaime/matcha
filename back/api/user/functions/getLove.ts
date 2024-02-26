@@ -49,8 +49,6 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
     const myLat = myConsent ? myLoc?.split(',')[0] : 0;
     const myLon = myConsent ? myLoc?.split(',')[1] : 0;
 
-    // console.log({ myLoc, myGender, myPreferences });
-
     const query = `
       SELECT
         u.id,
@@ -81,6 +79,7 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
       WHERE
         u.id != :userId
         AND u.isVerified = 1
+        AND u.isComplete = 1
         AND u.gender = :myPreferences
         AND u.sexualPreferences = :myGender
         AND u.id NOT IN (
@@ -180,8 +179,6 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
         distance: myConsent ? Math.round(row.distance) : -1,
         compatibilityScore: row.compatibilityScore,
       };
-
-      // console.log(user.firstName, user.compatibilityScore);
 
       // Push user object to the array
       users.push(user);
