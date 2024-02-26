@@ -8,9 +8,7 @@ export async function getFiltersInfos(res: Response): Promise<void> {
     const db = await connectToDatabase();
 
     // Get all interests from Tags table and min/max age and fameRating from User table
-    const [rows] = (await db.query(
-      'SELECT DISTINCT tagName FROM Tags'
-    )) as any;
+    const [rows] = (await db.query('SELECT DISTINCT tagName FROM Tags')) as any;
 
     // Get min and max age and fameRating from User table
     const [rowsMinMax] = (await db.query(
@@ -22,7 +20,7 @@ export async function getFiltersInfos(res: Response): Promise<void> {
     // Iterate over the rows and create an array of interests
     for (const row of rows) {
       interests.push(row.tagName);
-    } 
+    }
 
     // Close the connection
     await db.end();

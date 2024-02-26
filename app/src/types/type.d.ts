@@ -12,7 +12,8 @@ export type Filters = {
   maxAge: number;
   minFameRating: number;
   maxFameRating: number;
-}
+  maxDistance: number;
+};
 
 export type Gender = 'female' | 'male' | 'other';
 export type SexualPreferences = 'female' | 'male' | 'other';
