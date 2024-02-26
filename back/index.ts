@@ -10,7 +10,6 @@ import userPost from './api/user/post';
 import userPut from './api/user/put';
 import authGet from './api/auth/get';
 import authPost from './api/auth/post';
-import socketws from './websocket/post';
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
 
@@ -47,9 +46,6 @@ app.use('/user', userGet, userPost, userPut);
 
 // Initialiser IO
 initializeIO(server);
-
-// Notification route (WebSocket)
-app.use('/notification', socketws);
 
 // Start web server
 server.listen(PORT, () => {
