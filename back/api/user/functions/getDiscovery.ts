@@ -6,7 +6,10 @@ import { RequestUser } from '../../../types/express';
 
 const MAX_DAYS = 7;
 
-export async function getDiscovery(req: RequestUser, res: Response): Promise<void> {
+export async function getDiscovery(
+  req: RequestUser,
+  res: Response
+): Promise<void> {
   try {
     const userId = req.user.id;
 
@@ -51,6 +54,7 @@ export async function getDiscovery(req: RequestUser, res: Response): Promise<voi
         u.pictures,
         u.isOnline,
         u.isVerified,
+        u.isComplete,
         IF(u.consentLocation = 1, (
           6371 * 
           acos(

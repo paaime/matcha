@@ -45,7 +45,7 @@ export const getAuthId = (req: RequestUser): number => {
   }
 
   return decodedId;
-}
+};
 
 export const safeUserId = (id: number): boolean => {
   // Checl if is a positive finite integer
@@ -53,4 +53,4 @@ export const safeUserId = (id: number): boolean => {
     return false;
   }
   return true;
-}
+};

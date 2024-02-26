@@ -22,6 +22,7 @@ export async function getAllUsers(res: Response): Promise<void> {
         u.biography,
         u.pictures,
         u.fameRating,
+        u.isComplete,
         t.id AS interestId,
         t.tagName AS interestName
       FROM
@@ -30,10 +31,12 @@ export async function getAllUsers(res: Response): Promise<void> {
         Tags t
       ON
         u.id = t.user_id
+      WHERE
+        u.isComplete = 1
     `;
 
     // Execute the query
-    const [rows] = await db.query(query) as any;
+    const [rows] = (await db.query(query)) as any;
 
     // Close the connection
     await db.end();
@@ -43,7 +46,7 @@ export async function getAllUsers(res: Response): Promise<void> {
 
       res.status(404).json({
         error: 'Not found',
-        message: 'No users found'
+        message: 'No users found',
       });
       return;
     }
@@ -76,7 +79,7 @@ export async function getAllUsers(res: Response): Promise<void> {
         isBlocked: !!row.isBlocked,
         hasBlocked: !!row.hasBlocked,
         isVerified: !!row.isVerified,
-        interests: []
+        interests: [],
       };
 
       // Push user object to the array
@@ -101,11 +104,11 @@ export async function getAllUsers(res: Response): Promise<void> {
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
+    const code = e?.code || 'Unknown error';
+    const message = e?.message || 'Unknown message';
 
     console.error({ code, message });
-    
+
     res.status(501).json({
       error: 'Server error',
       message: 'An error occurred while getting user information',

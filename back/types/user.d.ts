@@ -1,4 +1,4 @@
-import { Notification } from "./type";
+import { Notification } from './type';
 
 export interface IPage {
   id: number;
@@ -34,7 +34,6 @@ export interface IUser {
   created_at: string;
 }
 
-
 export interface ILove {
   id: number;
   isOnline: boolean;
@@ -62,6 +61,7 @@ interface IUserSettings {
   id: number;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'
+  isComplete: boolean;
   lastConnection: string;
   created_at: string;
   firstName: string;

@@ -37,7 +37,6 @@ export default function SignInForm({
   });
 
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
-    console.log(data);
     const { email, password } = data;
     try {
       await axios.post(

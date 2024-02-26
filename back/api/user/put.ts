@@ -10,6 +10,7 @@ import { upName } from './functions/upName';
 import { upAge } from './functions/upAge';
 import { upEmail } from './functions/upEmail';
 import { upPassword } from './functions/upPassword';
+import { upBio } from './functions/upBio';
 
 const router = express.Router();
 
@@ -35,6 +36,10 @@ router.put('/name', async (req: RequestUser, res: Response) => {
 
 router.put('/age', async (req: RequestUser, res: Response) => {
   await upAge(req, res);
+});
+
+router.put('/bio', async (req: RequestUser, res: Response) => {
+  await upBio(req, res);
 });
 
 router.put('/email', async (req: RequestUser, res: Response) => {

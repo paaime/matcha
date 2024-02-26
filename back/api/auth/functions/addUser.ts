@@ -1,13 +1,16 @@
 import { Response } from 'express';
 import bcrypt from 'bcrypt';
 import { connectToDatabase } from '../../../utils/db';
-import { ageRegex, biographyRegex, genderEnum, nameRegex, picturesRegex, preferenceEnum } from '../../../types/regex';
+import { emailRegex, nameRegex, passwordRegex } from '../../../types/regex';
 import { getEmailData } from '../../../utils/emails';
 import { transporter } from '../../..';
 
-export const checkIfFieldExist = (name: string, field: string, res: Response): number => {
+export const checkIfFieldExist = (
+  name: string,
+  field: string,
+  res: Response
+): number => {
   if (!field || field === '') {
-
     res.status(400).json({
       error: 'Bad request',
       message: `Property '${name}' is missing`,
@@ -17,94 +20,63 @@ export const checkIfFieldExist = (name: string, field: string, res: Response): n
   }
 
   return 0;
-}
+};
 
-export async function addUser(body: any, res: Response): Promise<undefined>{
+export async function addUser(body: any, res: Response): Promise<undefined> {
   try {
     // Get infos from body
-    const { lastName, firstName, age, password, email, loc, city, gender, sexualPreferences, biography, pictures } = body;
+    const { lastName, firstName, password, confirmPassword, email } = body;
 
     // Check if fields exist
-    if (checkIfFieldExist("lastName", lastName, res)) return;
-    if (checkIfFieldExist("firstName", firstName, res)) return;
-    if (checkIfFieldExist("age", age, res)) return;
-    if (checkIfFieldExist("password", password, res)) return;
-    if (checkIfFieldExist("email", email, res)) return;
-    if (checkIfFieldExist("gender", gender, res)) return;
-    if (checkIfFieldExist("sexualPreferences", sexualPreferences, res)) return;
-    if (checkIfFieldExist("biography", biography, res)) return;
+    if (checkIfFieldExist('lastName', lastName, res)) return;
+    if (checkIfFieldExist('firstName', firstName, res)) return;
+    if (checkIfFieldExist('password', password, res)) return;
+    if (checkIfFieldExist('confirmPassword', confirmPassword, res)) return;
+    if (checkIfFieldExist('email', email, res)) return;
+
+    // Check if password and confirmPassword are the same
+    if (password !== confirmPassword) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Passwords do not match',
+      });
+      return;
+    }
 
     // Trim all values
     const newUser = {
       firstName: firstName?.trim(),
       lastName: lastName?.trim(),
-      age: parseInt(age),
       passwordHashed: password,
       email: email?.trim(),
-      loc: loc?.trim(),
-      city: city?.trim(),
-      gender: gender?.trim(),
-      sexualPreferences: sexualPreferences?.trim(),
-      biography: biography?.trim(),
-      pictures: pictures?.trim()
     };
 
     // Test values with regex
     if (!nameRegex.test(newUser.firstName)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'First name is not valid'
+        message: 'First name is not valid',
       });
       return;
     }
     if (!nameRegex.test(newUser.lastName)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Last name is not valid'
+        message: 'Last name is not valid',
       });
       return;
     }
-    if (!ageRegex.test(newUser.age.toString())) {
+    if (!emailRegex.test(newUser.email)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Age is not valid'
+        message: 'Email is not valid',
       });
       return;
     }
-    if (!genderEnum.includes(newUser.gender)) {
+    if (!passwordRegex.test(newUser.passwordHashed)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Gender is not valid'
-      });
-      return;
-    }
-    if (!preferenceEnum.includes(newUser.sexualPreferences)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Sexual preferences is not valid'
-      });
-      return;
-    }
-    if (!biographyRegex.test(newUser.biography)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Biography is not valid'
-      });
-      return;
-    }
-    // Location is optional
-    if (newUser.loc.length > 0 && !picturesRegex.test(newUser.pictures)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Pictures is not valid'
-      });
-      return;
-    }
-    // Pictures is optional
-    if (newUser.pictures.length > 0 && !picturesRegex.test(newUser.pictures)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Pictures is not valid'
+        message: 'Password is not valid',
       });
       return;
     }
@@ -113,13 +85,15 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
 
     // Check if email already exists
     const queryCheckEmail = 'SELECT * FROM User WHERE email = ?';
-    const [rowsCheckEmail] = await db.query(queryCheckEmail, [newUser.email]) as any;
+    const [rowsCheckEmail] = (await db.query(queryCheckEmail, [
+      newUser.email,
+    ])) as any;
 
     if (rowsCheckEmail.length > 0) {
       db.end();
       res.status(400).json({
         error: 'Bad request',
-        message: 'Email already exists: ' + newUser.email
+        message: 'Email already exists: ' + newUser.email,
       });
       return;
     }
@@ -128,24 +102,22 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
     const passwordHashed = bcrypt.hashSync(newUser.passwordHashed, 10);
 
     // Generate token to verify email
-    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const token =
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
     const tokenHashed = bcrypt.hashSync(token, 10);
-    
-    const query = 'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, gender, sexualPreferences, biography, pictures) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+    const query =
+      'INSERT INTO User (lastName, firstName, passwordHashed, email, emailToken) VALUES (?, ?, ?, ?, ?)';
 
     // Insert the user into the database and return the id
-    const [rows] = await db.query(query, [
+    const [rows] = (await db.query(query, [
       newUser.lastName,
       newUser.firstName,
-      newUser.age,
       passwordHashed,
       newUser.email,
       tokenHashed,
-      newUser.gender,
-      newUser.sexualPreferences,
-      newUser.biography,
-      newUser.pictures || null
-    ]) as any;
+    ])) as any;
 
     const id = rows.insertId;
 
@@ -156,8 +128,13 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       throw new Error('User not added');
     }
 
-    const confirmLink = process.env.NEXT_PUBLIC_API + '/auth/confirm/' + newUser.email + '/' + token;
-    const emailData = getEmailData("verifyEmail");
+    const confirmLink =
+      process.env.NEXT_PUBLIC_API +
+      '/auth/confirm/' +
+      newUser.email +
+      '/' +
+      token;
+    const emailData = getEmailData('verifyEmail');
 
     if (!emailData) {
       throw new Error('Email template not found');
@@ -170,7 +147,7 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       text: emailData.text,
       html: emailData.html
         .replace('[FIRST_NAME]', newUser.firstName)
-        .replaceAll('[CONFIRM_LINK]', confirmLink)
+        .replaceAll('[CONFIRM_LINK]', confirmLink),
     };
 
     transporter.sendMail(mailData, function (err, info) {
@@ -183,14 +160,14 @@ export async function addUser(body: any, res: Response): Promise<undefined>{
       id: id,
       lastName: newUser.lastName,
       firstName: newUser.firstName,
-      email: newUser.email
+      email: newUser.email,
     });
   } catch (error) {
     console.error('Error while adding user:', error);
 
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while adding the user'
+      message: 'An error occurred while adding the user',
     });
   }
 }

@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 type FormFields = z.infer<typeof SignUpSchema>;
 
@@ -32,31 +33,18 @@ export default function SignUpForm() {
   const handleRegister: SubmitHandler<FormFields> = async (data) => {
     const { email, firstName, lastName, password, confirmPassword } = data;
     try {
-      const response = await fetch(`/api/register`, {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          firstName,
-          lastName,
-          password,
-          confirmPassword,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await axios.post(`${process.env.NEXT_PUBLIC_API}/auth/register`, {
+        email,
+        firstName,
+        lastName,
+        password,
+        confirmPassword,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error_msg || 'Something went wrong');
-      }
-
       setOpen(true);
     } catch (err) {
-      toast('Error', {
-        description: err.message,
-      });
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else toast('Error', { description: 'Something went wrong' });
     }
   };
 

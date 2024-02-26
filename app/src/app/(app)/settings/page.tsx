@@ -3,10 +3,11 @@ import Gallery from '@/components/Settings/Gallery';
 import Age from '@/components/Settings/Age';
 import Interests from '@/components/Settings/Interests';
 import Gender from '@/components/Settings/Gender';
-import Other from '@/components/Settings/Names';
+import Names from '@/components/Settings/Names';
 import Email from '@/components/Settings/Email';
 import Password from '@/components/Settings/Password';
 import SexualPreference from '@/components/Settings/SexualPreference';
+import Bio from '@/components/Settings/Bio';
 
 export const metadata = {
   title: 'Matcha | Settings',
@@ -31,7 +32,8 @@ export default function Page() {
           <Interests />
           <Gender />
           <SexualPreference />
-          <Other />
+          <Names />
+          <Bio />
           <Age />
         </TabsContent>
         <TabsContent value="security">

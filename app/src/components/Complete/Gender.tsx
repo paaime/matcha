@@ -5,12 +5,25 @@ import { AiOutlineMan, AiOutlineWoman } from 'react-icons/ai';
 import { LiaTransgenderSolid } from 'react-icons/lia';
 import { Button } from '../ui/button';
 import { Dispatch, SetStateAction } from 'react';
+import { CompleteForm, Gender } from '@/types/type';
+import { toast } from 'sonner';
 
 export default function Gender({
   setStep,
+  data,
+  setData,
 }: {
   setStep: Dispatch<SetStateAction<number>>;
+  data: CompleteForm;
+  setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {
+  const handleNext = () => {
+    if (!['male', 'female', 'other'].includes(data.gender)) {
+      return toast.error('Please select a gender.');
+    }
+    setStep((prev) => prev + 1);
+  };
+
   return (
     <div className="flex flex-col animate__animated animate__fadeIn animate__faster">
       <h3 className="text-2xl font-extrabold text-center mb-5">
@@ -20,9 +33,13 @@ export default function Gender({
         <RadioGroup
           className="flex flex-wrap justify-center gap-5 pt-2"
           id="gender"
+          onValueChange={(value: Gender) =>
+            setData((prev) => ({ ...prev, gender: value }))
+          }
+          defaultValue={data.gender}
         >
           <Label className="bg-white flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
-            <RadioGroupItem value="man" className="sr-only" />
+            <RadioGroupItem value="male" className="sr-only" />
             <div className="flex items-center justify-center h-12 w-12 bg-primary rounded-full">
               <AiOutlineMan className="h-6 w-6 text-white" />
             </div>
@@ -31,7 +48,7 @@ export default function Gender({
             </span>
           </Label>
           <Label className="bg-white flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
-            <RadioGroupItem value="women" className="sr-only" />
+            <RadioGroupItem value="female" className="sr-only" />
             <div className="flex items-center justify-center h-12 w-12 bg-pink rounded-full">
               <AiOutlineWoman className="h-6 w-6 text-white" />
             </div>
@@ -40,20 +57,17 @@ export default function Gender({
             </span>
           </Label>
           <Label className="bg-white flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
-            <RadioGroupItem value="transgender" className="sr-only" />
+            <RadioGroupItem value="other" className="sr-only" />
             <div className="flex items-center justify-center h-12 w-12 bg-primary/80 rounded-full">
               <LiaTransgenderSolid className="h-6 w-6 text-white" />
             </div>
             <span className="text-center text-base w-full font-semibold">
-              Transgender
+              Other
             </span>
           </Label>
         </RadioGroup>
       </div>
-      <Button
-        className="mx-auto mt-10 w-52"
-        onClick={() => setStep((prev) => prev + 1)}
-      >
+      <Button className="mx-auto mt-10 w-52" onClick={handleNext}>
         Continue
       </Button>
     </div>

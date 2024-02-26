@@ -13,3 +13,15 @@ export type Filters = {
   minFameRating: number;
   maxFameRating: number;
 }
+
+export type Gender = 'female' | 'male' | 'other';
+export type SexualPreferences = 'female' | 'male' | 'other';
+
+export type CompleteForm = {
+  gender: Gender;
+  sexualPreferences: SexualPreferences;
+  age: number;
+  interests: string[];
+  pictures: string;
+  biography: string;
+};

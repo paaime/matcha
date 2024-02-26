@@ -2,10 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import SimpleModal from '@/components/ui/Modals/SimpleModal';
-import { SignUpSchema } from '@/utils/validator';
+import { NameSchema } from '@/utils/validator';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -16,29 +14,46 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { toast } from 'sonner';
+import customAxios from '@/utils/axios';
+import { useUserStore } from '@/store';
 
-type FormFields = z.infer<typeof SignUpSchema>;
+type FormFields = z.infer<typeof NameSchema>;
 
-export default function Other() {
+export default function Names() {
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
   // Form
   const form = useForm<FormFields>({
-    resolver: zodResolver(SignUpSchema),
+    resolver: zodResolver(NameSchema),
   });
 
-  const handleRegister = () => {};
+  const handleSubmit: SubmitHandler<FormFields> = async (data) => {
+    try {
+      const { firstName, lastName } = data;
+      await customAxios.put('/user/name', {
+        first: firstName,
+        last: lastName,
+      });
+      setUser({ ...user, firstName, lastName });
+      toast.success('Updated');
+    } catch (err) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else toast.error('An error occurred');
+    }
+  };
 
   return (
     <div className="flex flex-col border-t mt-10 pt-5">
       <h3 className="text-xl font-extrabold mb-5">Names</h3>
       <Form {...form}>
-        <form
-          className="space-y-6"
-          onSubmit={form.handleSubmit(handleRegister)}
-        >
+        <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="firstName"
+              defaultValue={user.firstName}
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>First Name</FormLabel>
@@ -52,6 +67,7 @@ export default function Other() {
             <FormField
               control={form.control}
               name="lastName"
+              defaultValue={user.lastName}
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Last Name</FormLabel>
@@ -63,9 +79,15 @@ export default function Other() {
               )}
             />
           </div>
+          <Button
+            isLoading={form.formState.isSubmitting}
+            className="mt-10 w-full"
+            type="submit"
+          >
+            Save
+          </Button>
         </form>
       </Form>
-      <Button className="mt-10">Save</Button>
     </div>
   );
 }
