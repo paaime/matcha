@@ -10,6 +10,7 @@ import { RequestUser } from '../../types/express';
 import { getAuthId } from '../../middlewares/authCheck';
 import { getLikes } from './functions/getLikes';
 import { getLikesSent } from './functions/getLikesSent';
+import { getFiltersInfos } from './functions/getFiltersInfos';
 
 const router = express.Router();
 
@@ -39,6 +40,10 @@ router.get('/getLikes', async (req: RequestUser, res: Response) => {
 
 router.get('/getLikesSent', async (req: RequestUser, res: Response) => {
   await getLikesSent(req, res);
+});
+
+router.get('/filtersInfos', async (req: RequestUser, res: Response) => {
+  await getFiltersInfos(res);
 });
 
 router.get('/:id', async (req: RequestUser, res: Response) => {
