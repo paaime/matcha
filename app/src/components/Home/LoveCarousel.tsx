@@ -66,6 +66,25 @@ export default function LoveCarousel() {
     }
   };
 
+  const superLike = async () => {
+    if (currentIndex === -1) return;
+    try {
+      await customAxios.post(`/user/like/${users[currentIndex].id}`, {
+        superLike: true,
+      });
+      setCurrentIndex(currentIndex - 1);
+      setDirection('right');
+    } catch (err) {
+      console.log(err);
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else
+        toast('An error occured', {
+          description: 'Error',
+        });
+    }
+  };
+
   const cardVariants = {
     current: {
       opacity: 1,
@@ -158,6 +177,7 @@ export default function LoveCarousel() {
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.9 }}
+            onClick={superLike}
             className={clsx(
               '!h-14 !w-14 !rounded-full !bg-primary shadow-xl text-white',
               buttonVariants({ variant: 'secondary' })

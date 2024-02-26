@@ -39,7 +39,11 @@ export async function addLike(
       return;
     }
 
+    const { superLike } = req.body;
+
     const db = await connectToDatabase();
+
+    const isSuper = superLike === true;
 
     // Check if the user exists
     const [rows] = (await db.query('SELECT id FROM User WHERE id = ?', [
@@ -55,8 +59,8 @@ export async function addLike(
     }
 
     // Add the like
-    const query = 'INSERT INTO UserLike (user_id, liked_user_id) VALUES (?, ?)';
-    const [rowsLikes] = (await db.query(query, [user_id, liked_id])) as any;
+    const query = 'INSERT INTO UserLike (user_id, liked_user_id, isSuperLike) VALUES (?, ?, ?)';
+    const [rowsLikes] = (await db.query(query, [user_id, liked_id, isSuper])) as any;
 
     if (!rowsLikes || rowsLikes.affectedRows === 0) {
       // Close the connection
@@ -99,7 +103,7 @@ export async function addLike(
     }
 
     await sendNotification(liked_id.toString(), {
-      content: 'You have a new like',
+      content: isSuper ? 'You have a new super like' : 'You have a new like',
       redirect: '/likes',
       related_user_id: user_id,
     });
