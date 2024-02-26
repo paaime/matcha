@@ -1,16 +1,96 @@
 import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
-import { ILove, IUser } from '../../../types/user';
+import { ILove } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 
-const MIN_AGE = 18;
-const MAX_AGE = 99;
+const getMinAge = (customFilter: boolean, newValue: string) => {
+  const defaultValue = 18;
 
-const MIN_FAME = 0;
-const MAX_FAME = 1000;
+  if (customFilter === false) {
+    return defaultValue;
+  }
 
-const MAX_DISTANCE = 10000e3; // 10 000 km
+  const intValue = parseInt(newValue, 10);
+
+  if (Number.isInteger(intValue) && intValue >= 18 && intValue <= 100) {
+    return Math.abs(intValue);
+  }
+
+  return defaultValue;
+}
+
+const getMaxAge = (customFilter: boolean, newValue: string) => {
+  const defaultValue = 99;
+
+  if (customFilter === false) {
+    return defaultValue;
+  }
+
+  const intValue = parseInt(newValue, 10);
+
+  if (Number.isInteger(intValue) && intValue >= 18 && intValue <= 100) {
+    return Math.abs(intValue);
+  }
+
+  return defaultValue;
+}
+
+const getMinFame = (customFilter: boolean, newValue: string) => {
+  const defaultValue = 0;
+
+  if (customFilter === false) {
+    return defaultValue;
+  }
+
+  const intValue = parseInt(newValue, 10);
+
+  if (Number.isInteger(intValue) && intValue >= 0 && intValue <= 100000) {
+    return Math.abs(intValue);
+  }
+
+  return defaultValue;
+}
+
+const getMaxFame = (customFilter: boolean, newValue: string) => {
+  const defaultValue = 400;
+
+  if (customFilter === false) {
+    return defaultValue;
+  }
+
+  const intValue = parseInt(newValue, 10);
+
+  if (Number.isInteger(intValue) && intValue >= 0 && intValue <= 100000) {
+    return Math.abs(intValue);
+  }
+
+  return defaultValue;
+}
+
+const getMaxDistance = (customFilter: boolean, newValue: string) => {
+  const defaultValue = 500000; // 500 000
+
+  if (customFilter === false) {
+    return defaultValue;
+  }
+
+  const intValue = parseInt(newValue, 10);
+
+  if (!Number.isInteger(intValue) || intValue < 1) {
+    return defaultValue;
+  }
+
+  if (intValue === 0) {
+    return 10;
+  } else if (intValue === 10) {
+    return 20;
+  } else if (intValue === 50) {
+    return 100;
+  }
+
+  return defaultValue;
+}
 
 export async function getLove(req: RequestUser, res: Response, customFilter: boolean = false): Promise<void> {
   try {
@@ -22,6 +102,26 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
         message: 'Invalid user id',
       });
       return;
+    }
+
+    let minAge = getMinAge(customFilter, req.query.minAge as string);
+    let maxAge = getMaxAge(customFilter, req.query.maxAge as string);
+    let minFame = getMinFame(customFilter, req.query.minFame as string);
+    let maxFame = getMaxFame(customFilter, req.query.maxFame as string);
+    let maxDistance = getMaxDistance(customFilter, req.query.maxDistance as string);
+
+    console.log({ minAge, maxAge, minFame, maxFame, maxDistance });
+
+    if (minAge > maxAge) {
+      const temp = minAge;
+      minAge = maxAge;
+      maxAge = temp;
+    }
+
+    if (minFame > maxFame) {
+      const temp = minFame;
+      minFame = maxFame;
+      maxFame = temp;
     }
 
     const db = await connectToDatabase();
@@ -46,8 +146,8 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
     const myGender = rowsPreferences[0].gender;
     const myPreferences = rowsPreferences[0].sexualPreferences;
 
-    const myLat = myConsent ? myLoc?.split(',')[0] : 0;
-    const myLon = myConsent ? myLoc?.split(',')[1] : 0;
+    const myLat = myLoc?.split(',')[0];
+    const myLon = myLoc?.split(',')[1];
 
     const query = `
       SELECT
@@ -71,6 +171,16 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
             sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
           )
         ), -1) AS distance,
+        IF(:myLat != 0 AND :myLon != 0 AND u.loc != '', (
+          6371 * 
+          acos(
+            cos(radians(:myLat)) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:myLon)) + 
+            sin(radians(:myLat)) * 
+            sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+          )
+        ), -1) AS estimatedDistance,
         (
           (100 - ABS(u.age - :myAge)) + (u.fameRating / 100)
         ) AS compatibilityScore
@@ -131,7 +241,7 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
             r.reported_user_id = :userId
         )
       HAVING
-        distance <= :maxDistance
+        estimatedDistance <= :maxDistance
         AND age >= :minAge
         AND age <= :maxAge
         AND fameRating >= :minFame
@@ -148,11 +258,11 @@ export async function getLove(req: RequestUser, res: Response, customFilter: boo
       userId,
       myGender,
       myPreferences,
-      maxDistance: MAX_DISTANCE,
-      minAge: MIN_AGE,
-      maxAge: MAX_AGE,
-      minFame: MIN_FAME,
-      maxFame: MAX_FAME,
+      maxDistance,
+      minAge,
+      maxAge,
+      minFame,
+      maxFame
     })) as any;
 
     // Close the connection
