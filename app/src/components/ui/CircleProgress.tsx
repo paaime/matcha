@@ -1,4 +1,14 @@
-export default function CircleProgress() {
+// Adaptive circle progress bar
+export const CircleProgress = ({ percent }: { percent: number }) => {
+
+  percent = percent > 100 ? 100 : percent;
+  percent = percent < 0 ? 0 : percent;
+
+  percent = Math.floor(percent);
+
+  const circumference = Math.PI * 2 * 24;
+  const strokeDashoffset = circumference - (percent / 100) * circumference;
+
   return (
     <div className="inline-flex items-center justify-center overflow-hidden rounded-full">
       <svg className="w-14 h-14">
@@ -14,24 +24,18 @@ export default function CircleProgress() {
         <circle
           className="text-white"
           strokeWidth="5"
-          strokeDasharray="100"
-          strokeDashoffset="0"
+          strokeDasharray={`${circumference} ${circumference}`}
+          strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           stroke="currentColor"
           fill="transparent"
           r="24"
           cx="27"
           cy="27"
-          // stroke-dasharray="188.49555921538757"
-          // stroke-dashoffset="54.6637121724624"
         ></circle>
       </svg>
-      <span
-        className="absolute font-bold text-white -mt-1"
-        x-text="`${percent}%`"
-      >
-        80%
-      </span>
+
+      <span className="absolute font-bold text-white -mt-1">{percent}%</span>
     </div>
   );
-}
+};
