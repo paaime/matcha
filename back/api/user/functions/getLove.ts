@@ -70,7 +70,7 @@ const getMaxFame = (customFilter: boolean, newValue: string) => {
 };
 
 const getMaxDistance = (customFilter: boolean, newValue: string) => {
-  const defaultValue = 500000; // 500 000
+  const defaultValue = 5; // 5km
 
   if (customFilter === false) {
     return defaultValue;
@@ -88,6 +88,8 @@ const getMaxDistance = (customFilter: boolean, newValue: string) => {
     return 20;
   } else if (intValue === 50) {
     return 100;
+  } else if (intValue === 100) {
+    return 500000; // 500 000
   }
 
   return defaultValue;
@@ -120,7 +122,7 @@ export async function getLove(
 
     let interests: string[] = [];
 
-    console.log(req.query.interests);
+    console.log( req.query); // TODO: Fix distance range
 
     if (minAge > maxAge) {
       const temp = minAge;
