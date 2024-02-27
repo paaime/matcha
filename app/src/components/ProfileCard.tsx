@@ -18,8 +18,8 @@ export default function ProfileCard({
         !small && 'border-[5px] border-pink',
         small ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',
         'block',
-        user.isSuperLike && 'border-2 border-orange-500',
-        user.isMatch && 'border-2 border-yellow-500'
+        user.isSuperLike && !user.isMatch && '!border-orange-500',
+        user.isMatch && '!border-yellow-500'
       )}
       style={{
         backgroundImage: `url(${pictures[0]})`,
@@ -44,8 +44,8 @@ export default function ProfileCard({
         ) : (
           <div className={clsx(
             "bg-pink text-white font-bold px-5 pb-1 rounded-b-2xl text-sm",
-            user.isSuperLike && "bg-orange-500",
-            user.isMatch && "bg-yellow-500"
+            user.isSuperLike && !user.isMatch && "!bg-orange-500",
+            user.isMatch && "!bg-yellow-500"
           )}>
             <p>
               {user.isSuperLike && "⭐️ "}

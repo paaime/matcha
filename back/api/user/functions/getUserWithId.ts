@@ -84,24 +84,41 @@ export async function getUserWithId(
             sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
           )
         ), -1) AS distance,
-        IF(m.id IS NOT NULL, true, false) AS isMatch,
-        m.id AS matchId,
         IF(l.id IS NOT NULL, true, false) AS isLiked,
+        IF(l.id IS NOT NULL, l.created_at, null) AS likeTime,
         IF(hl.id IS NOT NULL, true, false) AS hasLiked,
+        IF(hl.id IS NOT NULL, hl.created_at, null) AS hasLikeTime,
         IF(b.id IS NOT NULL, true, false) AS isBlocked,
-        IF(hb.id IS NOT NULL, true, false) AS hasBlocked
-      FROM
-        User u
+        IF(hb.id IS NOT NULL, true, false) AS hasBlocked,
+        m.user_id IS NOT NULL AS isMatch,
+        m.id AS matchId,
+        m.created_at AS matchTime,
+        
+        IF(
+          (SELECT COUNT(*) FROM UserLike WHERE user_id = :connectedUserId AND liked_user_id = :userId AND isSuperLike = 1) > 0,
+          true,
+          false
+        ) AS isSuperLike,
+
+        IF(
+          (SELECT COUNT(*) FROM UserLike WHERE user_id = :userId AND liked_user_id = :connectedUserId AND isSuperLike = 1) > 0,
+          true,
+          false
+        ) AS hasSuperLike
+        
+
+        FROM
+          User u
+        LEFT JOIN
+          Matchs m
+        ON
+          (m.user_id = :connectedUserId AND m.other_user_id = :userId)
+        OR
+          (m.other_user_id = :connectedUserId AND m.user_id = :userId)
       LEFT JOIN
         Tags t
       ON
         u.id = t.user_id
-      LEFT JOIN
-        Matchs m
-      ON
-        (u.id = m.user_id AND m.other_user_id = :userId)
-      OR
-        (u.id = m.other_user_id AND m.user_id = :connectedUserId)
       LEFT JOIN
         UserLike l
       ON
@@ -164,8 +181,13 @@ export async function getUserWithId(
       fameRating: rows[0].fameRating,
       isMatch: !!rows[0].isMatch,
       matchId: rows[0].matchId || undefined,
+      matchTime: rows[0].matchTime || undefined,
       isLiked: !!rows[0].isLiked,
+      isSuperLike: !!rows[0].isSuperLike,
+      isLikeTime: rows[0].likeTime || undefined,
       hasLiked: !!rows[0].hasLiked,
+      hasSuperLike: !!rows[0].hasSuperLike,
+      hasLikeTime: rows[0].hasLikeTime || undefined,
       isBlocked: !!rows[0].isBlocked,
       hasBlocked: !!rows[0].hasBlocked,
       isVerified: !!rows[0].isVerified,
