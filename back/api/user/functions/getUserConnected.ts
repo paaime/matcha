@@ -48,6 +48,7 @@ export async function getUserConnected(
         n.id AS notificationId,
         n.content AS notificationContent,
         n.redirect AS notificationRedirect,
+        n.related_user_id AS notificationRelatedUserId,
         n.created_at AS notificationCreatedAt
       FROM
         User u
@@ -128,8 +129,7 @@ export async function getUserConnected(
           id: row.notificationId,
           content: row.notificationContent,
           redirect: row.notificationRedirect,
-          // TODO : Put the real related user id
-          related_user_id: 1,
+          related_user_id: row.notificationRelatedUserId,
           created_at: row.notificationCreatedAt,
         });
     }
