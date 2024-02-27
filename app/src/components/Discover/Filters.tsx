@@ -30,8 +30,6 @@ const getResultsLink = (filters: Filters, interests: string[]) => {
 
   const interestsString = interests.join(',');
 
-  console.log(`/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`);
-
   return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`;
 };
 
