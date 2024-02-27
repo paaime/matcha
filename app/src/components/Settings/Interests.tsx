@@ -6,21 +6,7 @@ import { Button } from '../ui/button';
 import { useState } from 'react';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
-
-const fakeInterests = [
-  '🎵 Music',
-  '🚀 Travel',
-  '🍔 Food',
-  '💙 Fashion',
-  '💻 Technology',
-  '🕹️ Gaming',
-  '⚽️ Sports',
-  '🎨 Art',
-  '📸 Photography',
-  '🏋️ Fitness',
-  '📚 Reading',
-  '🖊️ Writing',
-];
+import { interestsList } from '@/types/list';
 
 export default function Interests() {
   const [loading, setLoading] = useState(false);
@@ -67,7 +53,7 @@ export default function Interests() {
     <div className="flex flex-col border-t mt-10 pt-5">
       <h3 className="text-xl font-extrabold mb-5">Your interests</h3>
       <div className="flex flex-wrap gap-3 mx-auto">
-        {fakeInterests.map((interest, index) => (
+        {interestsList.map((interest, index) => (
           <Interest
             key={index}
             value={interest}

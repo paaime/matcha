@@ -2,7 +2,7 @@
 
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
-import { useFiltersStore } from '@/store';
+import { useFiltersStore, useInterestsStore } from '@/store';
 
 export const Interest = ({
   value,
@@ -19,6 +19,7 @@ export const Interest = ({
         className="sr-only"
         value={value}
         onCheckedChange={(checked) => {
+          if (!changeInterests) return;
           changeInterests(value, checked);
         }}
         defaultChecked={checked}
@@ -41,6 +42,15 @@ export const StaticInterest = ({ value }: { value: string }) => {
 
 export const OnlineInterests = () => {
   const { filters } = useFiltersStore();
+  const { interests, setInterests } = useInterestsStore();
+
+  const changeInterests = (value: string, checked: boolean) => {
+    if (checked) {
+      setInterests([...interests, value]);
+    } else {
+      setInterests(interests?.filter((interest: string) => interest !== value));
+    }
+  }
 
   return (
     <div className="flex flex-col">
@@ -57,7 +67,7 @@ export const OnlineInterests = () => {
             <Interest
               key={index}
               value={interest}
-              changeInterests={null}
+              changeInterests={changeInterests}
               checked={false}
             />
           ))}
@@ -68,7 +78,7 @@ export const OnlineInterests = () => {
             <Interest
               key={index}
               value={interest}
-              changeInterests={null}
+              changeInterests={changeInterests}
               checked={false}
             />
           ))}

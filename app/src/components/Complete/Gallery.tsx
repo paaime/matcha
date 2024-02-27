@@ -8,21 +8,6 @@ import { useUserStore } from '@/store';
 import { GalleryImage } from '../Settings/Gallery';
 import { toast } from 'sonner';
 
-const fakeInterests = [
-  '🎵 Music',
-  '🚀 Travel',
-  '🍔 Food',
-  '💙 Fashion',
-  '💻 Technology',
-  '🕹️ Gaming',
-  '⚽️ Sports',
-  '🎨 Art',
-  '📸 Photography',
-  '🏋️ Fitness',
-  '📚 Reading',
-  '🖊️ Writing',
-];
-
 export default function Gallery({
   setStep,
 }: {

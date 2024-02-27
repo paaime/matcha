@@ -46,7 +46,7 @@ export async function addRandom(
     const passwordHashed = bcrypt.hashSync(password, 10);
 
     const query =
-      'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, loc, city, gender, sexualPreferences, biography, pictures, isVerified, isComplete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      'INSERT INTO User (lastName, firstName, age, passwordHashed, email, emailToken, loc, city, consentLocation, gender, sexualPreferences, biography, pictures, isVerified, isComplete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
     // Insert the user into the database and return the id
     const [rows] = (await db.query(query, [
@@ -58,6 +58,7 @@ export async function addRandom(
       null,
       loc,
       city,
+      1,
       gender,
       sexualPreferences,
       biography,
