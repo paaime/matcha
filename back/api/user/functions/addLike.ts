@@ -47,7 +47,7 @@ export async function addLike(
     const isSuper = superLike === true;
 
     // Check if the user exists
-    const [rows] = (await db.query('SELECT id FROM User WHERE id = ?', [
+    const [rows] = (await db.query('SELECT firstName FROM User WHERE id = ?', [
       liked_id,
     ])) as any;
 
@@ -61,6 +61,8 @@ export async function addLike(
       });
       return;
     }
+
+    const firstName = rows[0].firstName;
 
     // Check if the user is blocked
     const [rowsBlocked] = (await db.query(
@@ -114,13 +116,13 @@ export async function addLike(
 
     if (rowsMatch && rowsMatch.length > 0) {
       await sendNotification(liked_id.toString(), {
-        content: 'You have a new match',
+        content: 'You have a new match 🎉',
         redirect: '/likes',
         related_user_id: user_id,
       });
 
       await sendNotification(user_id.toString(), {
-        content: 'You have a new match',
+        content: 'You have a new match 🎉',
         redirect: '/likes',
         related_user_id: liked_id,
       });
@@ -137,9 +139,15 @@ export async function addLike(
     }
 
     await sendNotification(liked_id.toString(), {
-      content: isSuper ? 'You have a new super like ⭐️' : 'You have a new like',
+      content: isSuper ? 'You have a new super like ⭐️' : 'You have a new like 👍',
       redirect: '/likes',
       related_user_id: user_id,
+    });
+
+    await sendNotification(user_id.toString(), {
+      content: `You have liked ${firstName}`,
+      redirect: '/likes',
+      related_user_id: liked_id,
     });
 
     res.status(200).json({
