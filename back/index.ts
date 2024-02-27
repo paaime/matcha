@@ -5,6 +5,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
 import requestIp from 'request-ip';
+import multer from 'multer';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
@@ -13,6 +14,7 @@ import authGet from './api/auth/get';
 import authPost from './api/auth/post';
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
+import path from 'path';
 
 const PORT = process.env.BACK_PORT;
 
@@ -20,7 +22,6 @@ const app = express();
 const server = http.createServer(app);
 
 app.set('trust proxy', true);
-
 
 // Default message
 app.get('/', (req: Request, res: Response) => {
@@ -31,7 +32,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use(
   cors({
     origin: process.env.DOMAIN,
-    credentials: true
+    credentials: true,
   })
 );
 app.use(express.json());
@@ -39,8 +40,10 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(requestIp.mw()); // TODO test if it works
+// Serve static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.use(requestIp.mw()); // TODO test if it works
 
 // Auth routes
 app.use('/auth', authGet, authPost);
@@ -65,9 +68,9 @@ server.listen(PORT, () => {
 export const transporter = nodemailer.createTransport({
   port: process.env.MAIL_PORT as unknown as number,
   host: process.env.MAIL_HOST,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASSWORD
-    },
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASSWORD,
+  },
   secure: true,
 });
