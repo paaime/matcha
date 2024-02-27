@@ -65,6 +65,7 @@ export interface IDiscovery {
 
 export interface IMapUser {
   id: number;
+  isConnected: boolean;
   isOnline: boolean;
   firstName: string;
   pictures: string;

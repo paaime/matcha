@@ -36,8 +36,6 @@ router.get('/getlove', async (req: RequestUser, res: Response) => {
 });
 
 router.get('/me', async (req: RequestUser, res: Response) => {
-  console.log('Client IP:', req.clientIp);
-
   await getUserConnected(req, res);
 });
 

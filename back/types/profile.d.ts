@@ -9,5 +9,5 @@ export interface IProfile {
   gender: string;
   fameRating: number;
   about: string;
-  gps: any; // TODO: LatLngExpression;
+  gps: any;
 }

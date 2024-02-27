@@ -3,13 +3,14 @@ import { ThrownError } from '../../../types/type';
 import { IDiscovery, IMapUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+import { getAuthId } from '../../../middlewares/authCheck';
 
 export async function getMapUsers(
   req: RequestUser,
   res: Response
 ): Promise<void> {
   try {
-    const userId = req.user.id;
+    const userId = getAuthId(req);
 
     if (!userId || !Number.isInteger(userId) || userId < 1) {
       res.status(400).json({
@@ -54,8 +55,7 @@ export async function getMapUsers(
       FROM
         User u
       WHERE
-        u.id != :userId
-        AND u.isVerified = 1
+        u.isVerified = 1
         AND u.isComplete = 1
         AND u.loc IS NOT NULL
         AND u.consentLocation = 1
@@ -86,6 +86,7 @@ export async function getMapUsers(
       const loc = row.loc.split(',');
 
       const user: IMapUser = {
+        isConnected: userId === row.id,
         id: row.id,
         isOnline: row.isOnline,
         firstName: row.firstName,
