@@ -3,7 +3,6 @@ import express from 'express';
 
 import { RequestUser } from '../../types/express';
 import { upInterests } from './functions/upInterests';
-import { upPictures } from './functions/upPictures';
 import { upGender } from './functions/upGender';
 import { upPreference } from './functions/upPreference';
 import { upName } from './functions/upName';
@@ -11,17 +10,10 @@ import { upAge } from './functions/upAge';
 import { upEmail } from './functions/upEmail';
 import { upPassword } from './functions/upPassword';
 import { upBio } from './functions/upBio';
-import { upload } from '../../middlewares/multer';
-import { ThrownError } from '../../types/type';
-import multer from 'multer';
 import { upImage } from './functions/upImage';
 import { safeUserId } from '../../middlewares/authCheck';
 
 const router = express.Router();
-
-router.put('/pictures', async (req: RequestUser, res: Response) => {
-  await upPictures(req, res);
-});
 
 router.put('/interests', async (req: RequestUser, res: Response) => {
   await upInterests(req, res);
