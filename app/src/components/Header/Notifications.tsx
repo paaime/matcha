@@ -15,10 +15,30 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 const Notification = ({ notification }: { notification: Notification }) => {
+  const actualDate = new Date() as any;
+  let date;
+  let newDate;
+  let time;
+
+  if (notification.created_at) {
+    date = new Date(notification.created_at.replace('Z', ''));
+    newDate = Math.floor((actualDate - date) / 1000);
+    time = Math.floor(newDate / 60);
+    if (time < 60) {
+      time = `${time}m ago`;
+    } else if (time < 1440) {
+      time = `${Math.floor(time / 60)}h ago`;
+    } else {
+      time = `${Math.floor(time / 1440)}d ago`;
+    }
+  } else {
+    time = 'Just now';
+  }
+
   return (
     <Link href={notification.redirect}>
       <p>{notification.content}</p>
-      <p className="text-gray-500">5 min ago</p>
+      <p className="text-gray-500">{time}</p>
     </Link>
   );
 };
