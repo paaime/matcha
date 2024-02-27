@@ -13,6 +13,11 @@ type FiltersStore = {
   setFilters: (filters: Filters) => void;
 };
 
+type InterestsStore = {
+  interests: string[];
+  setInterests: (interests: string[]) => void;
+};
+
 type UserStore = {
   user: IUserSettings | null;
   setUser: (user: IUserSettings) => void;
@@ -40,6 +45,13 @@ export const useFiltersStore = create<FiltersStore>((set) => ({
     maxDistance: 100,
   },
   setFilters: (filters) => set({ filters }),
+}));
+
+export const useInterestsStore = create<InterestsStore>((
+  set: (arg0: { interests: string[]; }) => void,
+) => ({
+  interests: [],
+  setInterests: (interests: string[]) => set({ interests }),
 }));
 
 export const useUserStore = create<UserStore>((set) => ({

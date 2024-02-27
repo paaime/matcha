@@ -1,18 +1,9 @@
 import { Response } from 'express';
 import { connectToDatabase } from '../../../utils/db';
 import { addRandom } from './addRandom';
+import { interestsList } from '../../../types/list';
 
 // TODO: temporary, remove when the real api is ready
-
-const tags = [
-  "☀️ Sunny",
-  "🌧 Rainy",
-  "🌪 Windy",
-  "🌈 Rainbow",
-  "🌊 Ocean",
-  "🌲 Forest",
-  "🏔 Mountain"
-];
 
 export async function randomScript(res: Response): Promise<undefined>{
   try {
@@ -46,7 +37,7 @@ export async function randomScript(res: Response): Promise<undefined>{
     for (const row of rows) {
       const userId = row.id;
 
-      const tagsToAdd = tags.sort(() => Math.random() - 0.5).slice(0, 3);
+      const tagsToAdd = interestsList.sort(() => Math.random() - 0.5).slice(0, 3);
 
       for (const tag of tagsToAdd) {
         const query = 'INSERT INTO Tags (user_id, tagName) VALUES (?, ?)';

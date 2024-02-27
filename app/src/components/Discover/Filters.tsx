@@ -23,17 +23,22 @@ import { useEffect, useState } from 'react';
 import { Filters } from '@/types/type';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
-import { useDiscoverStore, useFiltersStore } from '@/store';
+import { useDiscoverStore, useFiltersStore, useInterestsStore } from '@/store';
 
-const getResultsLink = (filters: Filters) => {
+const getResultsLink = (filters: Filters, interests: string[]) => {
   const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
 
-  return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}`;
+  const interestsString = interests.join(',');
+
+  console.log(`/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`);
+
+  return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`;
 };
 
 export default function Filters() {
   const { setDiscover } = useDiscoverStore();
   const { filters, setFilters } = useFiltersStore();
+  const { interests } = useInterestsStore();
   const [filterLimit, setFilterLimit] = useState<Filters>({
     interests: [],
     minAge: 18,
@@ -45,7 +50,7 @@ export default function Filters() {
 
   const getDiscover = async () => {
     try {
-      const res = await customAxios.get(`${getResultsLink(filters)}`);
+      const res = await customAxios.get(`${getResultsLink(filters, interests)}`);
       setDiscover(res.data);
     } catch (err) {
       toast('Error', { description: 'An error occured while fetching users' });
@@ -68,6 +73,10 @@ export default function Filters() {
     getFiltersInfos();
     getDiscover();
   }, []);
+
+  useEffect(() => {
+    getDiscover();
+  }, [interests]);
 
   return (
     <Drawer>

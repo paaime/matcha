@@ -1,6 +1,3 @@
-// Emoji, space, and 1-20 letters. Example: "🍔 Burger" or "📸 Photographe"
-export const interestRegex = /^\p{Emoji}\s[a-zA-Z]{1,20}$/u;
-
 // Email regex
 export const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 

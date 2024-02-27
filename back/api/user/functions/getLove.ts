@@ -3,6 +3,7 @@ import { ThrownError } from '../../../types/type';
 import { ILove } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+import { interestsList } from '../../../types/list';
 
 const getMinAge = (customFilter: boolean, newValue: string) => {
   const defaultValue = 18;
@@ -117,7 +118,9 @@ export async function getLove(
       req.query.maxDistance as string
     );
 
-    console.log({ minAge, maxAge, minFame, maxFame, maxDistance });
+    let interests: string[] = [];
+
+    console.log(req.query.interests);
 
     if (minAge > maxAge) {
       const temp = minAge;
@@ -129,6 +132,19 @@ export async function getLove(
       const temp = minFame;
       minFame = maxFame;
       maxFame = temp;
+    }
+
+    if (req.query.interests) {
+      interests = (req.query.interests as string).split(',');
+
+      // Remove duplicates
+      interests = Array.from(new Set(interests));
+
+      // Remove empty strings
+      interests = interests.filter((interest) => interest.length > 0);
+
+      // Remove interests that not match interests regex
+      interests = interests.filter((interest) => interestsList.includes(interest));
     }
 
     const db = await connectToDatabase();
@@ -247,6 +263,14 @@ export async function getLove(
           WHERE
             r.reported_user_id = :userId
         )
+        ${interests.length > 0 ? `AND u.id IN (
+          SELECT
+            ti.user_id
+          FROM
+            Tags ti
+          WHERE
+            ti.tagName IN (${interests.map((interest) => "'" + interest + "'").join(',')})
+        )` : ''}
       HAVING
         estimatedDistance <= :maxDistance
         AND age >= :minAge
@@ -269,7 +293,7 @@ export async function getLove(
       minAge,
       maxAge,
       minFame,
-      maxFame,
+      maxFame
     })) as any;
 
     // Close the connection

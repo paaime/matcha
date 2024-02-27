@@ -1,10 +1,10 @@
 import { Response } from 'express';
 
 import { connectToDatabase } from '../../../utils/db';
-import { interestRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { interestsList } from '../../../types/list';
 
 export async function upInterests(req: RequestUser, res: Response): Promise<undefined>{
   try {
@@ -35,12 +35,9 @@ export async function upInterests(req: RequestUser, res: Response): Promise<unde
 
     // Check if interests are valid
     for (const interest of uniqueInterests) {
-      if (!interestRegex.test(interest)) {
-        res.status(400).json({
-          error: 'Bad request',
-          message: 'Invalid interests',
-        });
-        return;
+      if (!interestsList.includes(interest)) {
+        // Remove from the list
+        uniqueInterests.splice(uniqueInterests.indexOf(interest), 1);
       }
     }
 
