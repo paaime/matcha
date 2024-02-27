@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import {
   CompassIcon,
   HomeIcon,
+  MapIcon,
   MessageCircleIcon,
   PlusIcon,
   SettingsIcon,
@@ -32,8 +33,11 @@ export default function Menu() {
       case '/messages':
         setX(63);
         break;
-      case '/settings':
+      case '/map':
         setX(82.2);
+        break;
+      default:
+        setX(0);
         break;
     }
   }, [pathname]);
@@ -42,12 +46,13 @@ export default function Menu() {
 
   return (
     <header className="flex w-full justify-center fixed bottom-5 h-16 z-10">
-      <nav className="flex items-center bg-white px-5 rounded-full gap-6 shadow-lg relative">
+      <nav className="flex items-center bg-white dark:bg-gray-950 dark:border dark:border-input px-5 rounded-full gap-6 shadow-lg relative">
         {isMounted && (
           <div
             className="h-10 w-10 bg-pink rounded-full transition-all duration-300 absolute"
             style={{
               left: `${x}%` || '6%',
+              opacity: x === 0 ? 0 : 1,
             }}
           />
         )}
@@ -92,15 +97,13 @@ export default function Menu() {
           <MessageCircleIcon />
         </Link>
         <Link
-          href="/settings"
+          href="/map"
           className={clsx(
-            isMounted && pathname === '/settings'
-              ? 'text-white'
-              : 'text-gray-400',
+            isMounted && pathname === '/map' ? 'text-white' : 'text-gray-400',
             'h-10 w-10 rounded-full flex items-center justify-center z-10'
           )}
         >
-          <SettingsIcon />
+          <MapIcon />
         </Link>
       </nav>
     </header>

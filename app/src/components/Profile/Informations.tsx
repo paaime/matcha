@@ -77,7 +77,7 @@ export default function Informations({ user }: { user: IUser }) {
         >
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">About</p>
-            <p className="font-semibold text-dark">{user.biography}</p>
+            <p className="font-semibold text-dark dark:text-white">{user.biography}</p>
           </div>
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">Interests</p>
@@ -93,7 +93,7 @@ export default function Informations({ user }: { user: IUser }) {
               )}
             </div>
           </div>
-          <div className="flex justify-around bg-light-pink -mx-10 py-5">
+          <div className="flex justify-around bg-light-pink dark:bg-[#00234d] -mx-10 py-5">
             <div className="flex flex-col items-center">
               <div className="flex items-center justify-center bg-pink h-12 w-12 rounded-full">
                 <AiOutlineMan className="h-6 w-6 text-white" />
@@ -128,7 +128,7 @@ export default function Informations({ user }: { user: IUser }) {
             {user.consentLocation && user.loc ? (
               <Map user={user} />
             ) : (
-              <p className="font-semibold text-dark">
+              <p className="font-semibold text-dark dark:text-white">
                 {user.firstName} has disabled location or you don{"'"}t have consent
               </p>
             )}
@@ -140,7 +140,7 @@ export default function Informations({ user }: { user: IUser }) {
               <p className="text-gray-400 font-semibold">
                 You {user.isSuperLike && "super"} liked {user.firstName} {user.isSuperLike && " ⭐️"}
               </p>
-              <p className="font-semibold text-dark">
+              <p className="font-semibold text-dark dark:text-white">
                 {timeSince(user.isLikeTime)} ago
               </p>
             </div>
@@ -151,7 +151,7 @@ export default function Informations({ user }: { user: IUser }) {
               <p className="text-gray-400 font-semibold">
                 {user.firstName} {user.hasSuperLike && "super"} liked you {user.hasSuperLike && " ⭐️"}
               </p>
-              <p className="font-semibold text-dark">
+              <p className="font-semibold text-dark dark:text-white">
                 {timeSince(user.hasLikeTime)} ago
               </p>
             </div>
@@ -162,7 +162,7 @@ export default function Informations({ user }: { user: IUser }) {
               <p className="text-gray-400 font-semibold">
                 Block section
               </p>
-              <p className="font-semibold text-dark">
+              <p className="font-semibold text-dark dark:text-white">
                 {user.isBlocked ? 'You blocked' : 'You are blocked by'} {user.firstName}
               </p>
             </div>
@@ -173,7 +173,7 @@ export default function Informations({ user }: { user: IUser }) {
               <p className="text-gray-400 font-semibold">
                 You matched with {user.firstName}
               </p>
-              <p className="font-semibold text-dark">
+              <p className="font-semibold text-dark dark:text-white">
                 {timeSince(user.matchTime)} ago
 
                 <br />
@@ -188,7 +188,7 @@ export default function Informations({ user }: { user: IUser }) {
           {user.isOnline === false && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">Last seen</p>
-              <p className="font-semibold text-dark">
+              <p className="font-semibold text-dark dark:text-white">
                 {timeSince(user.lastConnection)} ago
               </p>
             </div>

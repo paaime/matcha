@@ -36,12 +36,8 @@ export default function Page({ params }) {
       }
     } catch (err) {
       console.log(err);
-      if (err.response?.data?.message)
-        toast(err.response?.data?.message, { description: 'Error' });
-      else
-        toast('An error occured', {
-          description: 'Error',
-        });
+      if (err.response?.data?.message) toast.error(err.response.data.message);
+      else toast.error('An error occured while liking user');
     }
   };
 

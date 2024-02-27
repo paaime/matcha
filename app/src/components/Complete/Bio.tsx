@@ -52,7 +52,10 @@ export default function Bio({
           setData((prev) => ({ ...prev, biography: e.target.value }))
         }
       />
-      <Button className="mx-auto mt-10 w-52" onClick={handleFinish}>
+      <Button
+        className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input"
+        onClick={handleFinish}
+      >
         Finish
       </Button>
     </div>

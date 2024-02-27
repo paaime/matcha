@@ -52,7 +52,7 @@ export default function Age() {
       <Button
         onClick={handleSubmit}
         isLoading={loading}
-        className="mt-10 w-24 mx-auto"
+        className="mt-10 w-24 mx-auto dark:bg-background dark:text-white dark:border dark:border-input"
       >
         Save
       </Button>

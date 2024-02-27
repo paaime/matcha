@@ -35,7 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="bg-[#FDF7FD] min-h-screen ">
+    <div className="dark:bg-gray-900 bg-[#FDF7FD] min-h-screen ">
       {loading ? (
         <div className="flex justify-center items-center h-screen">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink" />

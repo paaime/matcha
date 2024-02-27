@@ -34,7 +34,10 @@ export default function Gallery({
         <GalleryImage id={4} picture={pictures?.[3]} />
         <GalleryImage id={5} picture={pictures?.[4]} />
       </div>
-      <Button className="mx-auto mt-10 w-52" onClick={handleNext}>
+      <Button
+        className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input"
+        onClick={handleNext}
+      >
         Continue
       </Button>
     </div>

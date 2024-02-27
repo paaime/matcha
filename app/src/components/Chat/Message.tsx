@@ -12,12 +12,14 @@ export default function Message({ isMe }) {
         alt="Profile Picture"
         priority
       />
-      <div className="rounded-3xl bg-white flex flex-col items-center py-3 px-5 shadow-sm">
-        <p className="text-black">
+      <div className="rounded-3xl bg-white flex flex-col items-center py-3 px-5 shadow-sm dark:bg-gray-950 dark:border dark:border-input">
+        <p className="text-black dark:text-white">
           Hi, how are you? This is a test with a pretty much longer text to see
           how it work
         </p>
-        <p className="text-xs text-gray-400 font-semibold ml-3 self-end">10:30</p>
+        <p className="text-xs text-gray-400 font-semibold ml-3 self-end">
+          10:30
+        </p>
       </div>
     </div>
   );

@@ -55,7 +55,7 @@ export const OnlineInterests = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between">
-        <p className="text-xl text-black font-extrabold">Interest</p>
+        <p className="text-xl text-black dark:text-white font-extrabold">Interest</p>
         <p className="text-pink hover:underline cursor-pointer">
           {filters?.interests?.length} interests
         </p>

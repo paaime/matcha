@@ -62,7 +62,11 @@ export default function Interests() {
           />
         ))}
       </div>
-      <Button isLoading={loading} onClick={handleSubmit} className="mt-10">
+      <Button
+        isLoading={loading}
+        onClick={handleSubmit}
+        className="mt-10 dark:bg-background dark:text-white dark:border dark:border-input"
+      >
         Save
       </Button>
     </div>

@@ -88,7 +88,7 @@ export default function Password() {
           />
           <Button
             isLoading={form.formState.isSubmitting}
-            className="mt-10 w-full"
+            className="mt-10 w-full dark:bg-background dark:text-white dark:border dark:border-input"
           >
             Save
           </Button>

@@ -14,7 +14,7 @@ type Props = {
   isBlocked: boolean;
 };
 
-export default function More ({ user_id, isBlocked }: Props) {
+export default function More({ user_id, isBlocked }: Props) {
   const blockUser = async () => {
     try {
       if (isBlocked) {
@@ -24,12 +24,8 @@ export default function More ({ user_id, isBlocked }: Props) {
       }
     } catch (err) {
       console.log(err);
-      if (err.response?.data?.message)
-        toast(err.response?.data?.message, { description: 'Error' });
-      else
-        toast('An error occured', {
-          description: 'Error',
-        });
+      if (err.response?.data?.message) toast.error(err.response?.data?.message);
+      else toast.error('An error occured while blocking user');
     }
   };
 
@@ -38,20 +34,16 @@ export default function More ({ user_id, isBlocked }: Props) {
       await customAxios.post(`/user/report/${user_id}`);
     } catch (err) {
       console.log(err);
-      if (err.response?.data?.message)
-        toast(err.response?.data?.message, { description: 'Error' });
-      else
-        toast('An error occured', {
-          description: 'Error',
-        });
+      if (err.response?.data?.message) toast.error(err.response?.data?.message);
+      else toast.error('An error occured while reporting user');
     }
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="h-10 w-10 bg-white/30 backdrop-blur-sm rounded-full border border-[#ffffff1a] hover:bg-white/40">
-          <MoreHorizontalIcon className="h-6 w-6" />
+        <Button className="h-10 w-10 bg-white/30 dark:bg-background backdrop-blur-sm rounded-full border border-[#ffffff1a] hover:bg-white/40">
+          <MoreHorizontalIcon className="h-6 w-6 dark:text-white" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="mt-2">

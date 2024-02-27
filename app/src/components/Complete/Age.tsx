@@ -34,7 +34,7 @@ export default function Age({
           setData((prev) => ({ ...prev, age: parseInt(e.target.value) }))
         }
       />
-      <Button className="mx-auto mt-10 w-52" onClick={handleNext}>
+      <Button className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input" onClick={handleNext}>
         Continue
       </Button>
     </div>
