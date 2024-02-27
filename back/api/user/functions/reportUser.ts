@@ -62,10 +62,13 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
 
     // Send notifications
     await sendNotification(report_id.toString(), {
-      content: 'Someone reported you'
+      content: 'Someone reported you',
+      related_user_id: user_id,
     });
     await sendNotification(user_id.toString(), {
-      content: `You have reported ${firstName}`
+      content: `You have reported ${firstName}`,
+      redirect: `/profile/${report_id}`,
+      related_user_id: report_id,
     });
 
     // Update fame

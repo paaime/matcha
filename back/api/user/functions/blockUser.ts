@@ -66,10 +66,14 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
 
     // Send notifications
     await sendNotification(block_id.toString(), {
-      content: 'Someone blocked you'
+      content: 'Someone blocked you',
+      redirect: `/profile/${user_id}`,
+      related_user_id: user_id
     });
     await sendNotification(user_id.toString(), {
-      content: `You blocked ${firstName}`
+      content: `You blocked ${firstName}`,
+      redirect: `/profile/${block_id}`,
+      related_user_id: block_id
     });
 
     // Update fame

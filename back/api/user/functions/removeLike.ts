@@ -65,7 +65,7 @@ export async function removeLike(liked_id: number, req: RequestUser, res: Respon
     if (rowsMatch && rowsMatch.length > 0) {
       await sendNotification(liked_id.toString(), {
         content: 'You lost a match',
-        redirect: '/profile',
+        redirect: '/likes',
         related_user_id: user_id,
       });
 

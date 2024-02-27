@@ -137,7 +137,7 @@ export async function addLike(
     }
 
     await sendNotification(liked_id.toString(), {
-      content: isSuper ? 'You have a new super like' : 'You have a new like',
+      content: isSuper ? 'You have a new super like ⭐️' : 'You have a new like',
       redirect: '/likes',
       related_user_id: user_id,
     });
