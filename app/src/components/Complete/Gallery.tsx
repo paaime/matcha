@@ -3,7 +3,10 @@
 import { CameraIcon, PlusIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { FaSmile } from 'react-icons/fa';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { useUserStore } from '@/store';
+import { GalleryImage } from '../Settings/Gallery';
+import { toast } from 'sonner';
 
 const fakeInterests = [
   '🎵 Music',
@@ -25,65 +28,28 @@ export default function Gallery({
 }: {
   setStep: Dispatch<SetStateAction<number>>;
 }) {
+  const { user } = useUserStore();
+  const pictures = user?.pictures?.split(',');
+
+  const handleNext = () => {
+    if (pictures?.length < 1 || !pictures) {
+      return toast.error('Please upload at least one photo.');
+    }
+    setStep((prev) => prev + 1);
+  };
   return (
     <div className="flex flex-col animate__animated animate__fadeIn animate__faster">
       <h3 className="text-2xl font-extrabold text-center mb-5">
         Upload your photos
       </h3>
-      <div className="photo-gallery h-96 mx-auto w-full max-w-[400px]">
-        <div
-          className="photo-1 flex items-end justify-center pb-5 rounded-3xl"
-          style={{
-            backgroundImage: "url('/img/placeholder/users/1.jpg')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <Button className="bg-white/30 backdrop-blur-sm rounded-full border border-[#ffffff1a] hover:bg-white/40">
-            <CameraIcon className="mr-2 h-5 w-5" />
-            Change Photo
-          </Button>
-        </div>
-        <div className="photo-2 flex flex-col bg-white rounded-3xl p-4 justify-between items-center">
-          <FaSmile className="h-10 w-10 text-gray-200" />
-          <Button className="bg-pink hover:bg-pink/80">
-            <PlusIcon className="mr-1 h-4 w-4" />
-            Add
-          </Button>
-        </div>
-        <div className="photo-3 flex flex-col bg-white rounded-3xl p-4 justify-between items-center">
-          <FaSmile className="h-10 w-10 text-gray-200" />
-          <Button className="bg-pink hover:bg-pink/80">
-            <PlusIcon className="mr-1 h-4 w-4" />
-            Add
-          </Button>
-        </div>
-        <div className="photo-4 flex flex-col bg-white rounded-3xl p-4 justify-between items-center">
-          <FaSmile className="h-10 w-10 text-gray-200" />
-          <Button className="bg-pink hover:bg-pink/80">
-            <PlusIcon className="mr-1 h-4 w-4" />
-            Add
-          </Button>
-        </div>
-        <div className="photo-5 flex flex-col bg-white rounded-3xl p-4 justify-between items-center">
-          <FaSmile className="h-10 w-10 text-gray-200" />
-          <Button className="bg-pink hover:bg-pink/80">
-            <PlusIcon className="mr-1 h-4 w-4" />
-            Add
-          </Button>
-        </div>
-        <div className="photo-6 flex flex-col bg-white rounded-3xl p-4 justify-between items-center">
-          <FaSmile className="h-10 w-10 text-gray-200" />
-          <Button className="bg-pink hover:bg-pink/80">
-            <PlusIcon className="mr-1 h-4 w-4" />
-            Add
-          </Button>
-        </div>
+      <div className="photo-gallery-complete mx-auto w-full h-96">
+        <GalleryImage id={1} picture={pictures?.[0]} />
+        <GalleryImage id={2} picture={pictures?.[1]} />
+        <GalleryImage id={3} picture={pictures?.[2]} />
+        <GalleryImage id={4} picture={pictures?.[3]} />
+        <GalleryImage id={5} picture={pictures?.[4]} />
       </div>
-      <Button
-        className="mx-auto mt-10 w-52"
-        onClick={() => setStep((prev) => prev + 1)}
-      >
+      <Button className="mx-auto mt-10 w-52" onClick={handleNext}>
         Continue
       </Button>
     </div>

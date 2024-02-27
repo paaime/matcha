@@ -4,10 +4,8 @@ import customAxios from '@/utils/axios';
 
 export default function Logout() {
   const logout = async () => {
-    // await customAxios.post('/auth/logout');
-    await customAxios.get('/user/testNotification');
-
-    // window.location.href = '/';
+    await customAxios.post('/auth/logout');
+    window.location.href = '/';
   };
   return (
     <Button

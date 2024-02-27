@@ -58,7 +58,6 @@ export async function completeUser(
     if (checkIfFieldExist('sexualPreferences', sexualPreferences, res)) return;
     if (checkIfFieldExist('age', age, res)) return;
     if (checkIfFieldExist('interests', interests, res)) return;
-    // if (checkIfFieldExist('pictures', pictures, res)) return;
     if (checkIfFieldExist('biography', biography, res)) return;
 
     // Test values with regex
@@ -107,15 +106,6 @@ export async function completeUser(
       }
     }
 
-    // TODO: upload pictures to the server
-    
-    // if (pictures.length > 0 && !picturesRegex.test(pictures)) {
-    //   res.status(400).json({
-    //     error: 'Bad request',
-    //     message: 'Pictures is not valid',
-    //   });
-    //   return;
-    // }
     if (!biographyRegex.test(biography)) {
       res.status(400).json({
         error: 'Bad request',
@@ -128,12 +118,11 @@ export async function completeUser(
 
     // Update the user in the database
     const queryUpdate =
-      'UPDATE User SET gender = ?, sexualPreferences = ?, age = ?, pictures = ?, biography = ?, isComplete = 1 WHERE id = ?';
+      'UPDATE User SET gender = ?, sexualPreferences = ?, age = ?, biography = ?, isComplete = 1 WHERE id = ?';
     await db.execute(queryUpdate, [
       gender,
       sexualPreferences,
       age,
-      pictures,
       biography,
       user_id,
     ]);

@@ -11,6 +11,11 @@ import { upAge } from './functions/upAge';
 import { upEmail } from './functions/upEmail';
 import { upPassword } from './functions/upPassword';
 import { upBio } from './functions/upBio';
+import { upload } from '../../middlewares/multer';
+import { ThrownError } from '../../types/type';
+import multer from 'multer';
+import { upImage } from './functions/upImage';
+import { safeUserId } from '../../middlewares/authCheck';
 
 const router = express.Router();
 
@@ -40,6 +45,19 @@ router.put('/age', async (req: RequestUser, res: Response) => {
 
 router.put('/bio', async (req: RequestUser, res: Response) => {
   await upBio(req, res);
+});
+
+router.put('/image/:image_id', async (req: RequestUser, res: Response) => {
+  const image_id = parseInt(req.params.image_id, 10);
+
+  if (!safeUserId(image_id) || image_id > 5) {
+    res.status(400).json({
+      error: 'Bad request',
+      message: 'Invalid image_id',
+    });
+    return;
+  }
+  await upImage(req, res, image_id);
 });
 
 router.put('/email', async (req: RequestUser, res: Response) => {
