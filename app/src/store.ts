@@ -3,6 +3,11 @@ import { ILove, IUserSettings } from './types/user';
 import io, { Socket } from 'socket.io-client';
 import { Filters } from './types/type';
 
+type ChatsStore = {
+  chats: [];
+  setChats: (chats: []) => void;
+};
+
 type DiscoverStore = {
   discover: ILove[];
   setDiscover: (discovers: ILove[]) => void;
@@ -29,6 +34,11 @@ type SocketStore = {
   disconnect: () => void;
   sendMessage: (value: string) => void;
 };
+
+export const useChatsStore = create<ChatsStore>((set) => ({
+  chats: [],
+  setChats: (chats) => set({ chats }),
+}));
 
 export const useDiscoverStore = create<DiscoverStore>((set) => ({
   discover: [],
