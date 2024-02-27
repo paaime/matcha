@@ -27,7 +27,7 @@ export default function LikesSent() {
 
   return (
     <div>
-      <p className="text-xl text-black font-extrabold">People you liked</p>
+      <p className="text-xl text-black dark:text-white font-extrabold">People you liked</p>
       <p className="text-gray-400">Maybe they will like you too</p>
       {users?.length > 0 ? (
         <div className="grid sm:grid-cols-2 gap-4 mt-5">

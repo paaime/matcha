@@ -1,3 +1,7 @@
+'use client';
+
+import { useTheme } from 'next-themes';
+
 export default function Logo({
   white = false,
   height,
@@ -5,6 +9,8 @@ export default function Logo({
   white?: boolean;
   height?: number;
 }) {
+  const { resolvedTheme } = useTheme();
+  resolvedTheme === 'dark' ? (white = true) : (white = false);
   return (
     <svg
       width="36"

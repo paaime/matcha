@@ -12,7 +12,7 @@ const Chat = () => {
         className="rounded-full w-14 h-14 object-cover mr-5"
         priority
       />
-      <div className="max-w-[50%] flex flex-col text-dark justify-center">
+      <div className="max-w-[50%] flex flex-col text-dark dark:text-white justify-center">
         <p className="text-lg font-bold">Alfredo Calzoni</p>
         <p className=" truncate">What about that new jacket if i know you</p>
       </div>
@@ -27,7 +27,7 @@ const Chat = () => {
 export default function Chats() {
   return (
     <div
-      className="-mx-4 md:mx-auto -mb-28 bg-white flex flex-col rounded-t-3xl px-7"
+      className="-mx-4 md:mx-auto -mb-28 bg-white dark:bg-gray-950 dark:border dark:border-input flex flex-col rounded-t-3xl px-7"
       style={{
         minHeight: 'calc(100vh - 250px)',
       }}

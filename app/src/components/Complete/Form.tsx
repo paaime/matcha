@@ -33,10 +33,10 @@ export default function CompleteForm() {
     <>
       <Button
         variant="outline"
-        className="bg-transparent w-10 h-10 group"
+        className="bg-transparent w-10 h-10 group dark:bg-background"
         onClick={goBack}
       >
-        <ChevronLeftIcon className={'text-black h-6 w-6 '} />
+        <ChevronLeftIcon className={'text-black dark:text-white h-6 w-6 '} />
       </Button>
       {step === 1 && <Gender setStep={setStep} data={data} setData={setData} />}
       {step === 2 && (

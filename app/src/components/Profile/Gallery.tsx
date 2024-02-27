@@ -9,6 +9,7 @@ import { IUser } from '@/types/user';
 
 export default function Gallery({ user }: { user: IUser }) {
   const pictures = user.pictures?.split(',') || [];
+  console.log(pictures);
 
   return (
     <Swiper
@@ -22,11 +23,12 @@ export default function Gallery({ user }: { user: IUser }) {
       {pictures?.map((picture, index) => (
         <SwiperSlide key={index}>
           <Image
-            src={picture}
-            alt={'Photo 1'}
+            loader={({ src }) => src}
+            src={`${process.env.NEXT_PUBLIC_API}${picture}`}
+            alt={`Photo ${index}`}
             width={500}
             height={500}
-            className="absolute w-full h-full"
+            className="absolute w-full h-full bg-gray-700"
             style={{
               objectFit: 'cover',
             }}

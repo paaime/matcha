@@ -37,16 +37,16 @@ export default function SexualPreference({
           }
           defaultValue={data.sexualPreferences}
         >
-          <Label className="bg-white flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
+          <Label className="bg-white dark:bg-gray-950 flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
             <RadioGroupItem value="male" className="sr-only" />
-            <div className="flex items-center justify-center h-12 w-12 bg-primary rounded-full">
+            <div className="flex items-center justify-center h-12 w-12 bg-primary dark:bg-blue-500 rounded-full">
               <AiOutlineMan className="h-6 w-6 text-white" />
             </div>
             <span className="text-center text-base w-full font-semibold">
               Man
             </span>
           </Label>
-          <Label className="bg-white flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
+          <Label className="bg-white dark:bg-gray-950 flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
             <RadioGroupItem value="female" className="sr-only" />
             <div className="flex items-center justify-center h-12 w-12 bg-pink rounded-full">
               <AiOutlineWoman className="h-6 w-6 text-white" />
@@ -55,7 +55,7 @@ export default function SexualPreference({
               Woman
             </span>
           </Label>
-          <Label className="bg-white flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
+          <Label className="bg-white dark:bg-gray-950 flex flex-col gap-3 items-center w-36 [&:has([data-state=checked])]:border-pink [&:has([data-state=checked])]:border-2 rounded-3xl py-5 cursor-pointer">
             <RadioGroupItem value="other" className="sr-only" />
             <div className="flex items-center justify-center h-12 w-12 bg-primary/80 rounded-full">
               <LiaTransgenderSolid className="h-6 w-6 text-white" />
@@ -66,7 +66,10 @@ export default function SexualPreference({
           </Label>
         </RadioGroup>
       </div>
-      <Button className="mx-auto mt-10 w-52" onClick={handleNext}>
+      <Button
+        className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input"
+        onClick={handleNext}
+      >
         Continue
       </Button>
     </div>

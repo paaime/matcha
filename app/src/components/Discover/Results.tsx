@@ -11,7 +11,7 @@ export default function Results() {
 
   return (
     <div>
-      <p className="text-xl text-black font-extrabold">
+      <p className="text-xl text-black dark:text-white font-extrabold">
         Results{' '}
         <span className="text-pink">
           {discover.length > 0 ? discover.length : ''}

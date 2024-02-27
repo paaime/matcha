@@ -18,18 +18,13 @@ export default function Header() {
             <MapPinIcon className="h-4 w-4 stroke-pink" />
             <span className="text-sm font-semibold">Lyon</span>
           </div>
-          <h2 className="text-3xl font-extrabold text-black">Discover</h2>
-          <p className="text-gray-400">Our lastest members</p>
+          <h2 className="text-3xl font-extrabold text-black dark:text-white">
+            Discover
+          </h2>
+          <p className="text-gray-400">Our last members</p>
         </div>
       )}
       <div className="flex gap-3 items-center">
-        {/* <Button
-          variant="outline"
-          className="h-12 w-12 rounded-full"
-          onClick={() => setSearchOpen(!searchOpen)}
-        >
-          <SearchIcon />
-        </Button> */}
         <Filters />
       </div>
     </div>

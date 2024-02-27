@@ -115,7 +115,7 @@ export default function LoveCarousel() {
   return (
     <>
       <div
-        className="flex flex-col bg-white rounded-3xl shadow-xl p-3 z-10"
+        className="flex flex-col bg-white dark:bg-gray-950 rounded-3xl shadow-xl p-3 z-10 dark:border dark:border-input"
         style={{ height: 'calc(100vh - 205px)', minHeight: '250px' }}
       >
         <div className="relative w-full h-full">
@@ -169,17 +169,17 @@ export default function LoveCarousel() {
             whileTap={{ scale: 0.9 }}
             onClick={swipeLeft}
             className={clsx(
-              '!h-14 !w-14 !rounded-full bg-white shadow-xl text-black',
+              '!h-14 !w-14 !rounded-full bg-white shadow-xl text-black ',
               buttonVariants({ variant: 'secondary' })
             )}
           >
-            <XIcon />
+            <XIcon className="dark:text-black" />
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={superLike}
             className={clsx(
-              '!h-14 !w-14 !rounded-full !bg-primary shadow-xl text-white',
+              '!h-14 !w-14 !rounded-full !bg-primary dark:!bg-[#4a154b] shadow-xl text-white',
               buttonVariants({ variant: 'secondary' })
             )}
           >
@@ -197,7 +197,7 @@ export default function LoveCarousel() {
           </motion.button>
         </div>
       </div>
-      <div className="mx-auto w-11/12 bg-white rounded-3xl shadow-2xl h-[60px] mt-[-70px]"></div>
+      <div className="mx-auto w-11/12 bg-white dark:bg-gray-950 rounded-3xl shadow-2xl h-[60px] mt-[-70px] dark:border dark:border-input"></div>
     </>
   );
 }

@@ -51,7 +51,7 @@ export default function Bio() {
       />
       <Button
         isLoading={loading}
-        className="mx-auto mt-10 w-full"
+        className="mx-auto mt-10 w-full dark:bg-background dark:text-white dark:border dark:border-input"
         onClick={handleSubmit}
       >
         Save

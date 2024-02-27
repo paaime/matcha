@@ -33,7 +33,7 @@ export const GalleryImage = ({ id, picture }) => {
 
   return (
     <div
-      className={`photo-${id} flex flex-col items-center justify-between pb-5 rounded-3xl bg-white`}
+      className={`photo-${id} flex flex-col items-center justify-between pb-5 rounded-3xl bg-white dark:bg-background`}
       style={{
         backgroundImage: `url('${process.env.NEXT_PUBLIC_API}${picture}')`,
         backgroundSize: 'cover',
@@ -41,10 +41,10 @@ export const GalleryImage = ({ id, picture }) => {
       }}
     >
       {(picture?.length < 1 || !picture) && (
-        <FaSmile className="w-10 text-gray-200 h-full py-4" />
+        <FaSmile className="w-10 text-gray-200 dark:text-gray-500 h-full py-4" />
       )}
       {picture?.length > 0 ? (
-        <Button className="bg-white/30 backdrop-blur-sm rounded-full border border-[#ffffff1a] hover:bg-white/40 mt-auto">
+        <Button className="bg-white/30 backdrop-blur-sm rounded-full border border-[#ffffff1a] hover:bg-white/40 mt-auto dark:text-white">
           <form encType="multipart/form-data">
             <input
               type="file"
@@ -58,7 +58,7 @@ export const GalleryImage = ({ id, picture }) => {
           Change
         </Button>
       ) : (
-        <Button className="bg-pink hover:bg-pink/80 relative">
+        <Button className="bg-pink hover:bg-pink/80 relative dark:text-white">
           <form encType="multipart/form-data">
             <input
               type="file"
