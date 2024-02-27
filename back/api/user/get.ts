@@ -45,7 +45,7 @@ router.get('/getLikesSent', async (req: RequestUser, res: Response) => {
 });
 
 router.get('/filtersInfos', async (req: RequestUser, res: Response) => {
-  await getFiltersInfos(res);
+  await getFiltersInfos(req, res);
 });
 
 router.get('/:id', async (req: RequestUser, res: Response) => {

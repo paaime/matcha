@@ -16,6 +16,7 @@ export interface ILove {
   pictures?: string; // Can be undefined
   compatibilityScore: number;
   isMatch?: boolean;
+  isSuperLike?: boolean;
 }
 
 export interface IUser {
@@ -36,10 +37,15 @@ export interface IUser {
   fameRating: number;
   isMatch: boolean;
   isLiked: boolean;
+  isSuperLike?: boolean;
+  isLikeTime?: string; // Can be undefined
   hasLiked: boolean;
+  hasSuperLike?: boolean;
+  hasLikeTime?: string; // Can be undefined
   isBlocked: boolean;
   hasBlocked: boolean;
   matchId?: string; // If isMatch = true ; can be undefined
+  matchTime?: string; // If isMatch = true ; can be undefined
   lastConnection: string;
   isVerified: boolean;
   created_at: string;

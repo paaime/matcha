@@ -20,8 +20,8 @@ export async function randomScript(res: Response): Promise<undefined>{
     await db.query('DELETE FROM Blocked');
     await db.query('DELETE FROM Reported');
 
-    // First, generate 10 users
-    for (let i = 0; i < 10; i++) {
+    // First, generate 20 users
+    for (let i = 0; i < 20; i++) {
       await addRandom(res, false);
     }
 

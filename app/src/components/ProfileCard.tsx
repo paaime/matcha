@@ -16,9 +16,10 @@ export default function ProfileCard({
       href={`/profile/${user.id}`}
       className={clsx(
         !small && 'border-[5px] border-pink',
-        user.isMatch && 'border-[5px] border-blue-500',
         small ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',
-        'block'
+        'block',
+        user.isSuperLike && !user.isMatch && '!border-orange-500',
+        user.isMatch && '!border-yellow-500'
       )}
       style={{
         backgroundImage: `url(${pictures[0]})`,
@@ -43,12 +44,14 @@ export default function ProfileCard({
         ) : (
           <div className={clsx(
             "bg-pink text-white font-bold px-5 pb-1 rounded-b-2xl text-sm",
-            user.isMatch && "bg-blue-500"
+            user.isSuperLike && !user.isMatch && "!bg-orange-500",
+            user.isMatch && "!bg-yellow-500"
           )}>
             <p>
+              {user.isSuperLike && "⭐️ "}
               {user.isMatch
                 ? "It's a match!"
-                : user.compatibilityScore + "% Match" }
+                : user.compatibilityScore + "% Match"}
             </p>
           </div>
         )}
