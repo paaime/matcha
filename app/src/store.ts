@@ -47,11 +47,15 @@ export const useFiltersStore = create<FiltersStore>((set) => ({
   setFilters: (filters) => set({ filters }),
 }));
 
-export const useInterestsStore = create<InterestsStore>((
-  set: (arg0: { interests: string[]; }) => void,
-) => ({
+export const useInterestsStore = create<InterestsStore>((set) => ({
   interests: [],
   setInterests: (interests: string[]) => set({ interests }),
+}));
+
+export const useInterestsListStore = create<InterestsStore>((set) => ({
+  interestsList: [],
+  setInterestsList: (interestsList: string[]) => {
+    set({ interestsList })},
 }));
 
 export const useUserStore = create<UserStore>((set) => ({

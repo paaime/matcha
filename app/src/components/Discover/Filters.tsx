@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 import { Filters } from '@/types/type';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
-import { useDiscoverStore, useFiltersStore, useInterestsStore } from '@/store';
+import { useDiscoverStore, useFiltersStore, useInterestsListStore, useInterestsStore } from '@/store';
 
 const getResultsLink = (filters: Filters, interests: string[]) => {
   const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
@@ -37,6 +37,7 @@ export default function Filters() {
   const { setDiscover } = useDiscoverStore();
   const { filters, setFilters } = useFiltersStore();
   const { interests } = useInterestsStore();
+  const { interestsList, setInterestsList } = useInterestsListStore();
   const [filterLimit, setFilterLimit] = useState<Filters>({
     interests: [],
     minAge: 18,
@@ -55,11 +56,17 @@ export default function Filters() {
     }
   };
 
-  const getFiltersInfos = async () => {
+  const getFiltersInfos = async (isFirst = false) => {
     try {
-      const res = await customAxios.get('/user/filtersInfos');
-      setFilters(res.data);
+      const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
+
+      const res = await customAxios.get(`/user/filtersInfos?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}`);
       setFilterLimit(res.data);
+      setInterestsList(res.data.interests);
+
+      if (isFirst) {
+        setFilters(res.data);
+      }
     } catch (err) {
       toast('Error', {
         description: 'An error occured while gettings filters',
@@ -68,7 +75,7 @@ export default function Filters() {
   };
 
   useEffect(() => {
-    getFiltersInfos();
+    getFiltersInfos(true);
     getDiscover();
   }, []);
 
@@ -160,7 +167,10 @@ export default function Filters() {
             Reset
           </Button>
           <DrawerClose asChild>
-            <Button onClick={getDiscover} className="w-full h-12 text-md">
+            <Button onClick={() => {
+              getDiscover();
+              getFiltersInfos();
+            }} className="w-full h-12 text-md">
               Apply
             </Button>
           </DrawerClose>
