@@ -3,6 +3,8 @@ import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
 import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
+import { addVisit } from '../../../utils/visit';
+import { updateFame } from '../../../utils/fame';
 
 export async function getUserWithId(
   userId: number,
@@ -160,6 +162,14 @@ export async function getUserWithId(
         message: 'User not found',
       });
       return;
+    }
+
+    if (userId !== connectedUserId) {
+      // Add Trace
+      await addVisit(connectedUserId, userId);
+      
+      // Update fame
+      await updateFame(userId, 'newVisit');
     }
 
     // Create the user object

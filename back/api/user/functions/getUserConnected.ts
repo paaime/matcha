@@ -67,10 +67,10 @@ export async function getUserConnected(
     // Execute the query and check the result
     const [rows] = (await db.query(query, [userId])) as any;
 
-    // Close the connection
-    await db.end();
-
     if (!rows || rows.length === 0) {
+      // Close the connection
+      await db.end();
+
       console.error('No user found with id:', userId);
 
       res.status(404).json({
@@ -79,6 +79,47 @@ export async function getUserConnected(
       });
       return;
     }
+
+    const queryHistory = `
+      SELECT 
+          User.id,
+          User.firstName,
+          User.age,
+          User.pictures,
+          History.created_at
+      FROM
+          History
+      JOIN
+          User ON User.id = History.visited_user_id
+      WHERE
+          History.user_id = ?
+      ORDER BY
+          History.created_at DESC;
+    `;
+
+    const [history] = await db.query(queryHistory, [userId]) as any;
+
+    const queryVisited = `
+      SELECT 
+          User.id,
+          User.firstName,
+          User.age,
+          User.pictures,
+          History.created_at
+      FROM
+          History
+      JOIN
+          User ON User.id = History.user_id
+      WHERE
+          History.visited_user_id = ?
+      ORDER BY
+          History.created_at DESC;
+    `;
+
+    const [visited] = await db.query(queryVisited, [userId]) as any;
+
+    // Close the connection
+    await db.end();
 
     // Create the user object
     const user: IUserSettings = {
@@ -100,11 +141,11 @@ export async function getUserConnected(
       biography: rows[0].biography,
       pictures: rows[0].pictures,
       fameRating: rows[0].fameRating,
-      interests: [],
-      visitHistory: [],
-      userVisited: [],
+      interests: [], // Filled below
+      visitHistory: history || [],
+      userVisited: visited || [],
       usersBlocked: [],
-      notifications: [],
+      notifications: [], // Filled below
     };
 
     const interestsSet = new Set<string>();
@@ -134,8 +175,6 @@ export async function getUserConnected(
         });
     }
 
-    // TODO: Get visit history
-    // TODO: Get user visited
     // TODO: Get users blocked
 
     res.status(200).json(user);
