@@ -19,7 +19,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Button } from '../ui/button';
 import { Settings2Icon } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Filters } from '@/types/type';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
@@ -28,12 +28,20 @@ import { useDiscoverStore, useFiltersStore } from '@/store';
 const getResultsLink = (filters: Filters) => {
   const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
 
-  return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFameRating=${minFameRating}&maxFameRating=${maxFameRating}&maxDistance=${maxDistance}`;
+  return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}`;
 };
 
 export default function Filters() {
   const { setDiscover } = useDiscoverStore();
   const { filters, setFilters } = useFiltersStore();
+  const [filterLimit, setFilterLimit] = useState<Filters>({
+    interests: [],
+    minAge: 18,
+    maxAge: 100,
+    minFameRating: 0,
+    maxFameRating: 10,
+    maxDistance: 100,
+  });
 
   const getDiscover = async () => {
     try {
@@ -48,6 +56,7 @@ export default function Filters() {
     try {
       const res = await customAxios.get('/user/filtersInfos');
       setFilters(res.data);
+      setFilterLimit(res.data);
     } catch (err) {
       toast('Error', {
         description: 'An error occured while gettings filters',
@@ -108,8 +117,8 @@ export default function Filters() {
                 setFilters({ ...filters, minAge: value[0], maxAge: value[1] })
               }
               value={[filters.minAge, filters.maxAge]}
-              min={filters.minAge}
-              max={filters.maxAge}
+              min={filterLimit.minAge}
+              max={filterLimit.maxAge}
               step={1}
             />
           </div>
@@ -129,8 +138,8 @@ export default function Filters() {
                 })
               }
               value={[filters.minFameRating, filters.maxFameRating]}
-              min={filters.minFameRating}
-              max={filters.maxFameRating}
+              min={filterLimit.minFameRating}
+              max={filterLimit.maxFameRating}
               step={1}
             />
           </div>
