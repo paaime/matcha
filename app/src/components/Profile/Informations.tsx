@@ -2,7 +2,7 @@
 
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { AiOutlineMan } from 'react-icons/ai';
-import { Interest, StaticInterest } from '../Discover/Interests';
+import { StaticInterest } from '../Discover/Interests';
 import clsx from 'clsx';
 import { CalendarDaysIcon, FlameIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -16,6 +16,8 @@ export default function Informations({ user }: { user: IUser }) {
 
   // Function to calculate elapsed time (ex: 10 minutes ago)
   const timeSince = (date: string) => {
+    if (!date || date === "") return 'Unknown';
+
     const seconds = Math.abs(Math.floor((new Date().getTime() - new Date(date).getTime())) / 1000);
 
     let interval = seconds / 31536000;
@@ -132,6 +134,56 @@ export default function Informations({ user }: { user: IUser }) {
             )}
 
           </div>
+
+          {!user.isMatch && user.isLiked && (
+            <div className="flex flex-col gap-3">
+              <p className="text-gray-400 font-semibold">
+                You {user.isSuperLike && "super"} liked {user.firstName} {user.isSuperLike && " ⭐️"}
+              </p>
+              <p className="font-semibold text-dark">
+                {timeSince(user.isLikeTime)} ago
+              </p>
+            </div>
+          )}
+
+          {!user.isMatch && user.hasLiked && (
+            <div className="flex flex-col gap-3">
+              <p className="text-gray-400 font-semibold">
+                {user.firstName} {user.hasSuperLike && "super"} liked you {user.hasSuperLike && " ⭐️"}
+              </p>
+              <p className="font-semibold text-dark">
+                {timeSince(user.hasLikeTime)} ago
+              </p>
+            </div>
+          )}
+
+          {user.hasBlocked || user.isBlocked && (
+            <div className="flex flex-col gap-3">
+              <p className="text-gray-400 font-semibold">
+                Block section
+              </p>
+              <p className="font-semibold text-dark">
+                {user.isBlocked ? 'You blocked' : 'You are blocked by'} {user.firstName}
+              </p>
+            </div>
+          )}
+
+          {user.isMatch && (
+            <div className="flex flex-col gap-3">
+              <p className="text-gray-400 font-semibold">
+                You matched with {user.firstName}
+              </p>
+              <p className="font-semibold text-dark">
+                {timeSince(user.matchTime)} ago
+
+                <br />
+
+                {user.isSuperLike && user.hasSuperLike && "You both super liked each other ⭐️⭐️"}
+                {user.isSuperLike && !user.hasSuperLike && "You super liked ⭐️"}
+                {!user.isSuperLike && user.hasSuperLike && "You were super liked ⭐️"}
+              </p>
+            </div>
+          )}
 
           {user.isOnline === false && (
             <div className="flex flex-col gap-3">

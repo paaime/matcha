@@ -53,6 +53,10 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
 
     const firstName = rows[0].firstName;
 
+    // Remove like
+    const queryRemoveLike = 'DELETE FROM UserLike WHERE user_id = ? AND liked_user_id = ?';
+    await db.query(queryRemoveLike, [user_id, block_id]) as any;
+
     // Add blockedd
     const query = 'INSERT INTO Blocked (user_id, blocked_user_id) VALUES (?, ?)';
     await db.query(query, [user_id, block_id]) as any;

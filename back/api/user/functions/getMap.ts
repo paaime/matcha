@@ -1,11 +1,10 @@
-// Import necessary modules and types
 import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
-import { ILove, IUser } from '../../../types/user';
+import { IDiscovery, IMapUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 
-export async function getLikesSent(
+export async function getMapUsers(
   req: RequestUser,
   res: Response
 ): Promise<void> {
@@ -22,9 +21,9 @@ export async function getLikesSent(
 
     const db = await connectToDatabase();
 
-    // Get my sexual preferences
+    // Get my preferences
     const [rowsPreferences] = (await db.query(
-      'SELECT age FROM User WHERE id = ?',
+      'SELECT loc, consentLocation FROM User WHERE id = ?',
       [userId]
     )) as any;
 
@@ -36,45 +35,36 @@ export async function getLikesSent(
       return;
     }
 
-    const myAge = rowsPreferences[0].age;
+    // Return error if user has not consented to location
+    if (!rowsPreferences[0].consentLocation) {
+      res.status(403).json({
+        error: 'Forbidden',
+        message: 'User has not consented to location',
+      });
+      return;
+    }
 
-    // Query to get users to whom the current user has sent likes
     const query = `
       SELECT
         u.id,
         u.firstName,
-        u.isOnline,
-        u.age,
-        u.consentLocation,
         u.loc,
-        u.gender,
-        u.city,
         u.pictures,
-        u.fameRating,
-        ul.isSuperLike,
-        (
-          (100 - ABS(u.age - :myAge)) + (u.fameRating / 100)
-        ) AS compatibilityScore,
-        m.user_id IS NOT NULL AS isMatch
+        u.isOnline
       FROM
         User u
-      LEFT JOIN
-        Matchs m
-      ON
-        (u.id = m.user_id AND m.other_user_id = :userId)
-      OR
-        (u.id = m.other_user_id AND m.user_id = :userId)
-      INNER JOIN
-        UserLike ul ON u.id = ul.liked_user_id
       WHERE
-        ul.user_id = :userId
+        u.id != :userId
+        AND u.isVerified = 1
+        AND u.isComplete = 1
+        AND u.loc IS NOT NULL
+        AND u.consentLocation = 1
+      ORDER BY
+        created_at DESC
     `;
 
     // Execute the query
-    const [rows] = await db.query(query, {
-      myAge,
-      userId,
-    }) as any;
+    const [rows] = (await db.query(query, { userId })) as any;
 
     // Close the connection
     await db.end();
@@ -84,30 +74,30 @@ export async function getLikesSent(
       return;
     }
 
-    // Create an array to store users to whom likes were sent
-    const users: ILove[] = [];
+    // Create an array to store users
+    const users: IMapUser[] = [];
 
     // Iterate over the rows and create user objects
     for (const row of rows) {
-      const user: ILove = {
+      if (!row.loc || !row.loc.includes(',')) {
+        continue;
+      }
+
+      const loc = row.loc.split(',');
+
+      const user: IMapUser = {
         id: row.id,
-        isOnline: row.isOnline === 1,
+        isOnline: row.isOnline,
         firstName: row.firstName,
-        age: row.age,
-        gender: row.gender,
-        city: row.city,
-        pictures: row.pictures,
-        distance: -1,
-        isMatch: !!row.isMatch,
-        isSuperLike: row.isSuperLike === 1,
-        compatibilityScore: row.compatibilityScore
+        pictures: row.pictures || '',
+        loc
       };
 
-      // Push liked user object to the array
+      // Push user object to the array
       users.push(user);
     }
 
-    // Send the array of users to whom likes were sent as JSON response
+    // Send the array of users as JSON response
     res.status(200).json(users);
   } catch (error) {
     const e = error as ThrownError;
@@ -119,7 +109,7 @@ export async function getLikesSent(
 
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while getting sent liked user information',
+      message: 'An error occurred while getting map users',
     });
   }
 }

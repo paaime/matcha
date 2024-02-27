@@ -42,8 +42,8 @@ export default function Filters() {
     minAge: 18,
     maxAge: 100,
     minFameRating: 0,
-    maxFameRating: 10,
-    maxDistance: 100,
+    maxFameRating: 5000,
+    maxDistance: 0,
   });
 
   const getDiscover = async () => {

@@ -11,11 +11,16 @@ import { getAuthId } from '../../middlewares/authCheck';
 import { getLikes } from './functions/getLikes';
 import { getLikesSent } from './functions/getLikesSent';
 import { getFiltersInfos } from './functions/getFiltersInfos';
+import { getMapUsers } from './functions/getMap';
 
 const router = express.Router();
 
 router.get('/', async (req: RequestUser, res: Response) => {
   await getAllUsers(res);
+});
+
+router.get('/map', async (req: RequestUser, res: Response) => {
+  await getMapUsers(req, res);
 });
 
 router.get('/discovery/news', async (req: RequestUser, res: Response) => {
@@ -45,7 +50,7 @@ router.get('/getLikesSent', async (req: RequestUser, res: Response) => {
 });
 
 router.get('/filtersInfos', async (req: RequestUser, res: Response) => {
-  await getFiltersInfos(res);
+  await getFiltersInfos(req, res);
 });
 
 router.get('/:id', async (req: RequestUser, res: Response) => {
