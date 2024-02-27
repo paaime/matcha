@@ -26,7 +26,7 @@ export default function Matches() {
       pagination={{
         clickable: true,
       }}
-      className="shadow-scroll !-ml-5 sm:!ml-auto !pl-5"
+      className="!-ml-5 sm:!ml-auto !pl-5"
       breakpoints={{
         580: {
           slidesPerView: 4.5,

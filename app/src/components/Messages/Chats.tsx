@@ -1,5 +1,11 @@
+'use client';
+
+import { useChatsStore, useSocketStore } from '@/store';
+import customAxios from '@/utils/axios';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 const Chat = () => {
   return (
@@ -25,18 +31,52 @@ const Chat = () => {
 };
 
 export default function Chats() {
+  const { socket } = useSocketStore();
+  const { chats, setChats } = useChatsStore();
+
+  const getChats = async () => {
+    try {
+      const { data } = await customAxios.get('/chat');
+      setChats(data);
+    } catch (err) {
+      if (err.response?.data?.message) toast.error(err.response.data.message);
+      else toast.error('An error occurred');
+    }
+  };
+
+  // useEffect(() => {
+  //   getChats();
+  // }, [])
+
+  // useEffect(() => {
+  //   if (socket) {
+  //     socket.on('message', (body) => {
+  //       let message = JSON.parse(body);
+  //       setChats((prev) => {
+  //         return {
+  //           ...prev,
+  //           messages: [message, ...prev.messages],
+  //         };
+  //       });
+  //     });
+  //   }
+  // }, [socket]);
+
   return (
     <div
-      className="-mx-4 md:mx-auto -mb-28 bg-white dark:bg-gray-950 dark:border dark:border-input flex flex-col rounded-t-3xl px-7"
+      className="-mx-4 md:mx-auto -mb-28 bg-white dark:bg-gray-950 dark:border dark:border-input flex flex-col rounded-t-3xl px-7 pb-32 overflow-scroll"
       style={{
-        minHeight: 'calc(100vh - 250px)',
+        height: 'calc(100vh - 250px)',
       }}
     >
-      <Chat />
-      <Chat />
-      <Chat />
-      <Chat />
-      <Chat />
+      {chats.map((chat, index) => (
+        <Chat key={index} />
+      ))}
+      {chats.length === 0 && (
+        <div className="flex flex-col items-center justify-center h-full">
+          <p className="text-gray-400">No chats</p>
+        </div>
+      )}
     </div>
   );
 }
