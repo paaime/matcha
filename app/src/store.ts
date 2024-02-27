@@ -41,8 +41,8 @@ export const useFiltersStore = create<FiltersStore>((set) => ({
     minAge: 18,
     maxAge: 100,
     minFameRating: 0,
-    maxFameRating: 500,
-    maxDistance: 100,
+    maxFameRating: 5000,
+    maxDistance: 0,
   },
   setFilters: (filters) => set({ filters }),
 }));

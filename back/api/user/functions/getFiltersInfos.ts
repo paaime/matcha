@@ -2,13 +2,43 @@
 import { Response } from 'express';
 import { Filters, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
+import { RequestUser } from '../../../types/express';
 
-export async function getFiltersInfos(res: Response): Promise<void> {
+export async function getFiltersInfos(req: RequestUser, res: Response): Promise<void> {
   try {
+    const userId = req.user.id;
+
+    if (!userId || !Number.isInteger(userId) || userId < 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid user id',
+      });
+      return;
+    }
+
     const db = await connectToDatabase();
 
-    // Get all interests from Tags table and min/max age and fameRating from User table
-    const [rows] = (await db.query('SELECT DISTINCT tagName FROM Tags')) as any;
+    // Get my sexual preferences
+    const [rowsPreferences] = (await db.query(
+      'SELECT sexualPreferences FROM User WHERE id = ?',
+      [userId]
+    )) as any;
+
+    if (!rowsPreferences || rowsPreferences.length === 0) {
+      res.status(404).json({
+        error: 'User not found',
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const mySexualPreferences = rowsPreferences[0].sexualPreferences;
+
+    // Get all interests from Tags table related to user_id with the same sexual preferences
+    const [rows] = (await db.query(
+      'SELECT tagName FROM Tags WHERE user_id IN (SELECT id FROM User WHERE gender = ?) GROUP BY tagName',
+      [mySexualPreferences]
+    )) as any;
 
     // Get min and max age and fameRating from User table
     const [rowsMinMax] = (await db.query(

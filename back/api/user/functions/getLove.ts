@@ -73,7 +73,7 @@ const getMaxDistance = (customFilter: boolean, newValue: string) => {
   const defaultValue = 5; // 5km
 
   if (customFilter === false) {
-    return defaultValue;
+    return 25;
   }
 
   const intValue = parseInt(newValue, 10);
@@ -121,8 +121,6 @@ export async function getLove(
     );
 
     let interests: string[] = [];
-
-    console.log( req.query); // TODO: Fix distance range
 
     if (minAge > maxAge) {
       const temp = minAge;
