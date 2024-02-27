@@ -10,5 +10,5 @@ declare global {
 }
 
 export interface RequestUser extends Request {
-  user: JwtDatas;
+  user?: JwtDatas;
 }

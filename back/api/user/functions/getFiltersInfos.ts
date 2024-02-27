@@ -3,10 +3,11 @@ import { Response } from 'express';
 import { Filters, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+import { getAuthId } from '../../../middlewares/authCheck';
 
 export async function getFiltersInfos(req: RequestUser, res: Response): Promise<void> {
   try {
-    const userId = req.user.id;
+    const userId = getAuthId(req);
 
     if (!userId || !Number.isInteger(userId) || userId < 1) {
       res.status(400).json({

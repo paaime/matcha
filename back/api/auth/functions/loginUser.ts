@@ -79,9 +79,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     }
 
     if (user.isVerified === 0) {
-      // TODO : Send a new email to verify the account
-      const db = await connectToDatabase();
-
       const token =
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15);
@@ -91,9 +88,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
       const query = 'UPDATE User SET emailToken = ? WHERE email = ?';
 
       // Execute the query and check the result
-      const row = await db.execute(query, [tokenHashed, user.email]);
-
-      // TODO : Check if the query is correct
+      await db.execute(query, [tokenHashed, user.email]);
 
       // Close the connection
       await db.end();

@@ -4,6 +4,7 @@ import { ILove } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { interestsList } from '../../../types/list';
+import { getAuthId } from '../../../middlewares/authCheck';
 
 const getMinAge = (customFilter: boolean, newValue: string) => {
   const defaultValue = 18;
@@ -101,7 +102,7 @@ export async function getLove(
   customFilter: boolean = false
 ): Promise<void> {
   try {
-    const userId = req.user.id;
+    const userId = getAuthId(req);
 
     if (!userId || !Number.isInteger(userId) || userId < 1) {
       res.status(400).json({

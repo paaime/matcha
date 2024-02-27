@@ -8,11 +8,9 @@ export async function logoutUser(
 ): Promise<undefined> {
   try {
     res.clearCookie('token');
-    // TODO : set the user to null or undefined
-    req.user = {
-      id: -1,
-      email: '',
-    };
+
+    req.user = undefined;
+
     res.sendStatus(200);
   } catch (error) {
     const e = error as ThrownError;

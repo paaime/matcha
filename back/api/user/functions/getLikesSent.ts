@@ -4,13 +4,14 @@ import { ThrownError } from '../../../types/type';
 import { ILove, IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+import { getAuthId } from '../../../middlewares/authCheck';
 
 export async function getLikesSent(
   req: RequestUser,
   res: Response
 ): Promise<void> {
   try {
-    const userId = req.user.id;
+    const userId = getAuthId(req);
 
     if (!userId || !Number.isInteger(userId) || userId < 1) {
       res.status(400).json({

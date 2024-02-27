@@ -3,6 +3,7 @@ import { ThrownError } from '../../../types/type';
 import { IDiscovery } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+import { getAuthId } from '../../../middlewares/authCheck';
 
 const MAX_DAYS = 7;
 
@@ -11,7 +12,7 @@ export async function getDiscovery(
   res: Response
 ): Promise<void> {
   try {
-    const userId = req.user.id;
+    const userId = getAuthId(req);
 
     if (!userId || !Number.isInteger(userId) || userId < 1) {
       res.status(400).json({
