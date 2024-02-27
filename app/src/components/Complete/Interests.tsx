@@ -3,21 +3,7 @@ import { Interest } from '../Discover/Interests';
 import { Button } from '../ui/button';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'sonner';
-
-const fakeInterests = [
-  '🎵 Music',
-  '🚀 Travel',
-  '🍔 Food',
-  '💙 Fashion',
-  '💻 Technology',
-  '🎮 Gaming',
-  '⚽️ Sports',
-  '🎨 Art',
-  '📸 Photography',
-  '🏋️ Fitness',
-  '📚 Reading',
-  '🖊️ Writing',
-];
+import { interestsList } from '@/types/list';
 
 export default function Interests({
   setStep,
@@ -53,7 +39,7 @@ export default function Interests({
         Select up to 5 interests
       </h3>
       <div className="flex flex-wrap gap-3 mx-auto justify-center max-w-[360px]">
-        {fakeInterests.map((interest, index) => (
+        {interestsList.map((interest, index) => (
           <Interest
             key={index}
             value={interest}

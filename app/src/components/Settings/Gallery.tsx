@@ -3,22 +3,6 @@
 import { CameraIcon, PlusIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { FaSmile } from 'react-icons/fa';
-import { Dispatch, SetStateAction } from 'react';
-
-const fakeInterests = [
-  '🎵 Music',
-  '🚀 Travel',
-  '🍔 Food',
-  '💙 Fashion',
-  '💻 Technology',
-  '🕹️ Gaming',
-  '⚽️ Sports',
-  '🎨 Art',
-  '📸 Photography',
-  '🏋️ Fitness',
-  '📚 Reading',
-  '🖊️ Writing',
-];
 
 export default function Gallery() {
   return (

@@ -1,19 +1,14 @@
 import { Response } from 'express';
-import bcrypt from 'bcrypt';
 import { connectToDatabase } from '../../../utils/db';
 import {
   ageRegex,
   biographyRegex,
   genderEnum,
-  interestRegex,
-  nameRegex,
-  picturesRegex,
   preferenceEnum,
 } from '../../../types/regex';
-import { getEmailData } from '../../../utils/emails';
-import { transporter } from '../../..';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { RequestUser } from '../../../types/express';
+import { interestsList } from '../../../types/list';
 
 export const checkIfFieldExist = (
   name: string,
@@ -97,13 +92,9 @@ export async function completeUser(
     const uniqueInterests = Array.from(new Set(interests));
 
     for (const interest of uniqueInterests) {
-      if (!interestRegex.test(interest)) {
-        console.log(interest);
-        res.status(400).json({
-          error: 'Bad request',
-          message: 'Invalid interests',
-        });
-        return;
+      // Remove interests that not match interests regex
+      if (!interestsList.includes(interest)) {
+        uniqueInterests.splice(uniqueInterests.indexOf(interest), 1);
       }
     }
 
