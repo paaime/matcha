@@ -6,7 +6,7 @@ import { RequestUser } from '../../../types/express';
 import { interestsList } from '../../../types/list';
 import { getAuthId } from '../../../middlewares/authCheck';
 
-const getMinAge = (customFilter: boolean, newValue: string) => {
+export const getMinAge = (customFilter: boolean, newValue: string) => {
   const defaultValue = 18;
 
   if (customFilter === false) {
@@ -22,7 +22,7 @@ const getMinAge = (customFilter: boolean, newValue: string) => {
   return defaultValue;
 };
 
-const getMaxAge = (customFilter: boolean, newValue: string) => {
+export const getMaxAge = (customFilter: boolean, newValue: string) => {
   const defaultValue = 99;
 
   if (customFilter === false) {
@@ -38,7 +38,7 @@ const getMaxAge = (customFilter: boolean, newValue: string) => {
   return defaultValue;
 };
 
-const getMinFame = (customFilter: boolean, newValue: string) => {
+export const getMinFame = (customFilter: boolean, newValue: string) => {
   const defaultValue = 0;
 
   if (customFilter === false) {
@@ -54,7 +54,7 @@ const getMinFame = (customFilter: boolean, newValue: string) => {
   return defaultValue;
 };
 
-const getMaxFame = (customFilter: boolean, newValue: string) => {
+export const getMaxFame = (customFilter: boolean, newValue: string) => {
   const defaultValue = 400;
 
   if (customFilter === false) {
@@ -70,7 +70,7 @@ const getMaxFame = (customFilter: boolean, newValue: string) => {
   return defaultValue;
 };
 
-const getMaxDistance = (customFilter: boolean, newValue: string) => {
+export const getMaxDistance = (customFilter: boolean, newValue: string) => {
   const defaultValue = 5; // 5km
 
   if (customFilter === false) {
@@ -247,22 +247,6 @@ export async function getLove(
             Blocked ub
           WHERE
             ub.blocked_user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
-            r.reported_user_id
-          FROM
-            Reported r
-          WHERE
-            r.user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
-            r.user_id
-          FROM
-            Reported r
-          WHERE
-            r.reported_user_id = :userId
         )
         ${interests.length > 0 ? `AND u.id IN (
           SELECT
