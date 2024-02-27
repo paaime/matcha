@@ -48,6 +48,7 @@ export async function getLikes(req: RequestUser, res: Response): Promise<void> {
         u.city,
         u.pictures,
         u.fameRating,
+        ul.isSuperLike,
         (
           (100 - ABS(u.age - :myAge)) + (u.fameRating / 100)
         ) AS compatibilityScore,
@@ -95,6 +96,7 @@ export async function getLikes(req: RequestUser, res: Response): Promise<void> {
         pictures: row.pictures,
         distance: -1,
         isMatch: !!row.isMatch,
+        isSuperLike: row.isSuperLike === 1,
         compatibilityScore: row.compatibilityScore
       };
 

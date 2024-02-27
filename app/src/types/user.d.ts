@@ -16,6 +16,7 @@ export interface ILove {
   pictures?: string; // Can be undefined
   compatibilityScore: number;
   isMatch?: boolean;
+  isSuperLike?: boolean;
 }
 
 export interface IUser {
