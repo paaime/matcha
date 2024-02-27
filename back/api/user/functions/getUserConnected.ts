@@ -215,8 +215,6 @@ export async function getUserConnected(
         });
     }
 
-    // TODO: Get users blocked
-
     res.status(200).json(user);
   } catch (error) {
     const e = error as ThrownError;
