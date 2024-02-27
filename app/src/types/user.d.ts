@@ -19,6 +19,14 @@ export interface ILove {
   isSuperLike?: boolean;
 }
 
+export interface IMapUser {
+  id: number;
+  isOnline: boolean;
+  firstName: string;
+  pictures: string;
+  loc: string[];
+}
+
 export interface IUser {
   id: number;
   isOnline: boolean;
@@ -51,7 +59,7 @@ export interface IUser {
   created_at: string;
 }
 
-interface IUserSettings {
+export interface IUserSettings {
   id: number;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'

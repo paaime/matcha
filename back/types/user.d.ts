@@ -63,7 +63,15 @@ export interface IDiscovery {
   pictures?: string; // Can be undefined
 }
 
-interface IUserSettings {
+export interface IMapUser {
+  id: number;
+  isOnline: boolean;
+  firstName: string;
+  pictures: string;
+  loc: string[];
+}
+
+export interface IUserSettings {
   id: number;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'
