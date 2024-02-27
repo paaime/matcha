@@ -4,9 +4,11 @@ import Link from 'next/link';
 
 export default function ProfileCard({
   small = false,
+  preview = false,
   user,
 }: {
   small?: boolean;
+  preview?: boolean;
   user: ILove;
 }) {
   const pictures = user.pictures?.split(',') || [];
@@ -16,7 +18,7 @@ export default function ProfileCard({
       href={`/profile/${user.id}`}
       className={clsx(
         !small && 'border-[5px] border-pink',
-        small ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',
+        small || preview ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',
         'block',
         user.isSuperLike && !user.isMatch && '!border-orange-500',
         user.isMatch && '!border-yellow-500'
@@ -29,7 +31,7 @@ export default function ProfileCard({
     >
       <div
         className={clsx(
-          small ? 'rounded-xl' : 'rounded-3xl',
+          small || preview? 'rounded-xl' : 'rounded-3xl',
           'flex flex-col justify-between items-center h-full'
         )}
         style={{
@@ -41,7 +43,7 @@ export default function ProfileCard({
           <div className="bg-primary rounded-sm border border-pink px-3 py-1 self-start ml-3 mt-3">
             <p className="text-white font-semibold text-sm">NEW</p>
           </div>
-        ) : (
+        ) : !preview && (
           <div className={clsx(
             "bg-pink text-white font-bold px-5 pb-1 rounded-b-2xl text-sm",
             user.isSuperLike && !user.isMatch && "!bg-orange-500",

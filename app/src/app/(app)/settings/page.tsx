@@ -8,6 +8,9 @@ import Email from '@/components/Settings/Email';
 import Password from '@/components/Settings/Password';
 import SexualPreference from '@/components/Settings/SexualPreference';
 import Bio from '@/components/Settings/Bio';
+import History from '@/components/Settings/History';
+import Visited from '@/components/Settings/Visited';
+import Blocked from '@/components/Settings/Blocked';
 
 export const metadata = {
   title: 'Matcha | Settings',
@@ -35,6 +38,9 @@ export default function Page() {
           <Names />
           <Bio />
           <Age />
+          <History />
+          <Visited />
+          <Blocked />
         </TabsContent>
         <TabsContent value="security">
           <Email />

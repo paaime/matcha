@@ -4,19 +4,18 @@ import { ThrownError } from '../../../types/type';
 import { IUserSettings } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+import { getAuthId } from '../../../middlewares/authCheck';
 
 export async function getUserConnected(
   req: RequestUser,
   res: Response
 ): Promise<undefined> {
   try {
-    const userId = (req.user?.id as number) || -1;
+    const userId = getAuthId(req);
 
-    if (!Number.isInteger(userId) || userId < 1) {
-      console.error('Invalid user id:', userId);
-
-      res.status(401).json({
-        error: 'Unauthorized',
+    if (!userId || !Number.isInteger(userId) || userId < 1) {
+      res.status(400).json({
+        error: 'Bad request',
         message: 'Invalid user id',
       });
       return;
@@ -82,44 +81,85 @@ export async function getUserConnected(
 
     const queryHistory = `
       SELECT 
-          User.id,
-          User.firstName,
-          User.age,
-          User.pictures,
-          History.created_at
+        User.id,
+        User.firstName,
+        User.age,
+        User.pictures,
+        History.created_at
       FROM
-          History
+        History
       JOIN
-          User ON User.id = History.visited_user_id
+        User ON User.id = History.visited_user_id
       WHERE
-          History.user_id = ?
+        History.user_id = ?
       ORDER BY
-          History.created_at DESC;
+        History.created_at DESC;
     `;
 
     const [history] = await db.query(queryHistory, [userId]) as any;
 
     const queryVisited = `
       SELECT 
-          User.id,
-          User.firstName,
-          User.age,
-          User.pictures,
-          History.created_at
+        User.id,
+        User.firstName,
+        User.age,
+        User.pictures,
+        History.created_at
       FROM
-          History
+        History
       JOIN
-          User ON User.id = History.user_id
+        User ON User.id = History.user_id
       WHERE
-          History.visited_user_id = ?
+        History.visited_user_id = ?
       ORDER BY
-          History.created_at DESC;
+        History.created_at DESC;
     `;
 
     const [visited] = await db.query(queryVisited, [userId]) as any;
 
+    const blockedQuery = `
+      SELECT 
+        User.id,
+        User.firstName,
+        User.age,
+        User.pictures,
+        Blocked.created_at
+      FROM
+        Blocked
+      JOIN
+        User ON User.id = Blocked.blocked_user_id
+      WHERE
+        Blocked.user_id = ?
+      ORDER BY
+        Blocked.created_at DESC;
+    `;
+
+    const [blocked] = await db.query(blockedQuery, [userId]) as any;
+
     // Close the connection
     await db.end();
+
+    // Remove history users with same id
+    const historyIds = new Set<number>();
+    const historyFiltered = [];
+
+    for (const user of history) {
+      if (!historyIds.has(user.id)) {
+        historyIds.add(user.id);
+        historyFiltered.push(user);
+      }
+    }
+
+    // Remove visited users with same id
+    const visitedIds = new Set<number>();
+    const visitedFiltered = [];
+
+    for (const user of visited) {
+      if (!visitedIds.has(user.id)) {
+        visitedIds.add(user.id);
+        visitedFiltered.push(user);
+      }
+    }
 
     // Create the user object
     const user: IUserSettings = {
@@ -142,9 +182,9 @@ export async function getUserConnected(
       pictures: rows[0].pictures,
       fameRating: rows[0].fameRating,
       interests: [], // Filled below
-      visitHistory: history || [],
-      userVisited: visited || [],
-      usersBlocked: [],
+      visitHistory: historyFiltered || [],
+      userVisited: visitedFiltered || [],
+      usersBlocked: blocked || [],
       notifications: [], // Filled below
     };
 
