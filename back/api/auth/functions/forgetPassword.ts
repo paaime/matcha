@@ -8,7 +8,10 @@ import { RequestUser } from '../../../types/express';
 import { getEmailData } from '../../../utils/emails';
 import { transporter } from '../../..';
 
-export async function forgetPassword(req: RequestUser, res: Response): Promise<undefined>{
+export async function forgetPassword(
+  req: RequestUser,
+  res: Response
+): Promise<undefined> {
   try {
     // Get infos from body
     const { email } = req.body;
@@ -23,9 +26,28 @@ export async function forgetPassword(req: RequestUser, res: Response): Promise<u
 
     const db = await connectToDatabase();
 
+    // Check if the user is Google
+    const googleQuery = 'SELECT isGoogle FROM User WHERE email = ?';
+    const [googleResult] = (await db.query(googleQuery, [email])) as any;
+
+    if (googleResult && googleResult.length > 0) {
+      const { isGoogle } = googleResult[0];
+
+      // Close the connection
+      db.end();
+
+      if (isGoogle) {
+        res.status(400).json({
+          error: 'Bad request',
+          message: "Google user can't do that",
+        });
+        return;
+      }
+    }
+
     // Check if the email is already used
     const emailQuery = 'SELECT id, firstName FROM User WHERE email = ?';
-    const [emailResult] = await db.query(emailQuery, [email]) as any;
+    const [emailResult] = (await db.query(emailQuery, [email])) as any;
 
     if (!emailResult || emailResult.length === 0) {
       // Close the connection
@@ -49,7 +71,7 @@ export async function forgetPassword(req: RequestUser, res: Response): Promise<u
 
     // Update the user's email
     const updateQuery = 'UPDATE User SET emailToken = ? WHERE id = ?';
-    await db.query(updateQuery, [tokenHashed, user_id]) as any;
+    (await db.query(updateQuery, [tokenHashed, user_id])) as any;
 
     // Close the connection
     db.end();
@@ -68,7 +90,10 @@ export async function forgetPassword(req: RequestUser, res: Response): Promise<u
       text: emailData.text,
       html: emailData.html
         .replace('[FIRST_NAME]', firstName)
-        .replaceAll('[RESET_LINK]', `${process.env.DOMAIN}/auth/reset-password/?token=${token}&email=${email}`),
+        .replaceAll(
+          '[RESET_LINK]',
+          `${process.env.DOMAIN}/auth/reset-password/?token=${token}&email=${email}`
+        ),
     };
 
     transporter.sendMail(mailData, function (err, info) {
@@ -79,19 +104,19 @@ export async function forgetPassword(req: RequestUser, res: Response): Promise<u
 
     res.status(200).json({
       user_id,
-      sent: true
+      sent: true,
     });
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
+    const code = e?.code || 'Unknown error';
+    const message = e?.message || 'Unknown message';
 
     console.error({ code, message });
-    
+
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while sending the email'
+      message: 'An error occurred while sending the email',
     });
   }
 }

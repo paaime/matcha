@@ -6,7 +6,10 @@ import { emailRegex, passwordRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 
-export async function resetPassword(req: RequestUser, res: Response): Promise<undefined>{
+export async function resetPassword(
+  req: RequestUser,
+  res: Response
+): Promise<undefined> {
   try {
     // Get infos from body
     const { email, token, password } = req.body;
@@ -30,7 +33,7 @@ export async function resetPassword(req: RequestUser, res: Response): Promise<un
     console.log({
       email,
       token,
-      password
+      password,
     });
 
     // Check new password
@@ -44,9 +47,28 @@ export async function resetPassword(req: RequestUser, res: Response): Promise<un
 
     const db = await connectToDatabase();
 
+    // Check if the user is Google
+    const googleQuery = 'SELECT isGoogle FROM User WHERE email = ?';
+    const [googleResult] = (await db.query(googleQuery, [email])) as any;
+
+    if (googleResult && googleResult.length > 0) {
+      const { isGoogle } = googleResult[0];
+
+      // Close the connection
+      db.end();
+
+      if (isGoogle) {
+        res.status(400).json({
+          error: 'Bad request',
+          message: "Google user can't do that",
+        });
+        return;
+      }
+    }
+
     // Check if the email is already used
     const emailQuery = 'SELECT id, emailToken FROM User WHERE email = ?';
-    const [emailResult] = await db.query(emailQuery, [email]) as any;
+    const [emailResult] = (await db.query(emailQuery, [email])) as any;
 
     if (!emailResult || emailResult.length === 0) {
       // Close the connection
@@ -80,27 +102,29 @@ export async function resetPassword(req: RequestUser, res: Response): Promise<un
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Update the user's password
-    const updateQuery = 'UPDATE User SET passwordHashed = ?, emailToken = ? WHERE id = ?';
-    await db.query(updateQuery, [hashedPassword, null, user_id]) as any;
+    const updateQuery =
+      'UPDATE User SET passwordHashed = ?, emailToken = ? WHERE id = ?';
+    (await db.query(updateQuery, [hashedPassword, null, user_id])) as any;
 
     // Close the connection
     db.end();
 
     res.status(200).json({
       user_id,
-      reset: true
+      reset: true,
     });
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
+    const code = e?.code || 'Unknown error';
+    const message = e?.message || 'Unknown message';
 
     console.error({ code, message });
-    
+
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while resetting the password. Please try again later.'
+      message:
+        'An error occurred while resetting the password. Please try again later.',
     });
   }
 }

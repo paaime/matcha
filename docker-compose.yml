@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   db:
     image: mysql:latest
@@ -27,7 +27,7 @@ services:
     depends_on:
       - db
     logging:
-      driver: "none"
+      driver: 'none'
 
   app:
     build:
@@ -49,6 +49,8 @@ services:
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_PORT=3306
       - NEXT_PUBLIC_API=${NEXT_PUBLIC_API}
+      - NEXT_PUBLIC_GOOGLE_REDIRECT_URI=${NEXT_PUBLIC_GOOGLE_REDIRECT_URI}
+      - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
     env_file:
       - .env
     depends_on:
@@ -64,7 +66,7 @@ services:
       - ./back:/back
       - /app/node_modules
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       - FAST_REFRESH=true # React's hot reload
       - DOMAIN=${DOMAIN}
@@ -80,6 +82,9 @@ services:
       - MAIL_HOST=${MAIL_HOST}
       - MAIL_PORT=${MAIL_PORT}
       - IP_INFO_TOKEN=${IP_INFO_TOKEN}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
     env_file:
       - .env
     depends_on:

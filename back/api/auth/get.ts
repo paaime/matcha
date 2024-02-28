@@ -4,6 +4,7 @@ import express from 'express';
 import { addRandom } from './functions/addRandom';
 import { randomScript } from './functions/randomScript';
 import { confirmEmail } from './functions/confirmEmail';
+import { googleAuth } from './functions/googleAuth';
 
 const router = express.Router();
 
@@ -23,6 +24,10 @@ router.get('/randomScript', async (req: Request, res: Response) => {
 
 router.get('/confirm/:email/:token', async (req: Request, res: Response) => {
   await confirmEmail(req.params, res);
+});
+
+router.get('/google-auth', async (req: Request, res: Response) => {
+  await googleAuth(req, res);
 });
 
 export default router;

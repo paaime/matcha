@@ -4,6 +4,7 @@ import SignUpForm from '@/components/Auth/SignUp/Form';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import clsx from 'clsx';
+import Google from '@/components/Auth/Google';
 
 export const metadata = {
   title: 'Matcha | Sign up',
@@ -39,14 +40,7 @@ export default async function SignUp() {
         </div>
       </div>
       <div className="flex gap-3">
-        <Button variant="outline" type="button" className="w-full text-black dark:text-white">
-          <FaGoogle className="mr-2 h-4 w-4" />
-          Google
-        </Button>
-        <Button variant="outline" type="button" className="w-full text-black dark:text-white">
-          <FaGithub className="mr-2 h-4 w-4" />
-          GitHub
-        </Button>
+        <Google />
       </div>
       <p className="px-8 text-center text-sm text-muted-foreground">
         By clicking continue, you agree to our{' '}
