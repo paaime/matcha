@@ -64,7 +64,7 @@ services:
     restart: always
     volumes:
       - ./back:/back
-      - /app/node_modules
+      - /back/node_modules
     ports:
       - '3001:3001'
     environment:
