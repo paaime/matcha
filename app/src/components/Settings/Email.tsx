@@ -27,6 +27,9 @@ export default function Email() {
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(EmailSchema),
+    defaultValues: {
+      email: user.email,
+    },
   });
 
   const handleSubmit: SubmitHandler<FormFields> = async (data) => {
@@ -57,7 +60,7 @@ export default function Email() {
               <FormItem className="w-full">
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} autoComplete="email" type="email" />
+                  <Input {...field} autoComplete="email" type="email" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

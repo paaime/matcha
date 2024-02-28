@@ -25,6 +25,11 @@ export default function Password() {
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(PasswordSchema),
+    defaultValues: {
+      password: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
   });
 
   const handleSubmit: SubmitHandler<FormFields> = async (data) => {
@@ -54,7 +59,7 @@ export default function Password() {
               <FormItem className="w-full">
                 <FormLabel>Current Password</FormLabel>
                 <FormControl>
-                  <Input {...field} autoComplete="password" type="password" />
+                  <Input {...field} autoComplete="password" type="password" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -67,7 +72,7 @@ export default function Password() {
               <FormItem className="w-full">
                 <FormLabel>New Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -80,7 +85,7 @@ export default function Password() {
               <FormItem className="w-full">
                 <FormLabel>Confirm New Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

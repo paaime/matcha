@@ -29,6 +29,10 @@ export default function ResetPasswordForm() {
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(ResetPasswordSchema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const handleForgotPassword: SubmitHandler<FormFields> = async (data) => {
@@ -79,7 +83,7 @@ export default function ResetPasswordForm() {
               <FormItem className="w-full">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -93,7 +97,7 @@ export default function ResetPasswordForm() {
               <FormItem className="w-full">
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
