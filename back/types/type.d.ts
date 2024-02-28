@@ -22,4 +22,15 @@ export type Filters = {
   maxAge: number;
   minFameRating: number;
   maxFameRating: number;
-}
+};
+
+export type IChatUser = {
+  chatId: number;
+  matchId: number;
+  senderId: number;
+  senderName: string;
+  senderPictures: string;
+  content: string;
+  type: string;
+  sentAt: Date;
+};

@@ -42,6 +42,26 @@ const emailsData: Item[] = [
     },
   },
   {
+    name: 'inviteToDate',
+    data: {
+      subject: 'Matcha - You have been invited to a date',
+      text: 'You have been invited to a date to : [ACTIVITY] ',
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Inivited to a date</h2>
+        <p>
+          Hello [FIRST_NAME],
+        </p>
+        <p>
+          You have been invited to a date to : [ACTIVITY] by [INVITATOR_FIRST_NAME] tomorrow at 8pm !
+        </p>
+        <p>
+          Best regards,<br>
+          paime - dvergobb
+        </p>
+      </div>`,
+    },
+  },
+  {
     name: 'resetPassword',
     data: {
       subject: 'Matcha - Reset your password',
@@ -90,8 +110,8 @@ const emailsData: Item[] = [
           paime - dvergobb
         </p>
       </div>`,
-    }
-  }
+    },
+  },
 ];
 
 const getEmailData = (name: string): EmailData | null => {
@@ -100,6 +120,6 @@ const getEmailData = (name: string): EmailData | null => {
     return null;
   }
   return emailData.data;
-}
+};
 
 export { getEmailData };

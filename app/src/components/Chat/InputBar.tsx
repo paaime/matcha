@@ -52,7 +52,7 @@ export default function InputBar({ chatId }) {
           <SendIcon className="h-5 w-5 -ml-0.5 -mb-0.5 dark:text-white" />
         </Button>
         <GalleryModal open={openGallery} setOpen={setOpenGallery} />
-        <InvitationModal open={openInvitation} setOpen={setOpenInvitation} />
+        <InvitationModal open={openInvitation} setOpen={setOpenInvitation} matchId={chatId} />
       </div>
     </div>
   );
