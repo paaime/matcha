@@ -1,10 +1,10 @@
 import { connectToDatabase } from '../../utils/db';
-import { ThrownError } from '../../types/type';
+import { Notification, ThrownError } from '../../types/type';
 
-export async function addNotification(user_id: number, body: any): Promise<boolean>{
+export async function addNotification(user_id: number, body: Notification): Promise<boolean>{
   try {
     // Get infos from body
-    const { content, redirect, related_id } = body;
+    const { content, redirect, related_user_id } = body;
 
     // Check if fields exist
     if (!content || content.length < 1) {
@@ -17,7 +17,7 @@ export async function addNotification(user_id: number, body: any): Promise<boole
 
     // Add the notification
     const query = 'INSERT INTO Notification (user_id, content, redirect, related_user_id) VALUES (?, ?, ?, ?)';
-    const [rows] = await db.query(query, [user_id, content, redirect, related_id]) as any;
+    const [rows] = await db.query(query, [user_id, content, redirect, related_user_id]) as any;
 
     // Close the connection
     await db.end();

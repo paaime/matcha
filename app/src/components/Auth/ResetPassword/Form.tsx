@@ -18,43 +18,49 @@ import {
 } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
+import customAxios from '@/utils/axios';
 
 type FormFields = z.infer<typeof ResetPasswordSchema>;
 
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+  const email = searchParams.get('email');
   const [open, setOpen] = useState(false);
 
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(ResetPasswordSchema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const handleForgotPassword: SubmitHandler<FormFields> = async (data) => {
     const { password, confirmPassword } = data;
+
+    if (password !== confirmPassword) {
+      toast('Passwords do not match', { description: 'Error' });
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/user/reset-password`, {
-        method: 'POST',
-        body: JSON.stringify({
-          password,
-          confirmPassword,
-          token,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await customAxios.post('/auth/reset-password', {
+        email,
+        token,
+        password
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error_msg || 'Something went wrong');
-      }
 
       setOpen(true);
     } catch (err) {
-      toast('Error', { description: err.message });
+      console.error(err);
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else
+        toast('An error occured', {
+          description: 'Error',
+        });
     }
   };
 
@@ -79,7 +85,7 @@ export default function ResetPasswordForm() {
               <FormItem className="w-full">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -93,7 +99,7 @@ export default function ResetPasswordForm() {
               <FormItem className="w-full">
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

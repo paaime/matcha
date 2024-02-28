@@ -9,7 +9,6 @@ import { IUser } from '@/types/user';
 
 export default function Gallery({ user }: { user: IUser }) {
   const pictures = user.pictures?.split(',') || [];
-  console.log(pictures);
 
   return (
     <Swiper
@@ -33,6 +32,7 @@ export default function Gallery({ user }: { user: IUser }) {
               objectFit: 'cover',
             }}
             priority
+            unoptimized
           />
         </SwiperSlide>
       ))}

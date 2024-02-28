@@ -76,10 +76,13 @@ export async function unblockUser(unblock_id: number, req: RequestUser, res: Res
 
     // Send notifications
     await sendNotification(unblock_id.toString(), {
-      content: 'Someone unblocked you'
+      content: 'Someone unblocked you',
+      related_user_id: user_id,
     });
     await sendNotification(user_id.toString(), {
-      content: `You unblocked ${firstName}`
+      content: `You unblocked ${firstName}`,
+      redirect: `/profile/${unblock_id}`,
+      related_user_id: unblock_id,
     });
 
     res.status(200).json({

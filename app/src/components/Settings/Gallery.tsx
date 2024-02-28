@@ -12,7 +12,6 @@ export const GalleryImage = ({ id, picture }) => {
 
   const handleUpload = async (event, imageId: number) => {
     try {
-      console.log(user);
       const formData = new FormData();
       formData.append('image', event.target.files[0]);
       const { data } = await customAxios.put(

@@ -25,12 +25,14 @@ export default function LoveCard({ user }: { user: ILove }) {
         {pictures?.map((picture, index) => (
           <SwiperSlide key={index}>
             <Image
-              src={picture}
-              alt={user.firstName}
+              loader={({ src }) => src}
+              src={`${process.env.NEXT_PUBLIC_API}${picture}`}
+              alt={`Photo ${index}`}
               width={500}
               height={500}
               className="absolute w-full h-full object-cover"
               priority
+              unoptimized
             />
           </SwiperSlide>
         ))}

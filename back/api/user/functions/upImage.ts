@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { upload } from '../../../middlewares/multer';
 import { RequestUser } from '../../../types/express';
 import { Response } from 'express';
@@ -9,7 +10,7 @@ export async function upImage(
   res: Response,
   image_id: number
 ): Promise<undefined> {
-  upload(req, res, async (err) => {
+  upload(req as Request, res, async (err) => {
     try {
       const user_id = getAuthId(req);
 

@@ -4,19 +4,18 @@ import { ThrownError } from '../../../types/type';
 import { IUserSettings } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
+import { getAuthId } from '../../../middlewares/authCheck';
 
 export async function getUserConnected(
   req: RequestUser,
   res: Response
 ): Promise<undefined> {
   try {
-    const userId = (req.user?.id as number) || -1;
+    const userId = getAuthId(req);
 
-    if (!Number.isInteger(userId) || userId < 1) {
-      console.error('Invalid user id:', userId);
-
-      res.status(401).json({
-        error: 'Unauthorized',
+    if (!userId || !Number.isInteger(userId) || userId < 1) {
+      res.status(400).json({
+        error: 'Bad request',
         message: 'Invalid user id',
       });
       return;
@@ -48,6 +47,7 @@ export async function getUserConnected(
         n.id AS notificationId,
         n.content AS notificationContent,
         n.redirect AS notificationRedirect,
+        n.related_user_id AS notificationRelatedUserId,
         n.created_at AS notificationCreatedAt
       FROM
         User u
@@ -66,10 +66,10 @@ export async function getUserConnected(
     // Execute the query and check the result
     const [rows] = (await db.query(query, [userId])) as any;
 
-    // Close the connection
-    await db.end();
-
     if (!rows || rows.length === 0) {
+      // Close the connection
+      await db.end();
+
       console.error('No user found with id:', userId);
 
       res.status(404).json({
@@ -77,6 +77,88 @@ export async function getUserConnected(
         message: 'User not found',
       });
       return;
+    }
+
+    const queryHistory = `
+      SELECT 
+        User.id,
+        User.firstName,
+        User.age,
+        User.pictures,
+        History.created_at
+      FROM
+        History
+      JOIN
+        User ON User.id = History.visited_user_id
+      WHERE
+        History.user_id = ?
+      ORDER BY
+        History.created_at DESC;
+    `;
+
+    const [history] = await db.query(queryHistory, [userId]) as any;
+
+    const queryVisited = `
+      SELECT 
+        User.id,
+        User.firstName,
+        User.age,
+        User.pictures,
+        History.created_at
+      FROM
+        History
+      JOIN
+        User ON User.id = History.user_id
+      WHERE
+        History.visited_user_id = ?
+      ORDER BY
+        History.created_at DESC;
+    `;
+
+    const [visited] = await db.query(queryVisited, [userId]) as any;
+
+    const blockedQuery = `
+      SELECT 
+        User.id,
+        User.firstName,
+        User.age,
+        User.pictures,
+        Blocked.created_at
+      FROM
+        Blocked
+      JOIN
+        User ON User.id = Blocked.blocked_user_id
+      WHERE
+        Blocked.user_id = ?
+      ORDER BY
+        Blocked.created_at DESC;
+    `;
+
+    const [blocked] = await db.query(blockedQuery, [userId]) as any;
+
+    // Close the connection
+    await db.end();
+
+    // Remove history users with same id
+    const historyIds = new Set<number>();
+    const historyFiltered = [];
+
+    for (const user of history) {
+      if (!historyIds.has(user.id)) {
+        historyIds.add(user.id);
+        historyFiltered.push(user);
+      }
+    }
+
+    // Remove visited users with same id
+    const visitedIds = new Set<number>();
+    const visitedFiltered = [];
+
+    for (const user of visited) {
+      if (!visitedIds.has(user.id)) {
+        visitedIds.add(user.id);
+        visitedFiltered.push(user);
+      }
     }
 
     // Create the user object
@@ -99,11 +181,11 @@ export async function getUserConnected(
       biography: rows[0].biography,
       pictures: rows[0].pictures,
       fameRating: rows[0].fameRating,
-      interests: [],
-      visitHistory: [],
-      userVisited: [],
-      usersBlocked: [],
-      notifications: [],
+      interests: [], // Filled below
+      visitHistory: historyFiltered || [],
+      userVisited: visitedFiltered || [],
+      usersBlocked: blocked || [],
+      notifications: [], // Filled below
     };
 
     const interestsSet = new Set<string>();
@@ -128,15 +210,10 @@ export async function getUserConnected(
           id: row.notificationId,
           content: row.notificationContent,
           redirect: row.notificationRedirect,
-          // TODO : Put the real related user id
-          related_user_id: 1,
+          related_user_id: row.notificationRelatedUserId,
           created_at: row.notificationCreatedAt,
         });
     }
-
-    // TODO: Get visit history
-    // TODO: Get user visited
-    // TODO: Get users blocked
 
     res.status(200).json(user);
   } catch (error) {

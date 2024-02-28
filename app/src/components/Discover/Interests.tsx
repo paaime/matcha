@@ -2,7 +2,7 @@
 
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
-import { useFiltersStore, useInterestsStore } from '@/store';
+import { useFiltersStore, useInterestsListStore, useInterestsStore } from '@/store';
 
 export const Interest = ({
   value,
@@ -41,7 +41,7 @@ export const StaticInterest = ({ value }: { value: string }) => {
 };
 
 export const OnlineInterests = () => {
-  const { filters } = useFiltersStore();
+  const { interestsList } = useInterestsListStore();
   const { interests, setInterests } = useInterestsStore();
 
   const changeInterests = (value: string, checked: boolean) => {
@@ -57,13 +57,13 @@ export const OnlineInterests = () => {
       <div className="flex justify-between">
         <p className="text-xl text-black dark:text-white font-extrabold">Interest</p>
         <p className="text-pink hover:underline cursor-pointer">
-          {filters?.interests?.length} interests
+          {interestsList?.length} interests
         </p>
       </div>
 
       <div className="flex flex-col overflow-scroll relative">
         <div className="flex mt-3 gap-4">
-          {filters?.interests?.slice(0, 5).map((interest, index) => (
+          {interestsList?.slice(0, 6).map((interest, index) => (
             <Interest
               key={index}
               value={interest}
@@ -74,7 +74,7 @@ export const OnlineInterests = () => {
         </div>
 
         <div className="flex mt-3 gap-4">
-          {filters?.interests?.slice(5, 10).map((interest, index) => (
+          {interestsList?.slice(6, 12).map((interest, index) => (
             <Interest
               key={index}
               value={interest}
@@ -83,6 +83,13 @@ export const OnlineInterests = () => {
             />
           ))}
         </div>
+
+        {!interestsList || interestsList.length === 0 && (
+          <div className="flex mt-3 gap-4">
+            <StaticInterest value="🙁 No user found" />
+            <StaticInterest value="🔭 Broaden your criteria" />
+          </div>
+        )}
       </div>
     </div>
   );

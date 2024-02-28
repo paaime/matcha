@@ -42,7 +42,7 @@ const emailsData: Item[] = [
     },
   },
   {
-    name: 'resetPassword', // TODO implement resetPassword
+    name: 'resetPassword',
     data: {
       subject: 'Matcha - Reset your password',
       text: 'Please reset your password',
@@ -73,12 +73,12 @@ const emailsData: Item[] = [
     },
   },
   {
-    name: 'reportUser', // TODO implement reportUser
+    name: 'reportUser',
     data: {
       subject: 'Matcha - Reported by a user',
       text: 'You have been reported by a user, please be careful with your behavior.',
       html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Report a user</h2>
+        <h2>Reported by a user</h2>
         <p>
           Hello [FIRST_NAME],
         </p>

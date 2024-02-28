@@ -5,6 +5,8 @@ import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { sendNotification } from '../../../websocket/functions/initializeIo';
 import { updateFame } from '../../../utils/fame';
+import { getEmailData } from '../../../utils/emails';
+import { transporter } from '../../..';
 
 export async function reportUser(report_id: number, req: RequestUser, res: Response): Promise<void> {
   try {
@@ -38,7 +40,7 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
     const db = await connectToDatabase();
 
     // Check if the user exists
-    const [rows] = (await db.query('SELECT firstName FROM User WHERE id = ?', [report_id])) as any;
+    const [rows] = (await db.query('SELECT firstName, email FROM User WHERE id = ?', [report_id])) as any;
 
     if (!rows || rows.length === 0) {
       // Close the connection
@@ -52,6 +54,7 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
     }
 
     const firstName = rows[0].firstName;
+    const email = rows[0].email;
 
     // Add report
     const query = 'INSERT INTO Reported (user_id, reported_user_id) VALUES (?, ?)';
@@ -62,14 +65,38 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
 
     // Send notifications
     await sendNotification(report_id.toString(), {
-      content: 'Someone reported you'
+      content: 'Someone reported you',
+      related_user_id: user_id,
     });
     await sendNotification(user_id.toString(), {
-      content: `You have reported ${firstName}`
+      content: `You have reported ${firstName}`,
+      redirect: `/profile/${report_id}`,
+      related_user_id: report_id,
     });
 
     // Update fame
     await updateFame(report_id, 'newReport');
+
+    // Send email
+    const emailData = getEmailData('reportUser');
+
+    if (!emailData) {
+      throw new Error('Email template not found');
+    }
+
+    const mailData = {
+      from: process.env.MAIL_USER,
+      to: email,
+      subject: emailData.subject,
+      text: emailData.text,
+      html: emailData.html.replace('[FIRST_NAME]', firstName)
+    };
+
+    transporter.sendMail(mailData, function (err, info) {
+      if (err) {
+        throw new Error('Email not sent');
+      }
+    });
 
     res.status(200).json({
       reported: true

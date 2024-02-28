@@ -4,8 +4,6 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
-import requestIp from 'request-ip';
-import multer from 'multer';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
@@ -20,8 +18,6 @@ const PORT = process.env.BACK_PORT;
 
 const app = express();
 const server = http.createServer(app);
-
-app.set('trust proxy', true);
 
 // Default message
 app.get('/', (req: Request, res: Response) => {
@@ -42,8 +38,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-app.use(requestIp.mw()); // TODO test if it works
 
 // Auth routes
 app.use('/auth', authGet, authPost);
