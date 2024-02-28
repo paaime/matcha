@@ -24,6 +24,9 @@ app.get('/', (req: Request, res: Response) => {
   res.send('API is running !');
 });
 
+// Serve static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Middlewares
 app.use(
   cors({
@@ -35,9 +38,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-// Serve static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Auth routes
 app.use('/auth', authGet, authPost);

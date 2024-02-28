@@ -19,6 +19,14 @@ down:
 up:
 	docker-compose -p $(NAME) -f $(YML_FILE) --env-file $(ENV_FILE) up
 
+# TODO remove
+upBack: 
+	docker-compose -p $(NAME) -f $(YML_FILE) --env-file $(ENV_FILE) up back
+
+# TODO remove
+upApp:
+	docker-compose -p $(NAME) -f $(YML_FILE) --env-file $(ENV_FILE) up app
+
 clean: stop
 	docker system prune -af
 	docker volume prune -f
