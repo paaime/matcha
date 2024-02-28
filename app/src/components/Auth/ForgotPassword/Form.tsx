@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
+import customAxios from '@/utils/axios';
 
 type FormFields = z.infer<typeof ForgotPasswordSchema>;
 
@@ -36,25 +37,19 @@ export default function ForgotPasswordForm() {
   const handleForgotPassword: SubmitHandler<FormFields> = async (data) => {
     const { email } = data;
     try {
-      const response = await fetch(`/api/user/forgot-password`, {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await customAxios.post('/auth/forgot-password', {
+        email,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error_msg || 'Something went wrong');
-      }
 
       setOpen(true);
     } catch (err) {
-      toast('Error', { description: err.message });
+      console.error(err);
+      if (err.response?.data?.message)
+        toast(err.response?.data?.message, { description: 'Error' });
+      else
+        toast('An error occured', {
+          description: 'Error',
+        });
     }
   };
 

@@ -42,7 +42,7 @@ const emailsData: Item[] = [
     },
   },
   {
-    name: 'resetPassword', // TODO implement resetPassword
+    name: 'resetPassword',
     data: {
       subject: 'Matcha - Reset your password',
       text: 'Please reset your password',
