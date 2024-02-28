@@ -47,7 +47,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const db = await connectToDatabase();
 
     const query =
-      'SELECT id, firstName, lastName, email, passwordHashed, isVerified FROM User WHERE email = ? AND isVerified = 1';
+      'SELECT id, firstName, lastName, email, passwordHashed, isVerified, isGoogle FROM User WHERE email = ? AND isVerified = 1';
 
     // Execute the query and check the result
     const [rows] = (await db.execute(query, [datas.email])) as any;
@@ -63,6 +63,14 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     }
 
     const user = rows[0];
+
+    if (user.isGoogle === 1) {
+      res.status(403).json({
+        error: 'Forbidden',
+        message: 'User is a google user',
+      });
+      return;
+    }
 
     // Check if the password is correct
     const passwordCorrect = await bcrypt.compare(

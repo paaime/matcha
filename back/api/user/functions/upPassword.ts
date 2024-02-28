@@ -7,7 +7,10 @@ import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 
-export async function upPassword(req: RequestUser, res: Response): Promise<undefined>{
+export async function upPassword(
+  req: RequestUser,
+  res: Response
+): Promise<undefined> {
   try {
     const user_id = getAuthId(req);
 
@@ -32,6 +35,25 @@ export async function upPassword(req: RequestUser, res: Response): Promise<undef
     }
 
     const db = await connectToDatabase();
+
+    // Check if the user is Google
+    const googleQuery = 'SELECT isGoogle FROM User WHERE id = ?';
+    const [googleResult] = (await db.query(googleQuery, [user_id])) as any;
+
+    if (googleResult && googleResult.length > 0) {
+      const { isGoogle } = googleResult[0];
+
+      // Close the connection
+      db.end();
+
+      if (isGoogle) {
+        res.status(400).json({
+          error: 'Bad request',
+          message: 'Google user cannot update password',
+        });
+        return;
+      }
+    }
 
     // Check if the email is already used
     const query = 'SELECT passwordHashed FROM User WHERE id = ?';
@@ -72,19 +94,19 @@ export async function upPassword(req: RequestUser, res: Response): Promise<undef
 
     res.status(200).json({
       user_id,
-      updated: true
+      updated: true,
     });
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
+    const code = e?.code || 'Unknown error';
+    const message = e?.message || 'Unknown message';
 
     console.error({ code, message });
-    
+
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while updating the password'
+      message: 'An error occurred while updating the password',
     });
   }
 }
