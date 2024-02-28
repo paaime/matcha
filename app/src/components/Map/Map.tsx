@@ -41,37 +41,48 @@ export default function Map() {
 
   if (!isMounted) return null;
 
-  const center = user?.loc
-    ? [parseFloat(user.loc[0]), parseFloat(user.loc[1])]
-    : [0, 0];
+  const myLoc = user?.loc?.split(',')?.map((loc) => parseFloat(loc)) || ['45.750000', '4.850000']
+
+  const renderMarker = (map: IMapUser) => {
+    const pictures = map.pictures?.split(',') || [];
+
+    if (!pictures[0]) return;
+
+    const profilePicture = `${process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
+
+    return (
+      <Marker
+        key={map.id}
+        position={[parseFloat(map.loc[0]), parseFloat(map.loc[1])]}
+        eventHandlers={{
+          click: () => push(`/profile/${map.id}`),
+        }}
+        icon={
+          new L.Icon({
+            iconUrl: profilePicture,
+            iconSize: new L.Point(30, 50),
+            className: 'leaflet-marker',
+          })
+        }
+      />
+    );
+  }
 
   return (
     <MapContainer
-      center={center as unknown as LatLngLiteral}
+      center={myLoc as [number, number]}
       zoom={4}
       className="rounded-3xl mt-5 z-10"
-      scrollWheelZoom={false}
+      scrollWheelZoom
+      dragging
+      worldCopyJump
+      doubleClickZoom
       style={{
         height: 'calc(100vh - 270px)',
       }}
     >
       <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-      {maps?.map((map) => (
-        <Marker
-          key={map.id}
-          position={[parseFloat(map.loc[0]), parseFloat(map.loc[1])]}
-          eventHandlers={{
-            click: () => push(`/profile/${map.id}`),
-          }}
-          icon={
-            new L.Icon({
-              iconUrl: map.pictures,
-              iconSize: new L.Point(30, 50),
-              className: 'leaflet-marker',
-            })
-          }
-        />
-      ))}
+      {maps?.map(renderMarker)}
     </MapContainer>
   );
 }

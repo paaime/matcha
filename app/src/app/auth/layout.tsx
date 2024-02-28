@@ -45,10 +45,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <Image
               src="/img/background.png"
-              width={300}
-              height={300}
               alt="Background"
               className="absolute right-0 z-10 top-[20%] w-auto"
+              fill
+              sizes='(max-width: 768px) 100vw, 300px'
               priority
             />
           </div>

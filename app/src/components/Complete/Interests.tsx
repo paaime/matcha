@@ -15,7 +15,6 @@ export default function Interests({
   setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {
   const handleNext = () => {
-    console.log(data.interests);
     if (data.interests.length < 2) {
       return toast.error('Please select at least 2 interests.');
     } else if (data.interests.length > 5) {

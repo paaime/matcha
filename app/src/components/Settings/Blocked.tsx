@@ -10,8 +10,6 @@ export default function Blocked() {
 
   const users = user?.usersBlocked;
 
-  console.log(user);
-
   if (!users || users.length === 0) return null;
 
   return (

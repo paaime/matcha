@@ -26,6 +26,10 @@ export default function Names() {
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(NameSchema),
+    defaultValues: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+    },
   });
 
   const handleSubmit: SubmitHandler<FormFields> = async (data) => {
@@ -58,7 +62,7 @@ export default function Names() {
                 <FormItem className="w-full">
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input {...field} autoComplete="first-name" />
+                    <Input {...field} autoComplete="given-name" value={field.value} onChange={field.onChange}  />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,7 +76,7 @@ export default function Names() {
                 <FormItem className="w-full">
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
-                    <Input {...field} autoComplete="last-name" />
+                    <Input {...field} autoComplete="family-name" value={field.value} onChange={field.onChange}  />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

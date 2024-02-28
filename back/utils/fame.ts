@@ -31,7 +31,7 @@ export const fameUpdaters: Fame[] = [
     value: 1,
   },
   {
-    name: 'newVisit', // TODO: implement
+    name: 'newVisit',
     value: 1,
   },
   {

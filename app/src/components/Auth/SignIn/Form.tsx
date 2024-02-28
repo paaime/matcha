@@ -34,6 +34,10 @@ export default function SignInForm({
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(SignInSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
@@ -69,7 +73,7 @@ export default function SignInForm({
               <FormItem className="w-full">
                 <FormLabel>Email address</FormLabel>
                 <FormControl>
-                  <Input {...field} type="email" />
+                  <Input {...field} type="email" value={field.value} onChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,7 +87,7 @@ export default function SignInForm({
               <FormItem className="w-full">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input {...field} type="password" value={field.value} onChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
