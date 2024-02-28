@@ -12,6 +12,7 @@ export default function ProfileCard({
   user: ILove;
 }) {
   const pictures = user.pictures?.split(',') || [];
+  const profilePicture = `${process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
 
   return (
     <Link
@@ -24,7 +25,7 @@ export default function ProfileCard({
         user.isMatch && '!border-yellow-500'
       )}
       style={{
-        backgroundImage: `url(${pictures[0]})`,
+        backgroundImage: `url(${profilePicture})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
