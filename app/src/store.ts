@@ -23,6 +23,11 @@ type InterestsStore = {
   setInterests: (interests: string[]) => void;
 };
 
+type InterestsListStore = {
+  interestsList: string[];
+  setInterestsList: (interestsList: string[]) => void;
+};
+
 type UserStore = {
   user: IUserSettings | null;
   setUser: (user: IUserSettings) => void;
@@ -62,7 +67,7 @@ export const useInterestsStore = create<InterestsStore>((set) => ({
   setInterests: (interests: string[]) => set({ interests }),
 }));
 
-export const useInterestsListStore = create<InterestsStore>((set) => ({
+export const useInterestsListStore = create<InterestsListStore>((set) => ({
   interestsList: [],
   setInterestsList: (interestsList: string[]) => {
     set({ interestsList })},
