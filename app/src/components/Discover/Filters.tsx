@@ -92,13 +92,13 @@ export default function Filters() {
       </DrawerTrigger>
       <DrawerContent className="max-w-xl mx-auto rounded-t-3xl">
         <DrawerHeader className="pb-0">
-          <DrawerTitle className="text-2xl text-black font-extrabold text-center">
+          <DrawerTitle className="text-2xl text-black dark:text-white font-extrabold text-center">
             Filters
           </DrawerTitle>
         </DrawerHeader>
         <div className="flex flex-col p-4">
           <div className="flex justify-between items-center gap-5 border-b pb-2">
-            <p className="text-lg font-bold text-black">Location</p>
+            <p className="text-lg font-bold text-black dark:text-white">Location</p>
             <Select
               onValueChange={(value) =>
                 setFilters({ ...filters, maxDistance: parseInt(value) })
@@ -121,7 +121,7 @@ export default function Filters() {
           </div>
           <div className="flex flex-col gap-5 border-b pt-6 pb-8">
             <div className="flex justify-between">
-              <p className="text-lg font-bold text-black">Age</p>
+              <p className="text-lg font-bold text-black dark:text-white">Age</p>
               <p className="text-pink">
                 {filters.minAge} - {filters.maxAge}
               </p>
@@ -138,7 +138,7 @@ export default function Filters() {
           </div>
           <div className="flex flex-col gap-5 border-b pt-6 pb-8">
             <div className="flex justify-between">
-              <p className="text-lg font-bold text-black">Fame Rating</p>
+              <p className="text-lg font-bold text-black dark:text-white">Fame Rating</p>
               <p className="text-pink">
                 {filters.minFameRating} - {filters.maxFameRating}
               </p>
@@ -162,7 +162,7 @@ export default function Filters() {
           <Button
             variant="secondary"
             className="w-full h-12 text-md"
-            onClick={getFiltersInfos}
+            onClick={() => getFiltersInfos}
           >
             Reset
           </Button>

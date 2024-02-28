@@ -38,7 +38,7 @@ export default function Visited() {
         {users?.map((user, index) => {
           return (
             <SwiperSlide key={index}>
-              <ProfileCard preview={true} user={user} />
+              {/* <ProfileCard preview={true} user={user} /> */}
             </SwiperSlide>
           );
         })}

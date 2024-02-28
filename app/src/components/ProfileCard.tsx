@@ -1,4 +1,4 @@
-import { ILove } from '@/types/user';
+import { ILove, IUser } from '@/types/user';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -32,7 +32,7 @@ export default function ProfileCard({
     >
       <div
         className={clsx(
-          small || preview? 'rounded-xl' : 'rounded-3xl',
+          small || preview ? 'rounded-xl' : 'rounded-3xl',
           'flex flex-col justify-between items-center h-full'
         )}
         style={{
@@ -41,22 +41,26 @@ export default function ProfileCard({
         }}
       >
         {small ? (
-          <div className="bg-primary rounded-sm border border-pink px-3 py-1 self-start ml-3 mt-3">
+          <div className="bg-primary dark:bg-blue-500 rounded-sm border border-pink px-3 py-1 self-start ml-3 mt-3">
             <p className="text-white font-semibold text-sm">NEW</p>
           </div>
-        ) : !preview && (
-          <div className={clsx(
-            "bg-pink text-white font-bold px-5 pb-1 rounded-b-2xl text-sm",
-            user.isSuperLike && !user.isMatch && "!bg-orange-500",
-            user.isMatch && "!bg-yellow-500"
-          )}>
-            <p>
-              {user.isSuperLike && "⭐️ "}
-              {user.isMatch
-                ? "It's a match!"
-                : user.compatibilityScore + "% Match"}
-            </p>
-          </div>
+        ) : (
+          !preview && (
+            <div
+              className={clsx(
+                'bg-pink text-white font-bold px-5 pb-1 rounded-b-2xl text-sm',
+                user.isSuperLike && !user.isMatch && '!bg-orange-500',
+                user.isMatch && '!bg-yellow-500'
+              )}
+            >
+              <p>
+                {user.isSuperLike && '⭐️ '}
+                {user.isMatch
+                  ? "It's a match!"
+                  : user.compatibilityScore + '% Match'}
+              </p>
+            </div>
+          )
         )}
         <div className="flex flex-col items-center mb-3 mt-auto">
           {user.distance && user.distance > 0 ? (
