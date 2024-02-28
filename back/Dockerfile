@@ -2,26 +2,17 @@ FROM node:latest
 
 WORKDIR /back
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-RUN npm install -g pnpm
-
-RUN pnpm install
-
+# Copy the project into the container
 COPY . .
+
+RUN rm -rf node_modules
+
+RUN npm install -g nodemon ts-node
+RUN npm install
+RUN npm run build
 
 EXPOSE 3001
 
-CMD ["pnpm", "dev"]
-
-# # Copy the project into the container
-# COPY . .
-
-# RUN npm install
-
-# EXPOSE 3001
-
-# # Start Express.js
-# CMD ["npm", "run", "dev"]
+# Start Express.js
+CMD ["npm", "run", "dev"]
 # # ! 'dev' pour le developpement, 'start' pour la production
