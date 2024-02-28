@@ -14,5 +14,5 @@ RUN pnpm build
 EXPOSE 3000
 
 # Start Next.js
-CMD ["pnpm", "dev"]
+CMD ["pnpm", "start"]
 # ! 'dev' pour le développement, 'start' pour la production

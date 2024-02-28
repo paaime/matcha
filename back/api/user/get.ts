@@ -36,6 +36,13 @@ router.get('/getlove', async (req: RequestUser, res: Response) => {
 });
 
 router.get('/me', async (req: RequestUser, res: Response) => {
+  console.log(req.headers.location);
+  console.log(req.ips, req.ip);
+  console.log(req.headers['x-forwarded-for']);
+  console.log(req.headers['x-real-ip']);
+  console.log(req.headers['x-forwarded-host']);
+  console.log(req.headers['x-forwarded-proto']);
+  console.log(req.headers['x-forwarded-port']);
   await getUserConnected(req, res);
 });
 

@@ -43,11 +43,6 @@ services:
       - 3000:3000
     environment:
       - FAST_REFRESH=true # React's hot reload
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_PORT=3306
       - NEXT_PUBLIC_API=${NEXT_PUBLIC_API}
       - NEXT_PUBLIC_GOOGLE_REDIRECT_URI=${NEXT_PUBLIC_GOOGLE_REDIRECT_URI}
       - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
@@ -65,6 +60,7 @@ services:
     volumes:
       - ./back:/back
       - /back/node_modules
+      - /back/dist
     ports:
       - '3001:3001'
     environment:

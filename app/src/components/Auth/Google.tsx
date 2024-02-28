@@ -8,6 +8,8 @@ export default function Google() {
   const getGoogleOAuthURL = () => {
     const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
 
+    console.log(process.env)
+
     const options = {
       redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
