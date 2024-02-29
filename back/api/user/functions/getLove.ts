@@ -219,14 +219,6 @@ export async function getLove(
         AND u.sexualPreferences = :myGender
         AND u.id NOT IN (
           SELECT
-            ul.liked_user_id
-          FROM
-            UserLike ul
-          WHERE
-            ul.user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
             ul.user_id
           FROM
             UserLike ul
@@ -263,6 +255,7 @@ export async function getLove(
         AND age <= :maxAge
         AND fameRating >= :minFame
         AND fameRating <= :maxFame
+        AND fameRating >= 0
       ORDER BY
         compatibilityScore ASC
     `;

@@ -14,6 +14,7 @@ import chatPost from './api/chat/post';
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
 import path from 'path';
+import { randUser } from './api/auth/functions/randUser';
 
 const PORT = process.env.BACK_PORT;
 
@@ -57,7 +58,9 @@ app.use('/chat', chatPost);
 initializeIO(server);
 
 // Start web server
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
+  randUser(10);
+
   console.log(
     `API and WebSocket server is running at http://localhost:${PORT}`
   );

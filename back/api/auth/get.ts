@@ -10,28 +10,29 @@ import { randVisits } from './functions/randVisits';
 
 const router = express.Router();
 
-router.get('/init/users/:total', async (req: Request, res: Response) => {
+// ! Remove or keep, I don't know
+// router.get('/init/users/:total', async (req: Request) => {
+//   const total = parseInt(req.params.total);
+
+//   await randUser(total);
+// });
+
+// router.get('/init/likes/:total', async (req: Request) => {
+//   const total = parseInt(req.params.total);
+
+//   await randLikes(total);
+// });
+
+// router.get('/init/tags/:total', async (req: Request) => {
+//   const total = parseInt(req.params.total);
+
+//   await randTags(total);
+// });
+
+router.get('/init/visits/:total', async (req: Request) => {
   const total = parseInt(req.params.total);
 
-  await randUser(res, total);
-});
-
-router.get('/init/likes/:total', async (req: Request, res: Response) => {
-  const total = parseInt(req.params.total);
-
-  await randLikes(res, total);
-});
-
-router.get('/init/tags/:total', async (req: Request, res: Response) => {
-  const total = parseInt(req.params.total);
-
-  await randTags(res, total);
-});
-
-router.get('/init/visits/:total', async (req: Request, res: Response) => {
-  const total = parseInt(req.params.total);
-
-  await randVisits(res, total);
+  await randVisits(total);
 });
 
 router.get('/confirm/:email/:token', async (req: Request, res: Response) => {

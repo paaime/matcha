@@ -78,14 +78,6 @@ export async function getFiltersInfos(req: RequestUser, res: Response): Promise<
         AND User.sexualPreferences = :myGender
         AND User.id NOT IN (
           SELECT
-            ul.liked_user_id
-          FROM
-            UserLike ul
-          WHERE
-            ul.user_id = :userId
-        )
-        AND User.id NOT IN (
-          SELECT
             ul.user_id
           FROM
             UserLike ul
@@ -112,6 +104,7 @@ export async function getFiltersInfos(req: RequestUser, res: Response): Promise<
         AND User.age <= :maxAge
         AND User.fameRating >= :minFame
         AND User.fameRating <= :maxFame
+        AND User.fameRating >= 0
         AND (6371 * acos(cos(radians(:myLat)) * cos(radians(SUBSTRING_INDEX(User.loc, ',', 1))) * cos(radians(SUBSTRING_INDEX(User.loc, ',', -1)) - radians(:myLon)) + sin(radians(:myLat)) * sin(radians(SUBSTRING_INDEX(User.loc, ',', 1))))) <= :maxDistance
       GROUP BY
         Tags.tagName;
