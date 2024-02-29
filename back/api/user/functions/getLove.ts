@@ -71,7 +71,7 @@ export const getMaxFame = (customFilter: boolean, newValue: string) => {
 };
 
 export const getMaxDistance = (customFilter: boolean, newValue: string) => {
-  const defaultValue = 5; // 5km
+  const defaultValue = 30; // 5km
 
   if (customFilter === false) {
     return 150;
@@ -79,14 +79,14 @@ export const getMaxDistance = (customFilter: boolean, newValue: string) => {
 
   const intValue = parseInt(newValue, 10);
 
-  if (!Number.isInteger(intValue) || intValue < 1) {
+  if (!Number.isInteger(intValue) || intValue < 0) {
     return defaultValue;
   }
 
   if (intValue === 0) {
-    return 10;
-  } else if (intValue === 10) {
-    return 20;
+    return 30;
+  } else if (intValue === 30) {
+    return 50;
   } else if (intValue === 50) {
     return 100;
   } else if (intValue === 100) {
@@ -293,6 +293,8 @@ export async function getLove(
         AND fameRating >= :minFame
         AND fameRating <= :maxFame
         AND fameRating >= 0
+      ORDER BY
+        distance DESC, compatibilityScore DESC
     `;
 
     // Execute the query

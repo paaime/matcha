@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
 import { connectToDatabase } from '../../../utils/db';
-import { biographyRegex, locationRegex } from '../../../types/regex';
+import { locationRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -33,11 +33,37 @@ export async function upLocation(
       return;
     }
 
+    // Get City
+    const datas = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.split(',')[0]}&lon=${location.split(',')[1]}&zoom=18&addressdetails=1`
+    ).then((res) => res.json()) as any;
+
+    if (!datas || !datas.address) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid location',
+      });
+      return;
+    }
+    
+    const city = datas.address.city || datas.address.town || datas.address.village || datas.address.county || datas.address.state || datas.address.country;
+
+    // regex with numbers and ' " = @ # $ % ^ & * ( ) - _ + = { } [ ] | \ / : ; < > , . ? / ` ~
+    const cityRegex = /^[^0-9@#\$%\^&*\(\)\+=\{\}\[\]\|\\\/:;<>\?\/`~]+$/;
+
+    if (!city || city.length === 0 || !cityRegex.test(city)) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Invalid location',
+      });
+      return;
+    }
+
     const db = await connectToDatabase();
 
     // Update the user's biography
-    const updateQuery = 'UPDATE User SET loc = ? WHERE id = ?';
-    await db.query(updateQuery, [location, user_id]);
+    const updateQuery = 'UPDATE User SET loc = ?, city = ? WHERE id = ?';
+    await db.query(updateQuery, [location, city, user_id]);
 
     // Close the connection
     db.end();

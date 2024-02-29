@@ -1,8 +1,7 @@
 'use client';
 
-import { MapPinIcon, SearchIcon } from 'lucide-react';
+import { MapPinIcon } from 'lucide-react';
 import Search from './Search';
-import { Button } from '../ui/button';
 import Filters from './Filters';
 import { useState } from 'react';
 import { useUserStore } from '@/store';
@@ -10,6 +9,7 @@ import { useUserStore } from '@/store';
 export default function Header() {
   const { user } = useUserStore();
   const [searchOpen, setSearchOpen] = useState(false);
+
   return (
     <div className="flex justify-between">
       {searchOpen ? (

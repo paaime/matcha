@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { connectToDatabase } from '../../../utils/db';
 import { updateFame } from '../../../utils/fame';
 import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { Notification } from '../../../types/type';
 
 const MAX_LIKES = 30;
 
@@ -49,12 +50,12 @@ export async function randLikes(total: number): Promise<boolean>{
         content: 'You have a new match 🎉',
         redirect: '/likes',
         related_user_id: m.other_user_id,
-      });
+      } as Notification);
       await sendNotification(m.other_user_id.toString(), {
         content: 'You have a new match 🎉',
         redirect: '/likes',
         related_user_id: m.user_id,
-      });
+      } as Notification);
     }
 
     // Close the connection
