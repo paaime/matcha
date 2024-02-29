@@ -33,7 +33,7 @@ import {
 const getResultsLink = (filters: Filters, interests: string[]) => {
   const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
 
-  const interestsString = interests.join(',');
+  const interestsString = interests.join(',')?.replaceAll('#', '');
 
   return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`;
 };
