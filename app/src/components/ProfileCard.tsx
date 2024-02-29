@@ -32,7 +32,7 @@ export default function ProfileCard({
     >
       <div
         className={clsx(
-          small || preview ? 'rounded-xl' : 'rounded-3xl',
+          small || preview ? 'rounded-xl' : 'rounded-2xl',
           'flex flex-col justify-between items-center h-full'
         )}
         style={{

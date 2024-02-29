@@ -36,7 +36,7 @@ export default function Chats() {
 
   const getChats = async () => {
     try {
-      const { data } = await customAxios.get('/chat');
+      const { data } = await customAxios.get('/chat/getChats');
       setChats(data);
     } catch (err) {
       if (err.response?.data?.message) toast.error(err.response.data.message);
@@ -46,7 +46,7 @@ export default function Chats() {
 
   // useEffect(() => {
   //   getChats();
-  // }, [])
+  // }, []);
 
   // useEffect(() => {
   //   if (socket) {
