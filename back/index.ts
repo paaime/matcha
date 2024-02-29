@@ -59,7 +59,7 @@ initializeIO(server);
 
 // Start web server
 server.listen(PORT, async () => {
-  await randUser(10);
+  // await randUser(10); // ! Uncomment to generate random users
 
   console.log(
     `API and WebSocket server is running at http://localhost:${PORT}`
