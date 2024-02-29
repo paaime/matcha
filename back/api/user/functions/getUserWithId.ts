@@ -5,6 +5,7 @@ import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { addVisit } from '../../../utils/visit';
 import { updateFame } from '../../../utils/fame';
+import { sendNotification } from '../../../websocket/functions/initializeIo';
 
 export async function getUserWithId(
   userId: number,
@@ -216,6 +217,13 @@ export async function getUserWithId(
 
     // Set interests
     user.interests = Array.from(interestsSet);
+
+    // Send notifications
+    await sendNotification(userId.toString(), {
+      content: 'Someone visited your profile',
+      redirect: `/profile/${connectedUserId}`,
+      related_user_id: connectedUserId
+    });
 
     res.status(200).json(user);
   } catch (error) {
