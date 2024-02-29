@@ -26,7 +26,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Serve static files
-app.use('/uploads', express.static(path.join(__dirname, "..", "public", "uploads")));
+app.use('/uploads', express.static(path.join(__dirname, "public", "uploads")));
+// app.use('/uploads', express.static(path.join(__dirname, "..", "public", "uploads"))); // ! Works in production
 
 // Middlewares
 app.use(
