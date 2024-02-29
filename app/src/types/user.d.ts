@@ -1,10 +1,5 @@
 import { Gender, Notification, SexualPreferences } from './type';
 
-export interface ITag {
-  id: number;
-  name: string;
-}
-
 export interface ILove {
   id: number;
   isOnline: boolean;
@@ -60,6 +55,14 @@ export interface IUser {
   created_at: string;
 }
 
+export interface IUserList {
+  id: number;
+  firstName: string;
+  age: number
+  pictures: string;
+  created_at: string;
+}
+
 export interface IUserSettings {
   id: number;
   isVerified: boolean;
@@ -71,8 +74,8 @@ export interface IUserSettings {
   lastName: string;
   email: string;
   age: number;
-  gender: Gender;
-  sexualPreferences: SexualPreferences;
+  gender: string;
+  sexualPreferences: string;
   loc: string;
   city: string; // Can be undefined
   consentLocation: boolean;
@@ -80,8 +83,8 @@ export interface IUserSettings {
   interests: string[];
   pictures: string;
   fameRating: number;
-  visitHistory: IPage[];
-  userVisited: IUser[]; // Il manque la date du coup
-  usersBlocked: IUser[];
+  visitHistory: IUserList[];
+  userVisited: IUserList[]; // Il manque la date du coup
+  usersBlocked: IUserList[];
   notifications: Notification[];
 }

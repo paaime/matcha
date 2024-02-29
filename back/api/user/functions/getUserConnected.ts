@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
 import { ThrownError } from '../../../types/type';
-import { IUserSettings } from '../../../types/user';
+import { IUserList, IUserSettings } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -141,7 +141,7 @@ export async function getUserConnected(
 
     // Remove history users with same id
     const historyIds = new Set<number>();
-    const historyFiltered = [];
+    const historyFiltered = [] as IUserList[];
 
     for (const user of history) {
       if (!historyIds.has(user.id)) {
@@ -152,7 +152,7 @@ export async function getUserConnected(
 
     // Remove visited users with same id
     const visitedIds = new Set<number>();
-    const visitedFiltered = [];
+    const visitedFiltered = [] as IUserList[];
 
     for (const user of visited) {
       if (!visitedIds.has(user.id)) {
@@ -184,7 +184,7 @@ export async function getUserConnected(
       interests: [], // Filled below
       visitHistory: historyFiltered || [],
       userVisited: visitedFiltered || [],
-      usersBlocked: blocked || [],
+      usersBlocked: blocked as IUserList[] || [],
       notifications: [], // Filled below
     };
 

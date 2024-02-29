@@ -1,4 +1,4 @@
-import { ILove, IUser } from '@/types/user';
+import { ILove } from '@/types/user';
 import clsx from 'clsx';
 import Link from 'next/link';
 
