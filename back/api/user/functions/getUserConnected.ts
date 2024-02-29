@@ -26,6 +26,7 @@ export async function getUserConnected(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.lastName,
         u.email,
@@ -82,6 +83,7 @@ export async function getUserConnected(
     const queryHistory = `
       SELECT 
         User.id,
+        User.username,
         User.firstName,
         User.age,
         User.pictures,
@@ -101,6 +103,7 @@ export async function getUserConnected(
     const queryVisited = `
       SELECT 
         User.id,
+        User.username,
         User.firstName,
         User.age,
         User.pictures,
@@ -120,6 +123,7 @@ export async function getUserConnected(
     const blockedQuery = `
       SELECT 
         User.id,
+        User.username,
         User.firstName,
         User.age,
         User.pictures,
@@ -164,6 +168,7 @@ export async function getUserConnected(
     // Create the user object
     const user: IUserSettings = {
       id: rows[0].id,
+      username: rows[0].username,
       isVerified: !!rows[0].isVerified,
       isOnline: !!rows[0].isOnline,
       isComplete: !!rows[0].isComplete,

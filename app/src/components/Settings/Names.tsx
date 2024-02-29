@@ -53,7 +53,7 @@ export default function Names() {
       <h3 className="text-xl font-extrabold mb-5">Names</h3>
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="firstName"
@@ -83,6 +83,22 @@ export default function Names() {
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="username"
+            defaultValue={user.username}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username (read only)</FormLabel>
+                <FormControl>
+                  <Input {...field} autoComplete="none" value={field.value} onChange={field.onChange} readOnly  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button
             isLoading={form.formState.isSubmitting}
             className="mt-10 w-full dark:bg-background dark:text-white dark:border dark:border-input"

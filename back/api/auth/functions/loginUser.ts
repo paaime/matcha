@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 import { connectToDatabase } from '../../../utils/db';
 import { checkIfFieldExist } from './addUser';
-import { emailRegex } from '../../../types/regex';
+import { usernameRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { getEmailData } from '../../../utils/emails';
 import { transporter } from '../../..';
@@ -12,14 +12,14 @@ import { transporter } from '../../..';
 export async function loginUser(body: any, res: Response): Promise<undefined> {
   try {
     // Get infos from body
-    const { email, password } = body;
+    const { username, password } = body;
 
     // Check if fields exist
-    if (checkIfFieldExist('email', email, res)) return;
+    if (checkIfFieldExist('username', username, res)) return;
     if (checkIfFieldExist('password', password, res)) return;
 
     const datas = {
-      email: email?.trim(),
+      username: username?.trim(),
       password: password
         ?.trim()
         ?.slice(0, 35)
@@ -32,14 +32,14 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     };
 
     // Check if fields exist
-    if (checkIfFieldExist('email', email, res)) return;
-    if (checkIfFieldExist('password', password, res)) return;
+    if (checkIfFieldExist('username', datas.username, res)) return;
+    if (checkIfFieldExist('password', datas.password, res)) return;
 
     // Test values with regex
-    if (!emailRegex.test(datas.email)) {
+    if (!usernameRegex.test(datas.username)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Email is not valid',
+        message: 'Username is not valid',
       });
       return;
     }
@@ -47,17 +47,17 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const db = await connectToDatabase();
 
     const query =
-      'SELECT id, firstName, lastName, email, passwordHashed, isVerified, isGoogle FROM User WHERE email = ? AND isVerified = 1';
+      'SELECT id, firstName, lastName, email, passwordHashed, isVerified, isGoogle FROM User WHERE username = ? AND isVerified = 1';
 
     // Execute the query and check the result
-    const [rows] = (await db.execute(query, [datas.email])) as any;
+    const [rows] = (await db.execute(query, [datas.username])) as any;
 
     db.end();
 
     if (rows.length === 0) {
       res.status(401).json({
         error: 'Unauthorized',
-        message: 'Invalid email or password',
+        message: 'Invalid username or password',
       });
       return;
     }
@@ -81,7 +81,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     if (!passwordCorrect) {
       res.status(401).json({
         error: 'Unauthorized',
-        message: 'Invalid email or password',
+        message: 'Invalid username or password',
       });
       return;
     }
@@ -93,10 +93,10 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
       const tokenHashed = bcrypt.hashSync(token, 10);
 
       // Update the token in the database
-      const query = 'UPDATE User SET emailToken = ? WHERE email = ?';
+      const query = 'UPDATE User SET emailToken = ? WHERE username = ?';
 
       // Execute the query and check the result
-      await db.execute(query, [tokenHashed, user.email]);
+      await db.execute(query, [tokenHashed, user.username]);
 
       // Close the connection
       await db.end();
@@ -142,6 +142,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const token = jwt.sign(
       {
         id: user.id,
+        username: user.username,
         email: user.email,
       },
       process.env.JWT_SECRET as string,
@@ -161,6 +162,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     res.status(200).json({
       token: token,
       id: user.id,
+      username: user.username,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,

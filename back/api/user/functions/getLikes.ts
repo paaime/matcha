@@ -40,6 +40,7 @@ export async function getLikes(req: RequestUser, res: Response): Promise<void> {
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.isOnline,
         u.age,
@@ -89,6 +90,7 @@ export async function getLikes(req: RequestUser, res: Response): Promise<void> {
     for (const row of rows) {
       const user: ILove = {
         id: row.id,
+        username: row.username,
         isOnline: row.isOnline === 1,
         firstName: row.firstName,
         age: row.age,

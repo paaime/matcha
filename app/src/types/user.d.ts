@@ -2,6 +2,7 @@ import { Gender, Notification, SexualPreferences } from './type';
 
 export interface ILove {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   age: number;
@@ -16,7 +17,7 @@ export interface ILove {
 
 export interface IMapUser {
   id: number;
-  isConnected: boolean;
+  username: string;
   isOnline: boolean;
   firstName: string;
   pictures: string;
@@ -25,6 +26,7 @@ export interface IMapUser {
 
 export interface IUser {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   lastName: string;
@@ -65,6 +67,7 @@ export interface IUserList {
 
 export interface IUserSettings {
   id: number;
+  username: string;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'
   isComplete: boolean;

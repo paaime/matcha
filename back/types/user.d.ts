@@ -2,6 +2,7 @@ import { Notification } from './type';
 
 export interface IUser {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   lastName: string;
@@ -34,6 +35,7 @@ export interface IUser {
 
 export interface ILove {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   age: number;
@@ -48,6 +50,7 @@ export interface ILove {
 
 export interface IDiscovery {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   age: number;
@@ -58,7 +61,7 @@ export interface IDiscovery {
 
 export interface IMapUser {
   id: number;
-  isConnected: boolean;
+  username: string;
   isOnline: boolean;
   firstName: string;
   pictures: string;
@@ -67,6 +70,7 @@ export interface IMapUser {
 
 export interface IUserList {
   id: number;
+  username: string;
   firstName: string;
   age: number
   pictures: string;
@@ -75,6 +79,7 @@ export interface IUserList {
 
 export interface IUserSettings {
   id: number;
+  username: string;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'
   isComplete: boolean;

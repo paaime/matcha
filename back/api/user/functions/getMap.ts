@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
-import { IDiscovery, IMapUser } from '../../../types/user';
+import { IMapUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -48,6 +48,7 @@ export async function getMapUsers(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.loc,
         u.pictures,
@@ -86,8 +87,8 @@ export async function getMapUsers(
       const loc = row.loc.split(',');
 
       const user: IMapUser = {
-        isConnected: userId === row.id,
         id: row.id,
+        username: row.username,
         isOnline: row.isOnline,
         firstName: row.firstName,
         pictures: row.pictures || '',

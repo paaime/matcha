@@ -176,6 +176,7 @@ export async function getLove(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.age,
         u.loc,
@@ -296,6 +297,7 @@ export async function getLove(
     for (const row of rows) {
       const user: ILove = {
         id: row.id,
+        username: row.username,
         isOnline: row.isOnline,
         firstName: row.firstName,
         age: row.age,

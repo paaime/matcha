@@ -35,17 +35,17 @@ export default function SignInForm({
   const form = useForm<FormFields>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
-      email: '',
+      username: '',
       password: '',
     },
   });
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
-    const { email, password } = data;
+    const { username, password } = data;
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API}/auth/login`,
         {
-          email,
+          username,
           password,
         },
         {
@@ -67,12 +67,12 @@ export default function SignInForm({
         <form className="space-y-6" onSubmit={form.handleSubmit(handleLogin)}>
           <FormField
             control={form.control}
-            name="email"
+            name="username"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Email address</FormLabel>
+                <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input {...field} type="email" value={field.value} onChange={field.onChange} />
+                  <Input {...field} type="text" value={field.value} onChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

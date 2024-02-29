@@ -47,6 +47,7 @@ export async function getDiscovery(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.age,
         u.loc,
@@ -147,6 +148,7 @@ export async function getDiscovery(
     for (const row of rows) {
       const user: IDiscovery = {
         id: row.id,
+        username: row.username,
         isOnline: row.isOnline,
         firstName: row.firstName,
         age: row.age,

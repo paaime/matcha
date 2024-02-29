@@ -55,7 +55,7 @@ export default function Map() {
         key={map.id}
         position={[parseFloat(map.loc[0]), parseFloat(map.loc[1])]}
         eventHandlers={{
-          click: () => push(`/profile/${map.id}`),
+          click: () => push(`/profile/${map.username}`),
         }}
         icon={
           new L.Icon({
