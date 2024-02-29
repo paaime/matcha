@@ -33,12 +33,12 @@ export default function Blocked() {
             slidesPerView: 2.8,
           },
         }}
-        className="shadow-scroll !-ml-[20px] !pl-[20px]"
+        className="!-ml-[20px] !pl-[20px]"
       >
         {users?.map((user, index) => {
           return (
             <SwiperSlide key={index}>
-              {/* <ProfileCard preview={true} user={user} /> */}
+              <ProfileCard preview={true} user={user} />
             </SwiperSlide>
           );
         })}
