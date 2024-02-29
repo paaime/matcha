@@ -16,7 +16,7 @@ export default function SexualPreference() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const [sexualPreferences, setSexualPreferences] = useState<SexualPreferences>(
-    user.sexualPreferences
+    user.sexualPreferences as SexualPreferences
   );
 
   const handleSubmit = async () => {

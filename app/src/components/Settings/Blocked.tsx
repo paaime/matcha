@@ -4,11 +4,12 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useUserStore } from '@/store';
+import { ILove, IUserList } from '@/types/user';
 
 export default function Blocked() {
   const user = useUserStore((state) => state.user);
 
-  const users = user?.usersBlocked;
+  const users = user?.usersBlocked as unknown as ILove[];
 
   if (!users || users.length === 0) return null;
 
