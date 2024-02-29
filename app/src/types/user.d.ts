@@ -17,6 +17,7 @@ export interface ILove {
   compatibilityScore: number;
   isMatch?: boolean;
   isSuperLike?: boolean;
+  fameRating?: number;
 }
 
 export interface IMapUser {

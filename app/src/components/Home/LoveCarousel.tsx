@@ -3,7 +3,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
-import { buttonVariants } from '../ui/button';
+import { Button, buttonVariants } from '../ui/button';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
@@ -13,11 +13,13 @@ import { ILove } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 import LoveCard from './LoveCard';
+import Header from './Header';
+import { useCarouselStore } from '@/store';
 
 const easeOutExpo = [0.16, 1, 0.3, 1];
 
 export default function LoveCarousel() {
-  const [users, setUsers] = useState<ILove[]>([]);
+  const { users, setUsers } = useCarouselStore();
   const [direction, setDirection] = useState<'left' | 'right' | ''>('');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
@@ -32,9 +34,13 @@ export default function LoveCarousel() {
     }
   };
 
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
+
   useEffect(() => {
-    getUsers();
-  }, []);
+    setCurrentIndex(users.length - 1);
+  }, [users]);
 
   useEffect(() => {
     if (['left', 'right'].includes(direction)) {
@@ -114,9 +120,10 @@ export default function LoveCarousel() {
 
   return (
     <>
+      <Header />
       <div
         className="flex flex-col bg-white dark:bg-gray-950 rounded-3xl shadow-xl p-3 z-10 dark:border dark:border-input"
-        style={{ height: 'calc(100vh - 205px)', minHeight: '250px' }}
+        style={{ height: 'calc(100vh - 285px)', minHeight: '250px' }}
       >
         <div className="relative w-full h-full">
           <AnimatePresence>
@@ -142,7 +149,7 @@ export default function LoveCarousel() {
               <div
                 className="flex flex-col items-center justify-center"
                 style={{
-                  height: 'calc(100vh - 325px)',
+                  height: 'calc(100vh - 405px)',
                   minHeight: '250px',
                 }}
               >

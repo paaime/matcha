@@ -304,6 +304,7 @@ export async function getLove(
         pictures: row.pictures || '',
         distance: myConsent ? Math.round(row.distance) : -1,
         compatibilityScore: row.compatibilityScore,
+        fameRating: row.fameRating,
       };
 
       // Push user object to the array

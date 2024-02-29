@@ -24,24 +24,25 @@ import { Filters } from '@/types/type';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 import {
-  useDiscoverStore,
+  useCarouselStore,
   useFiltersStore,
   useInterestsListStore,
   useInterestsStore,
 } from '@/store';
+import { OnlineInterests } from '../Discover/Interests';
 
 const getResultsLink = (filters: Filters, interests: string[]) => {
   const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
 
   const interestsString = interests.join(',');
 
-  return `/user/discovery/results?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`;
+  return `/user/getLove?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`;
 };
 
 export default function Filters() {
-  const { setDiscover } = useDiscoverStore();
+  const { users, setUsers } = useCarouselStore();
   const { filters, setFilters } = useFiltersStore();
-  const { interests } = useInterestsStore();
+  const { interests, setInterests } = useInterestsStore();
   const { interestsList, setInterestsList } = useInterestsListStore();
   const [filterLimit, setFilterLimit] = useState<Filters>({
     interests: [],
@@ -52,12 +53,12 @@ export default function Filters() {
     maxDistance: 0,
   });
 
-  const getDiscover = async () => {
+  const getLove = async () => {
     try {
       const res = await customAxios.get(
         `${getResultsLink(filters, interests)}`
       );
-      setDiscover(res.data);
+      setUsers(res.data);
     } catch (err) {
       toast('Error', { description: 'An error occured while fetching users' });
     }
@@ -86,11 +87,11 @@ export default function Filters() {
 
   useEffect(() => {
     getFiltersInfos(true);
-    getDiscover();
+    getLove();
   }, []);
 
   useEffect(() => {
-    getDiscover();
+    getLove();
   }, [interests]);
 
   return (
@@ -173,9 +174,12 @@ export default function Filters() {
               step={1}
             />
           </div>
+          <div className="flex flex-col gap-5 border-b pt-6 pb-8">
+            <OnlineInterests />
+          </div>
         </div>
         <DrawerFooter className="flex-row">
-          <DrawerClose>
+          <DrawerClose asChild>
             <Button variant="secondary" className="w-full h-12 text-md">
               Close
             </Button>
@@ -183,7 +187,7 @@ export default function Filters() {
           <DrawerClose asChild>
             <Button
               onClick={() => {
-                getDiscover();
+                getLove();
                 getFiltersInfos();
               }}
               className="w-full h-12 text-md"
