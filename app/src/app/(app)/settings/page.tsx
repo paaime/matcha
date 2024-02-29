@@ -11,6 +11,7 @@ import Bio from '@/components/Settings/Bio';
 import History from '@/components/Settings/History';
 import Visited from '@/components/Settings/Visited';
 import Blocked from '@/components/Settings/Blocked';
+import ConsentLocation from '@/components/Settings/ConsentLocation';
 
 export const metadata = {
   title: 'Matcha | Settings',
@@ -38,6 +39,7 @@ export default function Page() {
           <Names />
           <Bio />
           <Age />
+          <ConsentLocation />
           <History />
           <Visited />
           <Blocked />
