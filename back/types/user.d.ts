@@ -46,6 +46,7 @@ export interface ILove {
   compatibilityScore: number;
   isMatch?: boolean;
   isSuperLike?: boolean;
+  fameRating?: number; // Can be undefined
 }
 
 export interface IDiscovery {

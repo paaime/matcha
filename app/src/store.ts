@@ -3,6 +3,11 @@ import { ILove, IUserSettings } from './types/user';
 import io, { Socket } from 'socket.io-client';
 import { Filters } from './types/type';
 
+type CarouselStore = {
+  users: ILove[];
+  setUsers: (users: ILove[]) => void;
+};
+
 type ChatsStore = {
   chats: [];
   setChats: (chats: []) => void;
@@ -40,6 +45,11 @@ type SocketStore = {
   sendMessage: (value: string) => void;
 };
 
+export const useCarouselStore = create<CarouselStore>((set) => ({
+  users: [],
+  setUsers: (users) => set({ users }),
+}));
+
 export const useChatsStore = create<ChatsStore>((set) => ({
   chats: [],
   setChats: (chats) => set({ chats }),
@@ -70,7 +80,8 @@ export const useInterestsStore = create<InterestsStore>((set) => ({
 export const useInterestsListStore = create<InterestsListStore>((set) => ({
   interestsList: [],
   setInterestsList: (interestsList: string[]) => {
-    set({ interestsList })},
+    set({ interestsList });
+  },
 }));
 
 export const useUserStore = create<UserStore>((set) => ({
