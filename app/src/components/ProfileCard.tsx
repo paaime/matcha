@@ -12,7 +12,12 @@ export default function ProfileCard({
   user: ILove;
 }) {
   const pictures = user.pictures?.split(',') || [];
-  const profilePicture = `${process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
+
+  if (pictures.length === 0) {
+    return null;
+  }
+
+  const profilePicture = `${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
 
   return (
     <Link

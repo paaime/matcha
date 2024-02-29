@@ -48,7 +48,7 @@ export default function Map() {
 
     if (!pictures[0]) return;
 
-    const profilePicture = `${process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
+    const profilePicture = `${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0]}`
 
     return (
       <Marker
