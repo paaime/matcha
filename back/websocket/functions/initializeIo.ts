@@ -22,7 +22,6 @@ export function initializeIO(server: any) {
     console.log('A client just arrived with id:', socket.id);
 
     if (!socket.request.headers.cookie) {
-      console.log('No cookie');
       return;
     }
 
@@ -30,7 +29,6 @@ export function initializeIO(server: any) {
     const { token } = cookies;
 
     if (!token || token === 'Bearer undefined') {
-      console.log('No token');
       return;
     }
 

@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { addVisit } from '../../../utils/visit';
@@ -223,7 +223,7 @@ export async function getUserWithId(
       content: 'Someone visited your profile',
       redirect: '/settings',
       related_user_id: connectedUserId
-    });
+    } as Notification);
 
     res.status(200).json(user);
   } catch (error) {

@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -67,12 +67,12 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
     await sendNotification(report_id.toString(), {
       content: 'Someone reported you',
       related_user_id: user_id,
-    });
+    } as Notification);
     await sendNotification(user_id.toString(), {
       content: `You have reported ${firstName}`,
       redirect: `/profile/${report_id}`,
       related_user_id: report_id,
-    });
+    } as Notification);
 
     // Update fame
     await updateFame(report_id, 'newReport');

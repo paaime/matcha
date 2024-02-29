@@ -325,22 +325,6 @@ export async function getLove(
     // Create an array to store users
     const users: ILove[] = [];
 
-    console.log({
-      myLat,
-      myLon,
-      myAge,
-      userId,
-      myGender,
-      myPreferences,
-      maxDistance,
-      minAge,
-      maxAge,
-      minFame,
-      maxFame,
-      myFame,
-      myInterests: myInterests ? myInterests.split(',') : [],
-    })
-
     // Iterate over the rows and create user objects
     for (const row of rows) {
       const user: ILove = {

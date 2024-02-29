@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -69,12 +69,12 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
       content: 'Someone blocked you',
       redirect: `/profile/${user_id}`,
       related_user_id: user_id
-    });
+    } as Notification);
     await sendNotification(user_id.toString(), {
       content: `You blocked ${firstName}`,
       redirect: `/profile/${block_id}`,
       related_user_id: block_id
-    });
+    } as Notification);
 
     // Update fame
     await updateFame(block_id, 'newBlock');

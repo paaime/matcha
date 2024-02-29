@@ -30,12 +30,6 @@ export async function resetPassword(
       return;
     }
 
-    console.log({
-      email,
-      token,
-      password,
-    });
-
     // Check new password
     if (!passwordRegex.test(password)) {
       res.status(400).json({

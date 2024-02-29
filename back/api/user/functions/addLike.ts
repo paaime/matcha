@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -119,13 +119,13 @@ export async function addLike(
         content: 'You have a new match 🎉',
         redirect: '/likes',
         related_user_id: user_id,
-      });
+      } as Notification);
 
       await sendNotification(user_id.toString(), {
         content: 'You have a new match 🎉',
         redirect: '/likes',
         related_user_id: liked_id,
-      });
+      } as Notification);
 
       // Update fame
       await updateFame(liked_id, 'newMatch');
@@ -142,13 +142,13 @@ export async function addLike(
       content: isSuper ? 'You have a new super like ⭐️' : 'You have a new like 👍',
       redirect: '/likes',
       related_user_id: user_id,
-    });
+    } as Notification);
 
     await sendNotification(user_id.toString(), {
       content: isSuper ? `You have super liked ${firstName} ⭐️` : `You have liked ${firstName} 👍`,
       redirect: '/likes',
       related_user_id: liked_id,
-    });
+    } as Notification);
 
     res.status(200).json({
       liked: true,

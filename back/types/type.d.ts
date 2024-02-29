@@ -9,11 +9,12 @@ export type JwtDatas = {
 };
 
 export type Notification = {
-  id?: number;
+  id: number;
+  isRead?: boolean;
   content: string;
   redirect?: string;
   related_user_id?: number;
-  created_at?: Date;
+  created_at: string;
 };
 
 export type Filters = {
