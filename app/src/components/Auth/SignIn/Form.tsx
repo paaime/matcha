@@ -39,7 +39,6 @@ export default function SignInForm({
       password: '',
     },
   });
-  console.log("ENV", process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI)
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
     const { email, password } = data;
     try {
