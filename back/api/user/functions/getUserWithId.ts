@@ -5,19 +5,19 @@ import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { addVisit } from '../../../utils/visit';
 import { updateFame } from '../../../utils/fame';
+import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { usernameRegex } from '../../../types/regex';
 
 export async function getUserWithId(
-  userId: number,
+  username: string,
   connectedUserId: number,
   res: Response
 ): Promise<undefined> {
   try {
-    if (!Number.isInteger(userId) || userId < 1) {
-      console.error('Invalid user id:', userId);
-
+    if (!username || !usernameRegex.test(username)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Invalid user id',
+        message: 'Invalid username',
       });
       return;
     }
@@ -60,6 +60,7 @@ export async function getUserWithId(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.lastName,
         u.age,
@@ -74,6 +75,7 @@ export async function getUserWithId(
         u.isOnline,
         u.isVerified,
         u.lastConnection,
+        u.created_at,
         u.isComplete,
         t.tagName AS interestName,
         IF(u.consentLocation = 1 AND :lat != 0 AND :lon != 0 AND u.loc != '', (
@@ -138,7 +140,7 @@ export async function getUserWithId(
       ON
         hb.user_id = u.id AND hb.blocked_user_id = :connectedUserId
       WHERE
-        u.id = :userId
+        u.username = :username
         AND u.isVerified = 1
         AND u.isComplete = 1
     `;
@@ -147,7 +149,7 @@ export async function getUserWithId(
     const [rows] = (await db.query(query, {
       lat,
       lon,
-      userId,
+      username,
       connectedUserId,
     })) as any;
 
@@ -155,7 +157,7 @@ export async function getUserWithId(
     await db.end();
 
     if (!rows || rows.length === 0) {
-      console.error('No user found with id:', userId);
+      console.error('No user found with username:', username);
 
       res.status(404).json({
         error: 'Not found',
@@ -163,6 +165,8 @@ export async function getUserWithId(
       });
       return;
     }
+
+    const userId = rows[0].id;
 
     if (userId !== connectedUserId) {
       // Add Trace
@@ -175,6 +179,7 @@ export async function getUserWithId(
     // Create the user object
     const user: IUser = {
       id: rows[0].id,
+      username: rows[0].username,
       isOnline: rows[0].isOnline === 1,
       lastConnection: rows[0].lastConnection,
       created_at: rows[0].created_at,
@@ -217,6 +222,13 @@ export async function getUserWithId(
     // Set interests
     user.interests = Array.from(interestsSet);
 
+    // Send notifications
+    await sendNotification(userId.toString(), {
+      content: 'Someone visited your profile',
+      redirect: '/settings',
+      related_user_id: connectedUserId
+    });
+
     res.status(200).json(user);
   } catch (error) {
     const e = error as ThrownError;
@@ -226,7 +238,7 @@ export async function getUserWithId(
 
     console.error({ code, message });
 
-    res.status(501).json({
+    res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',
       message: 'An error occurred while getting user infos',
     });

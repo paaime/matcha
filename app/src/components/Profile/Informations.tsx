@@ -122,6 +122,19 @@ export default function Informations({ user }: { user: IUser }) {
               </p>
             </div>
           </div>
+
+          <div className="flex flex-col gap-3">
+            <p className="text-gray-400 font-semibold">Username</p>
+
+            <p className="font-semibold text-dark dark:text-white">
+              <strong>
+                {user.username}
+              </strong>
+              {" "}
+              registered {timeSince(user.created_at)} ago
+            </p>
+          </div>
+
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">Location</p>
 
@@ -132,7 +145,6 @@ export default function Informations({ user }: { user: IUser }) {
                 {user.firstName} has disabled location or you don{"'"}t have consent
               </p>
             )}
-
           </div>
 
           {!user.isMatch && user.isLiked && (

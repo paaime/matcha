@@ -17,6 +17,8 @@ export const ageRegex = /^(1[8-9]|[2-9][0-9])$/;
 // Location regex : array of 2 floats
 export const locationRegex = /^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/;
 
+export const usernameRegex = /^[a-z]{3,40}$/;
+
 // Pictures regex : url separated by a comma
 export const picturesRegex = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
 export const urlRegex = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;

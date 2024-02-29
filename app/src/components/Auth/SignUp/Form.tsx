@@ -112,6 +112,20 @@ export default function SignUpForm() {
             />
           </div>
 
+          {/* <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} type="text" autoComplete='none' value={field.value} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+
           <FormField
             control={form.control}
             name="password"

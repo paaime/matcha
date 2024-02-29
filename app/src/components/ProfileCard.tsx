@@ -1,4 +1,4 @@
-import { ILove, IUser } from '@/types/user';
+import { ILove } from '@/types/user';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -12,11 +12,16 @@ export default function ProfileCard({
   user: ILove;
 }) {
   const pictures = user.pictures?.split(',') || [];
-  const profilePicture = `${process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
+
+  if (pictures.length === 0) {
+    return null;
+  }
+
+  const profilePicture = `${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
 
   return (
     <Link
-      href={`/profile/${user.id}`}
+      href={`/profile/${user.username}`}
       className={clsx(
         !small && 'border-[5px] border-pink',
         small || preview ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',

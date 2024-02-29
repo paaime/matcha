@@ -5,9 +5,9 @@ const required_error = 'This field cannot be blank';
 const too_short_error = 'Value is too short';
 
 export const SignInSchema = z.object({
-  email: z
-    .string({ invalid_type_error, required_error })
-    .regex(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/),
+  username: z
+      .string({ invalid_type_error, required_error })
+      .regex(/^[a-z]{3,40}$/),
   password: z
     .string({ invalid_type_error, required_error })
     .min(1, too_short_error),
@@ -60,6 +60,9 @@ export const NameSchema = z.object({
   lastName: z
     .string({ invalid_type_error, required_error })
     .regex(/^[a-zA-Z\s'-]{1,40}$/),
+  username: z
+    .string({ invalid_type_error, required_error })
+    .regex(/^[a-z]{3,40}$/),
 });
 
 export const EmailSchema = z.object({

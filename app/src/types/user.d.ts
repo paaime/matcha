@@ -1,12 +1,8 @@
 import { Gender, Notification, SexualPreferences } from './type';
 
-export interface ITag {
-  id: number;
-  name: string;
-}
-
 export interface ILove {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   age: number;
@@ -22,7 +18,7 @@ export interface ILove {
 
 export interface IMapUser {
   id: number;
-  isConnected: boolean;
+  username: string;
   isOnline: boolean;
   firstName: string;
   pictures: string;
@@ -31,6 +27,7 @@ export interface IMapUser {
 
 export interface IUser {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   lastName: string;
@@ -61,8 +58,17 @@ export interface IUser {
   created_at: string;
 }
 
+export interface IUserList {
+  id: number;
+  firstName: string;
+  age: number
+  pictures: string;
+  created_at: string;
+}
+
 export interface IUserSettings {
   id: number;
+  username: string;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'
   isComplete: boolean;
@@ -72,8 +78,8 @@ export interface IUserSettings {
   lastName: string;
   email: string;
   age: number;
-  gender: Gender;
-  sexualPreferences: SexualPreferences;
+  gender: string;
+  sexualPreferences: string;
   loc: string;
   city: string; // Can be undefined
   consentLocation: boolean;
@@ -81,8 +87,8 @@ export interface IUserSettings {
   interests: string[];
   pictures: string;
   fameRating: number;
-  visitHistory: IPage[];
-  userVisited: IUser[]; // Il manque la date du coup
-  usersBlocked: IUser[];
+  visitHistory: IUserList[];
+  userVisited: IUserList[]; // Il manque la date du coup
+  usersBlocked: IUserList[];
   notifications: Notification[];
 }

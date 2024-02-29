@@ -48,14 +48,14 @@ export default function Map() {
 
     if (!pictures[0]) return;
 
-    const profilePicture = `${process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
+    const profilePicture = `${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0]}`
 
     return (
       <Marker
         key={map.id}
         position={[parseFloat(map.loc[0]), parseFloat(map.loc[1])]}
         eventHandlers={{
-          click: () => push(`/profile/${map.id}`),
+          click: () => push(`/profile/${map.username}`),
         }}
         icon={
           new L.Icon({

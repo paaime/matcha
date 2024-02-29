@@ -5,6 +5,7 @@ import {
   biographyRegex,
   genderEnum,
   preferenceEnum,
+  usernameRegex,
 } from '../../../types/regex';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { RequestUser } from '../../../types/express';
@@ -34,7 +35,7 @@ export async function completeUser(
 ): Promise<undefined> {
   try {
     // Get infos from body
-    const { gender, sexualPreferences, age, interests, pictures, biography } =
+    const { gender, sexualPreferences, age, interests, username, biography } =
       body;
 
     const user_id = getAuthId(req);
@@ -53,9 +54,17 @@ export async function completeUser(
     if (checkIfFieldExist('sexualPreferences', sexualPreferences, res)) return;
     if (checkIfFieldExist('age', age, res)) return;
     if (checkIfFieldExist('interests', interests, res)) return;
+    if (checkIfFieldExist('username', username, res)) return;
     if (checkIfFieldExist('biography', biography, res)) return;
 
     // Test values with regex
+    if (!usernameRegex.test(username)) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'username is not valid',
+      });
+      return;
+    }
     if (!genderEnum.includes(gender)) {
       res.status(400).json({
         error: 'Bad request',
@@ -77,7 +86,6 @@ export async function completeUser(
       });
       return;
     }
-    // Remove duplicates with Set
 
     // Check if interests are valid
     if (!interests || !Array.isArray(interests)) {
@@ -107,10 +115,24 @@ export async function completeUser(
 
     const db = await connectToDatabase();
 
+    // Check if username is already taken
+    const queryUsername = 'SELECT id FROM User WHERE username = ?';
+    const [rowsUsername] = (await db.execute(queryUsername, [username])) as any;
+
+    if (rowsUsername[0]) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Username already taken',
+      });
+      return;
+    }
+
     // Update the user in the database
     const queryUpdate =
-      'UPDATE User SET gender = ?, sexualPreferences = ?, age = ?, biography = ?, isComplete = 1 WHERE id = ?';
+      'UPDATE User SET username = ?, gender = ?, sexualPreferences = ?, age = ?, biography = ?, isComplete = 1 WHERE id = ?';
+    
     await db.execute(queryUpdate, [
+      username?.trim()?.toLowerCase(),
       gender,
       sexualPreferences,
       age,
@@ -136,7 +158,7 @@ export async function completeUser(
   } catch (error) {
     console.error('Error while completing user:', error);
 
-    res.status(501).json({
+    res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',
       message: 'An error occurred while completing the user',
     });

@@ -1,25 +1,38 @@
 import { Request, Response } from 'express';
 import express from 'express';
 
-import { addRandom } from './functions/addRandom';
-import { randomScript } from './functions/randomScript';
 import { confirmEmail } from './functions/confirmEmail';
 import { googleAuth } from './functions/googleAuth';
+import { randUser } from './functions/randUser';
+import { randLikes } from './functions/randLikes';
+import { randTags } from './functions/randTags';
+import { randVisits } from './functions/randVisits';
 
 const router = express.Router();
 
-router.get('/random', async (req: Request, res: Response) => {
-  // Clear cookie
-  res.clearCookie('token');
+// ! Remove or keep, I don't know
+// router.get('/init/users/:total', async (req: Request) => {
+//   const total = parseInt(req.params.total);
 
-  await addRandom(res);
-});
+//   await randUser(total);
+// });
 
-router.get('/randomScript', async (req: Request, res: Response) => {
-  // Clear cookie
-  res.clearCookie('token');
+// router.get('/init/likes/:total', async (req: Request) => {
+//   const total = parseInt(req.params.total);
 
-  await randomScript(res);
+//   await randLikes(total);
+// });
+
+// router.get('/init/tags/:total', async (req: Request) => {
+//   const total = parseInt(req.params.total);
+
+//   await randTags(total);
+// });
+
+router.get('/init/visits/:total', async (req: Request) => {
+  const total = parseInt(req.params.total);
+
+  await randVisits(total);
 });
 
 router.get('/confirm/:email/:token', async (req: Request, res: Response) => {

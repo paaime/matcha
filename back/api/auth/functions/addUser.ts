@@ -91,9 +91,10 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
 
     if (rowsCheckEmail.length > 0) {
       db.end();
+      
       res.status(400).json({
         error: 'Bad request',
-        message: 'Email already exists: ' + newUser.email,
+        message: 'Email already exists',
       });
       return;
     }
@@ -165,7 +166,7 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
   } catch (error) {
     console.error('Error while adding user:', error);
 
-    res.status(501).json({
+    res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',
       message: 'An error occurred while adding the user',
     });

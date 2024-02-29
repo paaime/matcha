@@ -13,7 +13,7 @@ import customAxios from '@/utils/axios';
 const AvatarCard = ({ user }: { user: IUser }) => {
   return (
     <Link
-      href={`/profile/${user.id}`}
+      href={`/profile/${user.username}`}
       className="flex gap-1 flex-col items-center"
     >
       <div className="border-2 border-blue-400 rounded-full p-1">

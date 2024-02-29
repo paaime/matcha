@@ -47,6 +47,7 @@ export async function getDiscovery(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.age,
         u.loc,
@@ -72,15 +73,8 @@ export async function getDiscovery(
         u.id != :userId
         AND u.isVerified = 1
         AND u.isComplete = 1
+        AND u.fameRating >= 0
         AND u.created_at >= DATE_SUB(NOW(), INTERVAL ${MAX_DAYS} DAY)
-        AND u.id NOT IN (
-          SELECT
-            ul.liked_user_id
-          FROM
-            UserLike ul
-          WHERE
-            ul.user_id = :userId
-        )
         AND u.id NOT IN (
           SELECT
             ul.user_id
@@ -123,6 +117,7 @@ export async function getDiscovery(
         )
       ORDER BY
         created_at DESC
+      LIMIT 10
     `;
 
     // Execute the query
@@ -147,6 +142,7 @@ export async function getDiscovery(
     for (const row of rows) {
       const user: IDiscovery = {
         id: row.id,
+        username: row.username,
         isOnline: row.isOnline,
         firstName: row.firstName,
         age: row.age,
@@ -169,7 +165,7 @@ export async function getDiscovery(
 
     console.error({ code, message });
 
-    res.status(501).json({
+    res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',
       message: 'An error occurred while getting user discovery information',
     });

@@ -14,18 +14,12 @@ import chatPost from './api/chat/post';
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
 import path from 'path';
+import { randUser } from './api/auth/functions/randUser';
 
 const PORT = process.env.BACK_PORT;
 
 const app = express();
 const server = http.createServer(app);
-
-console.log({
-  client_id: process.env.GOOGLE_CLIENT_ID,
-  client_secret: process.env.GOOGLE_CLIENT_SECRET,
-  redirect_uri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
-  grant_type: 'authorization_code',
-})
 
 // Default message
 app.get('/', (req: Request, res: Response) => {
@@ -33,7 +27,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Serve static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, "public", "uploads")));
+// app.use('/uploads', express.static(path.join(__dirname, "..", "public", "uploads"))); // ! Works in production
 
 // Middlewares
 app.use(
@@ -63,7 +58,9 @@ app.use('/chat', chatPost);
 initializeIO(server);
 
 // Start web server
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
+  randUser(10);
+
   console.log(
     `API and WebSocket server is running at http://localhost:${PORT}`
   );

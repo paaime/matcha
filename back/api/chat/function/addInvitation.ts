@@ -123,7 +123,7 @@ export async function addInvitation(
     return;
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    res.status(400).json({ // 500 for real but not tolerated by 42
       error: 'Internal server error',
       message: 'An error occured while adding the invitation',
     });

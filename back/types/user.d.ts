@@ -1,14 +1,8 @@
 import { Notification } from './type';
 
-export interface IPage {
-  id: number;
-  visited_user_id: IUser;
-  redirectUri: string;
-  created_at: string;
-}
-
 export interface IUser {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   lastName: string;
@@ -41,6 +35,7 @@ export interface IUser {
 
 export interface ILove {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   age: number;
@@ -56,6 +51,7 @@ export interface ILove {
 
 export interface IDiscovery {
   id: number;
+  username: string;
   isOnline: boolean;
   firstName: string;
   age: number;
@@ -66,15 +62,25 @@ export interface IDiscovery {
 
 export interface IMapUser {
   id: number;
-  isConnected: boolean;
+  username: string;
   isOnline: boolean;
   firstName: string;
   pictures: string;
   loc: string[];
 }
 
+export interface IUserList {
+  id: number;
+  username: string;
+  firstName: string;
+  age: number
+  pictures: string;
+  created_at: string;
+}
+
 export interface IUserSettings {
   id: number;
+  username: string;
   isVerified: boolean;
   isOnline: boolean; // Must be 'true'
   isComplete: boolean;
@@ -93,8 +99,8 @@ export interface IUserSettings {
   interests: string[];
   pictures: string;
   fameRating: number;
-  visitHistory: IPage[];
-  userVisited: IUser[]; // Il manque la date du coup
-  usersBlocked: IUser[];
+  visitHistory: IUserList[];
+  userVisited: IUserList[]; // Il manque la date du coup
+  usersBlocked: IUserList[];
   notifications: Notification[];
 }

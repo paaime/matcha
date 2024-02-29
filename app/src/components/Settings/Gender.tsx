@@ -8,14 +8,14 @@ import { Button } from '../ui/button';
 import { useUserStore } from '@/store';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { Gender } from '@/types/type';
+import { Gender} from '@/types/type';
 import customAxios from '@/utils/axios';
 
 export default function Gender() {
   const [loading, setLoading] = useState(false);
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-  const [gender, setGender] = useState<Gender>(user.gender);
+  const [gender, setGender] = useState<Gender>(user.gender as Gender);
 
   const handleSubmit = async () => {
     try {
