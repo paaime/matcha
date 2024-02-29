@@ -4,13 +4,7 @@ import bcrypt from 'bcrypt';
 
 import { connectToDatabase } from '../../../utils/db';
 
-const MAX_USERS = 100;
-
-const preferences = [
-  'male',
-  'female',
-  'other'
-];
+const MAX_USERS = 500;
 
 const getRandomCoordinatesFrance = (): { lat: number; lon: number } => {
   const minLat = 41.333;
