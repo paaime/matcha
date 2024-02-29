@@ -124,7 +124,7 @@ const addRandom = async(db: Connection): Promise<boolean> => {
   }
 }
 
-export async function randUser(res: Response, total: number): Promise<boolean>{
+export async function randUser(total: number): Promise<boolean>{
   total = total > MAX_USERS ? MAX_USERS : total;
   total = total < 1 ? 1 : total;
 
@@ -155,18 +155,9 @@ export async function randUser(res: Response, total: number): Promise<boolean>{
 
     // Close the connection
     await db.end();
-
-    res.status(200).json({
-      message: 'Script executed'
-    });
     return true;
   } catch (error) {
     console.error('Error while adding user', ':', error);
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
-      message: 'An error occurred while generating users'
-    });
     return false;
   }
 }

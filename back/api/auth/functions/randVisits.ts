@@ -6,7 +6,7 @@ import { sendNotification } from '../../../websocket/functions/initializeIo';
 
 const NB_RANDOM_VISITS = 15;
 
-export async function randVisits(res: Response, total: number): Promise<boolean>{
+export async function randVisits(total: number): Promise<boolean>{
   total = total > NB_RANDOM_VISITS ? NB_RANDOM_VISITS : total;
   total = total < 1 ? 1 : total;
 
@@ -48,17 +48,10 @@ export async function randVisits(res: Response, total: number): Promise<boolean>
     // Close the connection
     await db.end();
 
-    res.status(200).json({
-      message: 'Script executed'
-    });
     return true;
   } catch (error) {
     console.error('Error while adding user', ':', error);
 
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
-      message: 'An error occurred while adding the user'
-    });
     return false;
   }
 }

@@ -73,15 +73,8 @@ export async function getDiscovery(
         u.id != :userId
         AND u.isVerified = 1
         AND u.isComplete = 1
+        AND u.fameRating >= 0
         AND u.created_at >= DATE_SUB(NOW(), INTERVAL ${MAX_DAYS} DAY)
-        AND u.id NOT IN (
-          SELECT
-            ul.liked_user_id
-          FROM
-            UserLike ul
-          WHERE
-            ul.user_id = :userId
-        )
         AND u.id NOT IN (
           SELECT
             ul.user_id

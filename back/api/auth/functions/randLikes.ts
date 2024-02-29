@@ -6,7 +6,7 @@ import { sendNotification } from '../../../websocket/functions/initializeIo';
 
 const MAX_LIKES = 30;
 
-export async function randLikes(res: Response, total: number): Promise<boolean>{
+export async function randLikes(total: number): Promise<boolean>{
   total = total > MAX_LIKES ? MAX_LIKES : total;
   total = total < 1 ? 1 : total;
 
@@ -60,17 +60,10 @@ export async function randLikes(res: Response, total: number): Promise<boolean>{
     // Close the connection
     await db.end();
 
-    res.status(200).json({
-      message: 'Script executed'
-    });
     return true;
   } catch (error) {
     console.error('Error while adding the likes:', error);
 
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
-      message: 'An error occurred while adding the likes'
-    });
     return false;
   }
 }
