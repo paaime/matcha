@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
 import { ThrownError } from '../../../types/type';
-import { IUserSettings } from '../../../types/user';
+import { IUserList, IUserSettings } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -26,6 +26,7 @@ export async function getUserConnected(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.lastName,
         u.email,
@@ -82,6 +83,7 @@ export async function getUserConnected(
     const queryHistory = `
       SELECT 
         User.id,
+        User.username,
         User.firstName,
         User.age,
         User.pictures,
@@ -101,6 +103,7 @@ export async function getUserConnected(
     const queryVisited = `
       SELECT 
         User.id,
+        User.username,
         User.firstName,
         User.age,
         User.pictures,
@@ -120,6 +123,7 @@ export async function getUserConnected(
     const blockedQuery = `
       SELECT 
         User.id,
+        User.username,
         User.firstName,
         User.age,
         User.pictures,
@@ -141,7 +145,7 @@ export async function getUserConnected(
 
     // Remove history users with same id
     const historyIds = new Set<number>();
-    const historyFiltered = [];
+    const historyFiltered = [] as IUserList[];
 
     for (const user of history) {
       if (!historyIds.has(user.id)) {
@@ -152,7 +156,7 @@ export async function getUserConnected(
 
     // Remove visited users with same id
     const visitedIds = new Set<number>();
-    const visitedFiltered = [];
+    const visitedFiltered = [] as IUserList[];
 
     for (const user of visited) {
       if (!visitedIds.has(user.id)) {
@@ -164,6 +168,7 @@ export async function getUserConnected(
     // Create the user object
     const user: IUserSettings = {
       id: rows[0].id,
+      username: rows[0].username,
       isVerified: !!rows[0].isVerified,
       isOnline: !!rows[0].isOnline,
       isComplete: !!rows[0].isComplete,
@@ -184,7 +189,7 @@ export async function getUserConnected(
       interests: [], // Filled below
       visitHistory: historyFiltered || [],
       userVisited: visitedFiltered || [],
-      usersBlocked: blocked || [],
+      usersBlocked: blocked as IUserList[] || [],
       notifications: [], // Filled below
     };
 
@@ -224,7 +229,7 @@ export async function getUserConnected(
 
     console.error({ code, message });
 
-    res.status(501).json({
+    res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',
       message: 'An error occurred while getting connected user infos',
     });

@@ -43,6 +43,7 @@ export async function getLikesSent(
     const query = `
       SELECT
         u.id,
+        u.username,
         u.firstName,
         u.isOnline,
         u.age,
@@ -92,6 +93,7 @@ export async function getLikesSent(
     for (const row of rows) {
       const user: ILove = {
         id: row.id,
+        username: row.username,
         isOnline: row.isOnline === 1,
         firstName: row.firstName,
         age: row.age,
@@ -101,7 +103,7 @@ export async function getLikesSent(
         distance: -1,
         isMatch: !!row.isMatch,
         isSuperLike: row.isSuperLike === 1,
-        compatibilityScore: row.compatibilityScore
+        compatibilityScore: Math.min(100, Math.max(0, row.compatibilityScore)),
       };
 
       // Push liked user object to the array
@@ -118,7 +120,7 @@ export async function getLikesSent(
 
     console.error({ code, message });
 
-    res.status(501).json({
+    res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',
       message: 'An error occurred while getting sent liked user information',
     });

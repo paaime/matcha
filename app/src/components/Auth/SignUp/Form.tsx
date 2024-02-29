@@ -38,12 +38,13 @@ export default function SignUpForm() {
   const [open, setOpen] = useState(false);
 
   const handleRegister: SubmitHandler<FormFields> = async (data) => {
-    const { email, firstName, lastName, password, confirmPassword } = data;
+    const { email, firstName, lastName, username, password, confirmPassword } = data;
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API}/auth/register`, {
         email,
         firstName,
         lastName,
+        username,
         password,
         confirmPassword,
       });
@@ -111,6 +112,20 @@ export default function SignUpForm() {
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} type="text" autoComplete='none' value={field.value} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}

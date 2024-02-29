@@ -3,7 +3,6 @@ import express from 'express';
 
 import { getUserWithId } from './functions/getUserWithId';
 import { getUserConnected } from './functions/getUserConnected';
-import { getAllUsers } from './functions/getAllUsers';
 import { getDiscovery } from './functions/getDiscovery';
 import { getLove } from './functions/getLove';
 import { RequestUser } from '../../types/express';
@@ -12,12 +11,9 @@ import { getLikes } from './functions/getLikes';
 import { getLikesSent } from './functions/getLikesSent';
 import { getFiltersInfos } from './functions/getFiltersInfos';
 import { getMapUsers } from './functions/getMap';
+import { usernameRegex } from '../../types/regex';
 
 const router = express.Router();
-
-router.get('/', async (req: RequestUser, res: Response) => {
-  await getAllUsers(res);
-});
 
 router.get('/map', async (req: RequestUser, res: Response) => {
   await getMapUsers(req, res);
@@ -60,17 +56,17 @@ router.get('/filtersInfos', async (req: RequestUser, res: Response) => {
 
 router.get('/:id', async (req: RequestUser, res: Response) => {
   // Get user info by id
-  const userId = parseInt(req.params?.id) || -1;
+  const username = req.params?.id;
 
-  if (!userId || userId < 1) {
+  if (!username || !usernameRegex.test(username)) {
     res.status(400).json({
       error: 'Bad request',
-      message: 'Invalid user id',
+      message: 'Invalid username',
     });
     return;
   }
 
-  await getUserWithId(userId, getAuthId(req), res);
+  await getUserWithId(username, getAuthId(req), res);
 });
 
 export default router;

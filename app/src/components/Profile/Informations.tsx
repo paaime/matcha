@@ -114,6 +114,15 @@ export default function Informations({ user }: { user: IUser }) {
             </div>
             <div className="flex flex-col items-center">
               <div className="flex items-center justify-center bg-pink h-12 w-12 rounded-full">
+                <CalendarDaysIcon className="h-6 w-6 text-white" />
+              </div>
+              <p className="text-gray-400 mt-3">Username</p>
+              <p className="text-primary font-semibold text-lg">
+                {user.username} since {new Date(user.created_at).getFullYear()}
+              </p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="flex items-center justify-center bg-pink h-12 w-12 rounded-full">
                 <FlameIcon className="h-6 w-6 text-white" />
               </div>
               <p className="text-gray-400 mt-3">Fame rating</p>

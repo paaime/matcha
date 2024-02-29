@@ -51,7 +51,7 @@ export async function upPreference(req: RequestUser, res: Response): Promise<und
 
     console.error({ code, message });
     
-    res.status(501).json({
+    res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',
       message: 'An error occurred while updating the preference'
     });

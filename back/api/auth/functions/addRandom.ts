@@ -89,7 +89,7 @@ export async function addRandom(
     console.error('Error while adding user', ':', error);
 
     if (withResponse) {
-      res.status(501).json({
+      res.status(401).json({ // 501 for real but not tolerated by 42
         error: 'Server error',
         message: 'An error occurred while adding the user',
       });

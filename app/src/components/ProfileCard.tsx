@@ -1,4 +1,4 @@
-import { ILove, IUser } from '@/types/user';
+import { ILove } from '@/types/user';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -16,7 +16,7 @@ export default function ProfileCard({
 
   return (
     <Link
-      href={`/profile/${user.id}`}
+      href={`/profile/${user.username}`}
       className={clsx(
         !small && 'border-[5px] border-pink',
         small || preview ? 'h-64 rounded-xl' : 'h-72 rounded-3xl',

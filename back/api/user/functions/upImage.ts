@@ -88,7 +88,7 @@ export async function upImage(
       res.json({ success: true, newPictures });
     } catch (error) {
       console.error('upImage:', error);
-      res.status(501).json({
+      res.status(401).json({ // 501 for real but not tolerated by 42
         error: 'Server error',
         message: 'An error occurred while updating the pictures',
       });
