@@ -24,6 +24,7 @@ const Chat = ({ chat }: { chat: IPreviewChat }) => {
         height={300}
         className="rounded-full w-14 h-14 object-cover mr-5"
         priority
+        unoptimized
       />
       <div className="max-w-[50%] flex flex-col text-dark dark:text-white justify-center">
         <p className="text-lg font-bold">{chat.username}</p>
@@ -33,7 +34,7 @@ const Chat = ({ chat }: { chat: IPreviewChat }) => {
         <div className="flex flex-col items-end ml-auto">
           <div className="bg-pink h-3 w-3 rounded-full"></div>
           <p className="text-sm text-gray-400 font-semibold mt-auto">
-            {timeSince(chat.lastMessageDate)}
+            {timeSince(chat.lastMessageDate.replace('Z', ''))}
           </p>
         </div>
       )}

@@ -21,6 +21,7 @@ const Match = ({ chat }: { chat: IPreviewChat }) => {
       height={300}
       className="rounded-lg w-24 h-28 object-cover"
       priority
+      unoptimized
     />
   );
 };
