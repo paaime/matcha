@@ -4,13 +4,14 @@ import { GalleryVerticalEndIcon, LandPlotIcon, SendIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { useSocketStore } from '@/store';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { GalleryModal } from './GalleryModal';
 import { InvitationModal } from './InvitationModal';
 
 export default function InputBar({ chatId }) {
   const { socket } = useSocketStore();
+  const [isMounted, setIsMounted] = useState(false);
   const [openInvitation, setOpenInvitation] = useState(false);
   const [openGallery, setOpenGallery] = useState(false);
   const [input, setInput] = useState('');
@@ -52,7 +53,11 @@ export default function InputBar({ chatId }) {
           <SendIcon className="h-5 w-5 -ml-0.5 -mb-0.5 dark:text-white" />
         </Button>
         <GalleryModal open={openGallery} setOpen={setOpenGallery} />
-        <InvitationModal open={openInvitation} setOpen={setOpenInvitation} matchId={chatId} />
+        <InvitationModal
+          open={openInvitation}
+          setOpen={setOpenInvitation}
+          matchId={chatId}
+        />
       </div>
     </div>
   );

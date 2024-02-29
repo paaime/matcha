@@ -11,6 +11,7 @@ import userPut from './api/user/put';
 import authGet from './api/auth/get';
 import authPost from './api/auth/post';
 import chatPost from './api/chat/post';
+import chatGet from './api/chat/get';
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
 import path from 'path';
@@ -27,7 +28,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Serve static files
-app.use('/uploads', express.static(path.join(__dirname, "public", "uploads")));
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 // app.use('/uploads', express.static(path.join(__dirname, "..", "public", "uploads"))); // ! Works in production
 
 // Middlewares
@@ -52,7 +53,7 @@ app.use(authCheck);
 app.use('/user', userGet, userPost, userPut);
 
 // Chat routes
-app.use('/chat', chatPost);
+app.use('/chat', chatGet, chatPost);
 
 // Initialiser IO
 initializeIO(server);

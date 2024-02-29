@@ -1,31 +1,43 @@
 'use client';
 
 import { useChatsStore, useSocketStore } from '@/store';
+import { IPreviewChat } from '@/types/chat';
 import customAxios from '@/utils/axios';
+import { timeSince } from '@/utils/time';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-const Chat = () => {
+const Chat = ({ chat }: { chat: IPreviewChat }) => {
+  const pictures = chat.pictures?.split(',') || [];
   return (
-    <Link href="/chat" className="borber border-b flex py-5 cursor-pointer">
+    <Link
+      href={`/chat/${chat.id}`}
+      className="borber border-b flex py-5 cursor-pointer"
+    >
       <Image
-        src="/img/placeholder/users/1.jpg"
-        alt="LoveCard1"
+        loader={({ src }) => src}
+        src={process.env.NEXT_PUBLIC_API + pictures[0]}
+        alt={chat.username}
         width={200}
         height={300}
         className="rounded-full w-14 h-14 object-cover mr-5"
         priority
+        unoptimized
       />
       <div className="max-w-[50%] flex flex-col text-dark dark:text-white justify-center">
-        <p className="text-lg font-bold">Alfredo Calzoni</p>
-        <p className=" truncate">What about that new jacket if i know you</p>
+        <p className="text-lg font-bold">{chat.username}</p>
+        <p className=" truncate">{chat.lastMessage ?? 'No messages'}</p>
       </div>
-      <div className="flex flex-col items-end ml-auto">
-        <div className="bg-pink h-3 w-3 rounded-full"></div>
-        <p className="text-sm text-gray-400 font-semibold mt-auto">10:30</p>
-      </div>
+      {chat.lastMessage && (
+        <div className="flex flex-col items-end ml-auto">
+          <div className="bg-pink h-3 w-3 rounded-full"></div>
+          <p className="text-sm text-gray-400 font-semibold mt-auto">
+            {timeSince(chat.lastMessageDate.replace('Z', ''))}
+          </p>
+        </div>
+      )}
     </Link>
   );
 };
@@ -36,7 +48,7 @@ export default function Chats() {
 
   const getChats = async () => {
     try {
-      const { data } = await customAxios.get('/chat/getChats');
+      const { data } = await customAxios.get('/chat');
       setChats(data);
     } catch (err) {
       if (err.response?.data?.message) toast.error(err.response.data.message);
@@ -44,9 +56,9 @@ export default function Chats() {
     }
   };
 
-  // useEffect(() => {
-  //   getChats();
-  // }, []);
+  useEffect(() => {
+    getChats();
+  }, []);
 
   // useEffect(() => {
   //   if (socket) {
@@ -70,7 +82,7 @@ export default function Chats() {
       }}
     >
       {chats.map((chat, index) => (
-        <Chat key={index} />
+        <Chat chat={chat} key={index} />
       ))}
       {chats.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full">
