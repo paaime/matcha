@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { ILove, IUserSettings } from './types/user';
 import io, { Socket } from 'socket.io-client';
 import { Filters } from './types/type';
+import { IPreviewChat } from './types/chat';
 
 type CarouselStore = {
   users: ILove[];
@@ -9,7 +10,7 @@ type CarouselStore = {
 };
 
 type ChatsStore = {
-  chats: [];
+  chats: IPreviewChat[];
   setChats: (chats: []) => void;
 };
 

@@ -8,6 +8,7 @@ import { CalendarDaysIcon, FlameIcon } from 'lucide-react';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { IUser } from '@/types/user';
+import { timeSince } from '@/utils/time';
 
 const Map = dynamic(() => import('./Map'), { ssr: false });
 
@@ -15,34 +16,6 @@ export default function Informations({ user }: { user: IUser }) {
   const [snap, setSnap] = useState<number | string | null>(0.35);
 
   // Function to calculate elapsed time (ex: 10 minutes ago)
-  const timeSince = (date: string) => {
-    if (!date || date === "") return 'Unknown';
-
-    const seconds = Math.abs(Math.floor((new Date().getTime() - new Date(date).getTime())) / 1000);
-
-    let interval = seconds / 31536000;
-
-    if (interval > 1) {
-      return Math.floor(interval) + ' year' + (Math.floor(interval) > 1 ? 's' : '');
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return Math.floor(interval) + ' month' + (Math.floor(interval) > 1 ? 's' : '');
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return Math.floor(interval) + ' day' + (Math.floor(interval) > 1 ? 's' : '');
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return Math.floor(interval) + ' hour' + (Math.floor(interval) > 1 ? 's' : '');
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return Math.floor(interval) + ' minute' + (Math.floor(interval) > 1 ? 's' : '');
-    }
-    return Math.floor(seconds) + ' second' + (Math.floor(seconds) > 1 ? 's' : '');
-  }
 
   const getGender = (gender: string) => {
     switch (gender) {
@@ -53,7 +26,7 @@ export default function Informations({ user }: { user: IUser }) {
       default:
         return 'Other';
     }
-  }
+  };
 
   return (
     <Drawer
@@ -77,7 +50,9 @@ export default function Informations({ user }: { user: IUser }) {
         >
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">About</p>
-            <p className="font-semibold text-dark dark:text-white">{user.biography}</p>
+            <p className="font-semibold text-dark dark:text-white">
+              {user.biography}
+            </p>
           </div>
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">Interests</p>
@@ -127,11 +102,8 @@ export default function Informations({ user }: { user: IUser }) {
             <p className="text-gray-400 font-semibold">Username</p>
 
             <p className="font-semibold text-dark dark:text-white">
-              <strong>
-                {user.username}
-              </strong>
-              {" "}
-              registered {timeSince(user.created_at)} ago
+              <strong>{user.username}</strong> registered{' '}
+              {timeSince(user.created_at)} ago
             </p>
           </div>
 
@@ -142,7 +114,8 @@ export default function Informations({ user }: { user: IUser }) {
               <Map user={user} />
             ) : (
               <p className="font-semibold text-dark dark:text-white">
-                {user.firstName} has disabled location or you don{"'"}t have consent
+                {user.firstName} has disabled location or you don{"'"}t have
+                consent
               </p>
             )}
           </div>
@@ -150,7 +123,8 @@ export default function Informations({ user }: { user: IUser }) {
           {!user.isMatch && user.isLiked && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
-                You {user.isSuperLike && "super"} liked {user.firstName} {user.isSuperLike && " ⭐️"}
+                You {user.isSuperLike && 'super'} liked {user.firstName}{' '}
+                {user.isSuperLike && ' ⭐️'}
               </p>
               <p className="font-semibold text-dark dark:text-white">
                 {timeSince(user.isLikeTime)} ago
@@ -161,7 +135,8 @@ export default function Informations({ user }: { user: IUser }) {
           {!user.isMatch && user.hasLiked && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
-                {user.firstName} {user.hasSuperLike && "super"} liked you {user.hasSuperLike && " ⭐️"}
+                {user.firstName} {user.hasSuperLike && 'super'} liked you{' '}
+                {user.hasSuperLike && ' ⭐️'}
               </p>
               <p className="font-semibold text-dark dark:text-white">
                 {timeSince(user.hasLikeTime)} ago
@@ -169,16 +144,16 @@ export default function Informations({ user }: { user: IUser }) {
             </div>
           )}
 
-          {user.hasBlocked || user.isBlocked && (
-            <div className="flex flex-col gap-3">
-              <p className="text-gray-400 font-semibold">
-                Block section
-              </p>
-              <p className="font-semibold text-dark dark:text-white">
-                {user.isBlocked ? 'You blocked' : 'You are blocked by'} {user.firstName}
-              </p>
-            </div>
-          )}
+          {user.hasBlocked ||
+            (user.isBlocked && (
+              <div className="flex flex-col gap-3">
+                <p className="text-gray-400 font-semibold">Block section</p>
+                <p className="font-semibold text-dark dark:text-white">
+                  {user.isBlocked ? 'You blocked' : 'You are blocked by'}{' '}
+                  {user.firstName}
+                </p>
+              </div>
+            ))}
 
           {user.isMatch && (
             <div className="flex flex-col gap-3">
@@ -187,12 +162,16 @@ export default function Informations({ user }: { user: IUser }) {
               </p>
               <p className="font-semibold text-dark dark:text-white">
                 {timeSince(user.matchTime)} ago
-
                 <br />
-
-                {user.isSuperLike && user.hasSuperLike && "You both super liked each other ⭐️⭐️"}
-                {user.isSuperLike && !user.hasSuperLike && "You super liked ⭐️"}
-                {!user.isSuperLike && user.hasSuperLike && "You were super liked ⭐️"}
+                {user.isSuperLike &&
+                  user.hasSuperLike &&
+                  'You both super liked each other ⭐️⭐️'}
+                {user.isSuperLike &&
+                  !user.hasSuperLike &&
+                  'You super liked ⭐️'}
+                {!user.isSuperLike &&
+                  user.hasSuperLike &&
+                  'You were super liked ⭐️'}
               </p>
             </div>
           )}

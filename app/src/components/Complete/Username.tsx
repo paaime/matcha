@@ -14,8 +14,10 @@ export default function Username({
   setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {
   const handleNext = () => {
-    if (!/^[a-z]{3,40}$/.test(data.username))
-      return toast.error('Please enter a valid username (3-40 lowercase letters).');
+    if (!/^[a-z]{3,40}$/.test(data.username) || !data.username)
+      return toast.error(
+        'Please enter a valid username (3-40 lowercase letters).'
+      );
     setStep((prev) => prev + 1);
   };
   return (
@@ -34,7 +36,10 @@ export default function Username({
           setData((prev) => ({ ...prev, username: e.target.value?.trim() }))
         }
       />
-      <Button className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input" onClick={handleNext}>
+      <Button
+        className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input"
+        onClick={handleNext}
+      >
         Continue
       </Button>
     </div>

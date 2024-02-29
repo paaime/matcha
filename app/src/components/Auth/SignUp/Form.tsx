@@ -27,6 +27,7 @@ export default function SignUpForm() {
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
       email: '',
+      username: '',
       firstName: '',
       lastName: '',
       password: '',
@@ -38,10 +39,12 @@ export default function SignUpForm() {
   const [open, setOpen] = useState(false);
 
   const handleRegister: SubmitHandler<FormFields> = async (data) => {
-    const { email, firstName, lastName, password, confirmPassword } = data;
+    const { email, username, firstName, lastName, password, confirmPassword } =
+      data;
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API}/auth/register`, {
         email,
+        username,
         firstName,
         lastName,
         password,
@@ -76,7 +79,31 @@ export default function SignUpForm() {
               <FormItem className="w-full">
                 <FormLabel>Email address</FormLabel>
                 <FormControl>
-                  <Input {...field} type="email" value={field.value} onChange={field.onChange} />
+                  <Input
+                    {...field}
+                    type="email"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="text"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -91,7 +118,12 @@ export default function SignUpForm() {
                 <FormItem className="w-full">
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input {...field} autoComplete="given-name" value={field.value} onChange={field.onChange} />
+                    <Input
+                      {...field}
+                      autoComplete="given-name"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -104,7 +136,12 @@ export default function SignUpForm() {
                 <FormItem className="w-full">
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
-                    <Input {...field} autoComplete="family-name" value={field.value} onChange={field.onChange} />
+                    <Input
+                      {...field}
+                      autoComplete="family-name"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -133,7 +170,13 @@ export default function SignUpForm() {
               <FormItem className="w-full">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" autoComplete='new-password' value={field.value} onChange={field.onChange} />
+                  <Input
+                    {...field}
+                    type="password"
+                    autoComplete="new-password"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -147,7 +190,13 @@ export default function SignUpForm() {
               <FormItem className="w-full">
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" autoComplete='new-password' value={field.value} onChange={field.onChange} />
+                  <Input
+                    {...field}
+                    type="password"
+                    autoComplete="new-password"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
