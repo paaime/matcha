@@ -6,6 +6,7 @@ import { FaSmile } from 'react-icons/fa';
 import { toast } from 'sonner';
 import customAxios from '@/utils/axios';
 import { useUserStore } from '@/store';
+import { useEffect } from 'react';
 
 export const GalleryImage = ({ id, picture }) => {
   const { user, setUser } = useUserStore();
@@ -76,8 +77,23 @@ export const GalleryImage = ({ id, picture }) => {
 };
 
 export default function Gallery() {
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
   const pictures = user?.pictures?.split(',');
+
+  // Re call the user to get the updated list of blocked, visited and history
+  const getUser = async () => {
+    try {
+      const { data } = await customAxios.get('/user/me');
+      setUser(data);
+    } catch (err) {
+      if (err.response?.data?.message) toast.error(err.response.data.message);
+      else toast.error('An error occured');
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <div className="flex flex-col mt-5">
