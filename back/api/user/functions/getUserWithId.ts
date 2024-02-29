@@ -75,6 +75,7 @@ export async function getUserWithId(
         u.isOnline,
         u.isVerified,
         u.lastConnection,
+        u.created_at,
         u.isComplete,
         t.tagName AS interestName,
         IF(u.consentLocation = 1 AND :lat != 0 AND :lon != 0 AND u.loc != '', (
@@ -224,7 +225,7 @@ export async function getUserWithId(
     // Send notifications
     await sendNotification(userId.toString(), {
       content: 'Someone visited your profile',
-      redirect: `/profile/${connectedUserId}`,
+      redirect: '/settings',
       related_user_id: connectedUserId
     });
 

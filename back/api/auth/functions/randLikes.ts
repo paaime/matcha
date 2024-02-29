@@ -1,0 +1,76 @@
+import { Response } from 'express';
+
+import { connectToDatabase } from '../../../utils/db';
+import { updateFame } from '../../../utils/fame';
+import { sendNotification } from '../../../websocket/functions/initializeIo';
+
+const MAX_LIKES = 30;
+
+export async function randLikes(res: Response, total: number): Promise<boolean>{
+  total = total > MAX_LIKES ? MAX_LIKES : total;
+  total = total < 1 ? 1 : total;
+
+  try {
+    const db = await connectToDatabase();
+
+    // Get the users
+    const [rows] = await db.query('SELECT * FROM User') as any;
+
+    for (const row of rows) {
+      const userId = row.id;
+
+      // Get ids from User where  and sexualPreferences = sexualPreferences
+      const users = rows
+        .filter((user: any) => user.id !== userId)
+        .filter((user: any) => user.gender === row.sexualPreferences && user.sexualPreferences === row.gender);
+
+      // Get random user ids
+      const randomUserId = users.map((user: any) => user.id).sort(() => Math.random() - 0.5).slice(0, total);
+
+      for (const like of randomUserId) {
+        if (like === userId) {
+          continue;
+        }
+
+        const isSuper = Math.random() < 0.2;
+
+        const query = 'INSERT INTO UserLike (user_id, liked_user_id, isSuperLike) VALUES (?, ?, ?)';
+        await db.query(query, [userId, like, isSuper ? 1 : 0]);
+      }
+    }
+
+    // Send notifications for new matchs
+    const [match] = await db.query('SELECT * FROM Matchs') as any;
+
+    for (const m of match) {
+      await updateFame(m.user_id, 'newMatch');
+      await updateFame(m.other_user_id, 'newMatch');
+      await sendNotification(m.user_id.toString(), {
+        content: 'You have a new match 🎉',
+        redirect: '/likes',
+        related_user_id: m.other_user_id,
+      });
+      await sendNotification(m.other_user_id.toString(), {
+        content: 'You have a new match 🎉',
+        redirect: '/likes',
+        related_user_id: m.user_id,
+      });
+    }
+
+    // Close the connection
+    await db.end();
+
+    res.status(200).json({
+      message: 'Script executed'
+    });
+    return true;
+  } catch (error) {
+    console.error('Error while adding the likes:', error);
+
+    res.status(401).json({ // 501 for real but not tolerated by 42
+      error: 'Server error',
+      message: 'An error occurred while adding the likes'
+    });
+    return false;
+  }
+}

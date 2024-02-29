@@ -114,15 +114,6 @@ export default function Informations({ user }: { user: IUser }) {
             </div>
             <div className="flex flex-col items-center">
               <div className="flex items-center justify-center bg-pink h-12 w-12 rounded-full">
-                <CalendarDaysIcon className="h-6 w-6 text-white" />
-              </div>
-              <p className="text-gray-400 mt-3">Username</p>
-              <p className="text-primary font-semibold text-lg">
-                {user.username} since {new Date(user.created_at).getFullYear()}
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center bg-pink h-12 w-12 rounded-full">
                 <FlameIcon className="h-6 w-6 text-white" />
               </div>
               <p className="text-gray-400 mt-3">Fame rating</p>
@@ -131,6 +122,19 @@ export default function Informations({ user }: { user: IUser }) {
               </p>
             </div>
           </div>
+
+          <div className="flex flex-col gap-3">
+            <p className="text-gray-400 font-semibold">Username</p>
+
+            <p className="font-semibold text-dark dark:text-white">
+              <strong>
+                {user.username}
+              </strong>
+              {" "}
+              registered {timeSince(user.created_at)} ago
+            </p>
+          </div>
+
           <div className="flex flex-col gap-3">
             <p className="text-gray-400 font-semibold">Location</p>
 
@@ -141,7 +145,6 @@ export default function Informations({ user }: { user: IUser }) {
                 {user.firstName} has disabled location or you don{"'"}t have consent
               </p>
             )}
-
           </div>
 
           {!user.isMatch && user.isLiked && (

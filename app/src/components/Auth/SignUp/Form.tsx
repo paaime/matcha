@@ -38,13 +38,12 @@ export default function SignUpForm() {
   const [open, setOpen] = useState(false);
 
   const handleRegister: SubmitHandler<FormFields> = async (data) => {
-    const { email, firstName, lastName, username, password, confirmPassword } = data;
+    const { email, firstName, lastName, password, confirmPassword } = data;
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API}/auth/register`, {
         email,
         firstName,
         lastName,
-        username,
         password,
         confirmPassword,
       });
@@ -113,7 +112,7 @@ export default function SignUpForm() {
             />
           </div>
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
@@ -125,7 +124,7 @@ export default function SignUpForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormField
             control={form.control}

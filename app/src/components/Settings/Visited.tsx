@@ -4,11 +4,12 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useUserStore } from '@/store';
+import { ILove } from '@/types/user';
 
 export default function Visited() {
   const user = useUserStore((state) => state.user);
 
-  const users = user?.userVisited;
+  const users = user?.userVisited as unknown as ILove[];
 
   if (!users || users.length === 0) return null;
 
@@ -33,12 +34,12 @@ export default function Visited() {
             slidesPerView: 2.8,
           },
         }}
-        className="shadow-scroll !-ml-[20px] !pl-[20px]"
+        className="!-ml-[20px] !pl-[20px]"
       >
         {users?.map((user, index) => {
           return (
             <SwiperSlide key={index}>
-              {/* <ProfileCard preview={true} user={user} /> */}
+              <ProfileCard preview={true} user={user} />
             </SwiperSlide>
           );
         })}

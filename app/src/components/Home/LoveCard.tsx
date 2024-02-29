@@ -26,7 +26,7 @@ export default function LoveCard({ user }: { user: ILove }) {
           <SwiperSlide key={index}>
             <Image
               loader={({ src }) => src}
-              src={`${process.env.NEXT_PUBLIC_API}${picture}`}
+              src={`${picture.startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${picture}`}
               alt={`Photo ${index}`}
               width={500}
               height={500}

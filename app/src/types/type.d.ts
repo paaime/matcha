@@ -19,6 +19,7 @@ export type Gender = 'female' | 'male' | 'other';
 export type SexualPreferences = 'female' | 'male' | 'other';
 
 export type CompleteForm = {
+  username: string;
   gender: Gender;
   sexualPreferences: SexualPreferences;
   age: number;

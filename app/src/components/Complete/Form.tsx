@@ -12,10 +12,12 @@ import { ChevronLeftIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import SexualPreference from './SexualPreference';
 import { CompleteForm } from '@/types/type';
+import Username from './Username';
 
 export default function CompleteForm() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<CompleteForm>({
+    username: null,
     gender: null,
     sexualPreferences: null,
     age: null,
@@ -38,16 +40,17 @@ export default function CompleteForm() {
       >
         <ChevronLeftIcon className={'text-black dark:text-white h-6 w-6 '} />
       </Button>
-      {step === 1 && <Gender setStep={setStep} data={data} setData={setData} />}
-      {step === 2 && (
+      {step === 1 && <Username setStep={setStep} data={data} setData={setData} />}
+      {step === 2 && <Gender setStep={setStep} data={data} setData={setData} />}
+      {step === 3 && (
         <SexualPreference setStep={setStep} data={data} setData={setData} />
       )}
-      {step === 3 && <Age setStep={setStep} data={data} setData={setData} />}
-      {step === 4 && (
+      {step === 4 && <Age setStep={setStep} data={data} setData={setData} />}
+      {step === 5 && (
         <Interests setStep={setStep} data={data} setData={setData} />
       )}
-      {step === 5 && <Gallery setStep={setStep} />}
-      {step === 6 && <Bio setStep={setStep} data={data} setData={setData} />}
+      {step === 6 && <Gallery setStep={setStep} />}
+      {step === 7 && <Bio setStep={setStep} data={data} setData={setData} />}
       <Pagination step={step} />
     </>
   );

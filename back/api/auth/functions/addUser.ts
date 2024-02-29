@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import bcrypt from 'bcrypt';
 import { connectToDatabase } from '../../../utils/db';
-import { emailRegex, nameRegex, passwordRegex, usernameRegex } from '../../../types/regex';
+import { emailRegex, nameRegex, passwordRegex } from '../../../types/regex';
 import { getEmailData } from '../../../utils/emails';
 import { transporter } from '../../..';
 
@@ -25,12 +25,11 @@ export const checkIfFieldExist = (
 export async function addUser(body: any, res: Response): Promise<undefined> {
   try {
     // Get infos from body
-    const { lastName, firstName, username, password, confirmPassword, email } = body;
+    const { lastName, firstName, password, confirmPassword, email } = body;
 
     // Check if fields exist
     if (checkIfFieldExist('lastName', lastName, res)) return;
     if (checkIfFieldExist('firstName', firstName, res)) return;
-    if (checkIfFieldExist('username', username, res)) return;
     if (checkIfFieldExist('password', password, res)) return;
     if (checkIfFieldExist('confirmPassword', confirmPassword, res)) return;
     if (checkIfFieldExist('email', email, res)) return;
@@ -48,7 +47,6 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
     const newUser = {
       firstName: firstName?.trim(),
       lastName: lastName?.trim(),
-      username: username?.trim(),
       passwordHashed: password,
       email: email?.trim(),
     };
@@ -65,13 +63,6 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
       res.status(400).json({
         error: 'Bad request',
         message: 'Last name is not valid',
-      });
-      return;
-    }
-    if (!usernameRegex.test(newUser.username)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'username is not valid',
       });
       return;
     }
@@ -92,26 +83,18 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
 
     const db = await connectToDatabase();
 
-    // Check if email or username already exists
-    const queryCheckEmail = 'SELECT * FROM User WHERE email = ? OR username = ?';
+    // Check if email already exists
+    const queryCheckEmail = 'SELECT * FROM User WHERE email = ?';
     const [rowsCheckEmail] = (await db.query(queryCheckEmail, [
       newUser.email,
-      newUser.username,
     ])) as any;
 
     if (rowsCheckEmail.length > 0) {
       db.end();
       
-      const mailExists = rowsCheckEmail.find(
-        (row: any) => row.email === newUser.email
-      );
-      const usernameExists = rowsCheckEmail.find(
-        (row: any) => row.username === newUser.username
-      );
-
       res.status(400).json({
         error: 'Bad request',
-        message: mailExists && usernameExists ? 'Email and username already exist' : mailExists ? 'Email already exists' : 'Username already exists',
+        message: 'Email already exists',
       });
       return;
     }
@@ -126,13 +109,12 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
     const tokenHashed = bcrypt.hashSync(token, 10);
 
     const query =
-      'INSERT INTO User (lastName, firstName, username, passwordHashed, email, emailToken) VALUES (?, ?, ?, ?, ?, ?)';
+      'INSERT INTO User (lastName, firstName, passwordHashed, email, emailToken) VALUES (?, ?, ?, ?, ?)';
 
     // Insert the user into the database and return the id
     const [rows] = (await db.query(query, [
       newUser.lastName,
       newUser.firstName,
-      newUser.username,
       passwordHashed,
       newUser.email,
       tokenHashed,

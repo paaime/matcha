@@ -124,6 +124,7 @@ export async function getDiscovery(
         )
       ORDER BY
         created_at DESC
+      LIMIT 10
     `;
 
     // Execute the query

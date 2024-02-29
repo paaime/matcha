@@ -77,8 +77,8 @@ export async function googleAuth(
 
     // Insert the user into the database and return the id
     const [rowsQuery] = (await db.query(insertQuery, [
+      googleUser.family_name,
       googleUser.given_name,
-      googleUser.name,
       googleUser.email,
       '',
       1,
