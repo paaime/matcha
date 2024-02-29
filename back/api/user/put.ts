@@ -13,6 +13,7 @@ import { upBio } from './functions/upBio';
 import { upImage } from './functions/upImage';
 import { safeUserId } from '../../middlewares/authCheck';
 import { upConsentLocation } from './functions/upConsentLocation';
+import { upLocation } from './functions/upLocation';
 
 const router = express.Router();
 
@@ -42,6 +43,10 @@ router.put('/bio', async (req: RequestUser, res: Response) => {
 
 router.put('/consentLocation', async (req: RequestUser, res: Response) => {
   await upConsentLocation(req, res);
+});
+
+router.put('/location', async (req: RequestUser, res: Response) => {
+  await upLocation(req, res);
 });
 
 router.put('/image/:image_id', async (req: RequestUser, res: Response) => {

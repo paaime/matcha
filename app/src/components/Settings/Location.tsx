@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '../ui/button';
-import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useState } from 'react';
@@ -9,11 +9,29 @@ import { toast } from 'sonner';
 import customAxios from '@/utils/axios';
 import { useUserStore } from '@/store';
 
+const MapClick = ({ icon, setLocation }) => {
+  const map = useMapEvent('click', (e) => {
+    const { lat, lng } = e.latlng;
+    // remove previous marker
+    map.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
+    });
+    // add new marker
+    L.marker([lat, lng], {
+      icon,
+    }).addTo(map);
+    setLocation(`${lat},${lng}`);
+  });
+
+  return null;
+};
+
 export default function Location() {
   const [loading, setLoading] = useState(false);
-  const user = useUserStore((state) => state.user);
-  const setUser = useUserStore((state) => state.setUser);
-  const [consent, setConsent] = useState<boolean>(user.consentLocation);
+  const { user, setUser } = useUserStore();
+  const [location, setLocation] = useState();
 
   const pictures = user.pictures?.split(',') || [];
 
@@ -38,11 +56,12 @@ export default function Location() {
 
   const handleSubmit = async () => {
     try {
+      if (!location) toast.error('Please select a location');
       setLoading(true);
-      await customAxios.put('/user/consentLocation', {
-        consent,
+      await customAxios.put('/user/location', {
+        location,
       });
-      setUser({ ...user, consentLocation: consent });
+      setUser({ ...user, loc: location });
       toast.success('Updated');
     } catch (err) {
       if (err?.response?.data?.message) {
@@ -68,7 +87,9 @@ export default function Location() {
         scrollWheelZoom={false}
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+
         <Marker position={userLoc as [number, number]} icon={iconPerson} />
+        <MapClick icon={iconPerson} setLocation={setLocation} />
       </MapContainer>
       <Button
         isLoading={loading}

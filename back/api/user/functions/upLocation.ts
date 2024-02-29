@@ -1,12 +1,12 @@
 import { Response } from 'express';
 
 import { connectToDatabase } from '../../../utils/db';
-import { biographyRegex } from '../../../types/regex';
+import { biographyRegex, locationRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 
-export async function upConsentLocation(
+export async function upLocation(
   req: RequestUser,
   res: Response
 ): Promise<undefined> {
@@ -23,12 +23,12 @@ export async function upConsentLocation(
     }
 
     // Get infos from body
-    const { consent } = req.body;
+    const { location } = req.body;
 
-    if (typeof consent !== 'boolean') {
+    if (!locationRegex.test(location)) {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Invalid consent value',
+        message: 'Invalid location',
       });
       return;
     }
@@ -36,8 +36,8 @@ export async function upConsentLocation(
     const db = await connectToDatabase();
 
     // Update the user's biography
-    const updateQuery = 'UPDATE User SET consentLocation = ? WHERE id = ?';
-    await db.query(updateQuery, [consent, user_id]);
+    const updateQuery = 'UPDATE User SET loc = ? WHERE id = ?';
+    await db.query(updateQuery, [location, user_id]);
 
     // Close the connection
     db.end();
@@ -56,7 +56,7 @@ export async function upConsentLocation(
 
     res.status(501).json({
       error: 'Server error',
-      message: 'An error occurred while updating the consent location',
+      message: 'An error occurred while updating the location',
     });
   }
 }
