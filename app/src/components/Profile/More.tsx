@@ -49,7 +49,7 @@ export default function More({ user_id, isBlocked }: Props) {
       <DropdownMenuContent align="end" className="mt-2">
         <DropdownMenuItem onClick={reportUser}>
           <FlagIcon className="h-4 w-4 mr-2" />
-          Report
+          Report as fake
         </DropdownMenuItem>
         <DropdownMenuItem onClick={blockUser}>
           <ShieldBanIcon className="h-4 w-4 mr-2" />
