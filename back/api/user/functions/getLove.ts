@@ -303,7 +303,7 @@ export async function getLove(
         city: row.city || '',
         pictures: row.pictures || '',
         distance: myConsent ? Math.round(row.distance) : -1,
-        compatibilityScore: row.compatibilityScore,
+        compatibilityScore: Math.min(100, Math.max(0, row.compatibilityScore)),
       };
 
       // Push user object to the array

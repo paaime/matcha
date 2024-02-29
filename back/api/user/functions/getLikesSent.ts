@@ -101,7 +101,7 @@ export async function getLikesSent(
         distance: -1,
         isMatch: !!row.isMatch,
         isSuperLike: row.isSuperLike === 1,
-        compatibilityScore: row.compatibilityScore
+        compatibilityScore: Math.min(100, Math.max(0, row.compatibilityScore)),
       };
 
       // Push liked user object to the array
