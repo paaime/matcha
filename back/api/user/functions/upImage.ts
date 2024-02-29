@@ -50,6 +50,14 @@ export async function upImage(
       const getQuery = 'SELECT pictures FROM User WHERE id = ?';
       const [row] = (await db.query(getQuery, [user_id])) as any;
 
+      if (!row || !row[0]) {
+        res.status(400).json({
+          error: 'Bad request',
+          message: 'Invalid user id',
+        });
+        return;
+      }
+
       const pictures = row[0].pictures;
       let picturesArray;
 

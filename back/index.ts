@@ -20,20 +20,13 @@ const PORT = process.env.BACK_PORT;
 const app = express();
 const server = http.createServer(app);
 
-console.log({
-  client_id: process.env.GOOGLE_CLIENT_ID,
-  client_secret: process.env.GOOGLE_CLIENT_SECRET,
-  redirect_uri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
-  grant_type: 'authorization_code',
-})
-
 // Default message
 app.get('/', (req: Request, res: Response) => {
   res.send('API is running !');
 });
 
 // Serve static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, "..", "public", "uploads")));
 
 // Middlewares
 app.use(
