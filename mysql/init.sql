@@ -130,10 +130,7 @@ AFTER INSERT ON UserLike
 FOR EACH ROW
 BEGIN
     IF EXISTS (SELECT * FROM UserLike ul2 WHERE ul2.user_id = NEW.liked_user_id AND ul2.liked_user_id = NEW.user_id) THEN
-        -- Si un like mutuel existe, insérer une nouvelle ligne dans Matchs
-        INSERT INTO Matchs (user_id, other_user_id) VALUES (NEW.user_id, NEW.liked_user_id);
-        -- -- Mettre à jour le champ match_id pour refléter la nouvelle correspondance
-        -- UPDATE Matchs SET match_id = LAST_INSERT_ID() WHERE id = LAST_INSERT_ID();
+      INSERT INTO Matchs (user_id, other_user_id) VALUES (NEW.user_id, NEW.liked_user_id);
     END IF;
 END;
 //
@@ -145,10 +142,8 @@ CREATE TRIGGER after_user_like_delete
 AFTER DELETE ON UserLike
 FOR EACH ROW
 BEGIN
-    -- Vérifier si le like supprimé correspondait à une correspondance existante dans Matchs
     IF EXISTS (SELECT * FROM Matchs WHERE user_id = OLD.user_id AND other_user_id = OLD.liked_user_id) THEN
-        -- Si oui, supprimer la ligne correspondante de Matchs
-        DELETE FROM Matchs WHERE user_id = OLD.user_id AND other_user_id = OLD.liked_user_id;
+      DELETE FROM Matchs WHERE user_id = OLD.user_id AND other_user_id = OLD.liked_user_id;
     END IF;
 END;
 //

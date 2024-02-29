@@ -77,43 +77,11 @@ export async function getDiscovery(
         AND u.created_at >= DATE_SUB(NOW(), INTERVAL ${MAX_DAYS} DAY)
         AND u.id NOT IN (
           SELECT
-            ul.user_id
-          FROM
-            UserLike ul
-          WHERE
-            ul.liked_user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
             ub.blocked_user_id
           FROM
             Blocked ub
           WHERE
             ub.user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
-            ub.user_id
-          FROM
-            Blocked ub
-          WHERE
-            ub.blocked_user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
-            r.reported_user_id
-          FROM
-            Reported r
-          WHERE
-            r.user_id = :userId
-        )
-        AND u.id NOT IN (
-          SELECT
-            r.user_id
-          FROM
-            Reported r
-          WHERE
-            r.reported_user_id = :userId
         )
       ORDER BY
         created_at DESC

@@ -97,20 +97,16 @@ export async function getUserWithId(
         m.user_id IS NOT NULL AS isMatch,
         m.id AS matchId,
         m.created_at AS matchTime,
-        
         IF(
           (SELECT COUNT(*) FROM UserLike WHERE user_id = :connectedUserId AND liked_user_id = :userId AND isSuperLike = 1) > 0,
           true,
           false
         ) AS isSuperLike,
-
         IF(
           (SELECT COUNT(*) FROM UserLike WHERE user_id = :userId AND liked_user_id = :connectedUserId AND isSuperLike = 1) > 0,
           true,
           false
         ) AS hasSuperLike
-        
-
         FROM
           User u
         LEFT JOIN

@@ -74,7 +74,7 @@ export const getMaxDistance = (customFilter: boolean, newValue: string) => {
   const defaultValue = 5; // 5km
 
   if (customFilter === false) {
-    return 25;
+    return 150;
   }
 
   const intValue = parseInt(newValue, 10);
@@ -141,6 +141,9 @@ export async function getLove(
       // Remove duplicates
       interests = Array.from(new Set(interests));
 
+      // Add # to interests
+      interests = interests.map((interest) => '#' + interest);
+
       // Remove empty strings
       interests = interests.filter((interest) => interest.length > 0);
 
@@ -150,9 +153,29 @@ export async function getLove(
 
     const db = await connectToDatabase();
 
-    // Get my sexual preferences
-    const [rowsPreferences] = (await db.query(
-      'SELECT age, loc, consentLocation, gender, sexualPreferences FROM User WHERE id = ?',
+    // Get my infos
+    const [rowsPreferences] = (await db.query(`
+      SELECT 
+        u.age,
+        u.loc,
+        u.consentLocation,
+        u.gender,
+        u.sexualPreferences,
+        u.fameRating,
+        GROUP_CONCAT(ti.tagName) AS interests
+      FROM
+        User u
+        LEFT JOIN Tags ti ON u.id = ti.user_id
+      WHERE
+        u.id = ?
+      GROUP BY
+        u.id,
+        u.age,
+        u.loc,
+        u.consentLocation,
+        u.gender,
+        u.sexualPreferences;
+      `,
       [userId]
     )) as any;
 
@@ -169,6 +192,8 @@ export async function getLove(
     const myLoc = rowsPreferences[0].loc;
     const myGender = rowsPreferences[0].gender;
     const myPreferences = rowsPreferences[0].sexualPreferences;
+    const myInterests = rowsPreferences[0].interests;
+    const myFame = rowsPreferences[0].fameRating;
 
     const myLat = myLoc?.split(',')[0];
     const myLon = myLoc?.split(',')[1];
@@ -186,16 +211,6 @@ export async function getLove(
         u.fameRating,
         u.isOnline,
         u.isVerified,
-        IF(u.consentLocation = 1 AND :myLat != 0 AND :myLon != 0 AND u.loc != '', (
-          6371 * 
-          acos(
-            cos(radians(:myLat)) * 
-            cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
-            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:myLon)) + 
-            sin(radians(:myLat)) * 
-            sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
-          )
-        ), -1) AS distance,
         IF(:myLat != 0 AND :myLon != 0 AND u.loc != '', (
           6371 * 
           acos(
@@ -205,12 +220,23 @@ export async function getLove(
             sin(radians(:myLat)) * 
             sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
           )
-        ), -1) AS estimatedDistance,
+        ), -1) AS distance,
         (
-          (100 - ABS(u.age - :myAge)) + (u.fameRating / 100)
+          GREATEST(0, 50 - (ABS(u.age - :myAge) * 2)) +
+          GREATEST(0, 20 - ((6371 * 
+            acos(
+              cos(radians(:myLat)) * 
+              cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+              cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:myLon)) + 
+              sin(radians(:myLat)) * 
+              sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+            ) - 20) / 30)) +
+          LEAST(30, 10 * COUNT(ti.tagName)) +
+          GREATEST(-10, -1 * (ABS(:myFame - u.fameRating) / 3))
         ) AS compatibilityScore
       FROM
         User u
+        LEFT JOIN Tags ti ON u.id = ti.user_id AND ti.tagName IN (:myInterests)
       WHERE
         u.id != :userId
         AND u.isVerified = 1
@@ -219,11 +245,11 @@ export async function getLove(
         AND u.sexualPreferences = :myGender
         AND u.id NOT IN (
           SELECT
-            ul.user_id
+            ul.liked_user_id
           FROM
             UserLike ul
           WHERE
-            ul.liked_user_id = :userId
+            ul.user_id = :userId
         )
         AND u.id NOT IN (
           SELECT
@@ -243,21 +269,30 @@ export async function getLove(
         )
         ${interests.length > 0 ? `AND u.id IN (
           SELECT
-            ti.user_id
+            tif.user_id
           FROM
-            Tags ti
+            Tags tif
           WHERE
-            ti.tagName IN (${interests.map((interest) => "'" + interest + "'").join(',')})
+            tif.tagName IN (${interests.map((interest) => "'" + interest + "'").join(',')})
         )` : ''}
+      GROUP BY
+        u.id, u.username, u.firstName, u.age, u.loc, u.consentLocation, u.city, u.pictures, u.fameRating, u.isOnline, u.isVerified
       HAVING
-        estimatedDistance <= :maxDistance
+        IF(:myLat != 0 AND :myLon != 0 AND u.loc != '', (
+          6371 * 
+          acos(
+            cos(radians(:myLat)) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+            cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:myLon)) + 
+            sin(radians(:myLat)) * 
+            sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+          )
+        ), -1) <= :maxDistance
         AND age >= :minAge
         AND age <= :maxAge
         AND fameRating >= :minFame
         AND fameRating <= :maxFame
         AND fameRating >= 0
-      ORDER BY
-        compatibilityScore ASC
     `;
 
     // Execute the query
@@ -272,7 +307,9 @@ export async function getLove(
       minAge,
       maxAge,
       minFame,
-      maxFame
+      maxFame,
+      myFame,
+      myInterests: myInterests ? myInterests.split(',') : [],
     })) as any;
 
     // Close the connection
@@ -297,8 +334,8 @@ export async function getLove(
         gender: row.gender,
         city: row.city || '',
         pictures: row.pictures || '',
-        distance: myConsent ? Math.round(row.distance) : -1,
-        compatibilityScore: Math.min(100, Math.max(0, row.compatibilityScore)),
+        distance: myConsent && row.consentLocation ? Math.round(row.distance) : -1,
+        compatibilityScore: Math.round(Math.min(100, Math.max(0, row.compatibilityScore))),
       };
 
       // Push user object to the array

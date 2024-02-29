@@ -3,7 +3,7 @@ export const CircleProgress = ({ percent }: { percent: number }) => {
 
   percent = percent > 100 ? 100 : percent;
   percent = percent < 0 ? 0 : percent;
-
+  
   percent = Math.floor(percent);
 
   const circumference = Math.PI * 2 * 24;
