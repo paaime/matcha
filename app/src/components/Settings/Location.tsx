@@ -62,7 +62,9 @@ export default function Location() {
       await customAxios.put('/user/location', {
         location
       });
-      setUser({ ...user, loc: location });
+      // setUser({ ...user, loc: location });
+      const { data } = await customAxios.get('/user/me');
+      setUser(data);
       toast.success('Updated');
     } catch (err) {
       if (err?.response?.data?.message) {
