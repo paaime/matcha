@@ -75,6 +75,7 @@ export async function getUserWithId(
         u.isOnline,
         u.isVerified,
         u.lastConnection,
+        u.created_at,
         u.isComplete,
         t.tagName AS interestName,
         IF(u.consentLocation = 1 AND :lat != 0 AND :lon != 0 AND u.loc != '', (
