@@ -175,7 +175,7 @@ export default function Filters() {
           </div>
         </div>
         <DrawerFooter className="flex-row">
-          <DrawerClose>
+          <DrawerClose asChild>
             <Button variant="secondary" className="w-full h-12 text-md">
               Close
             </Button>
