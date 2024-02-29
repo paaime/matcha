@@ -5,8 +5,10 @@ import Search from './Search';
 import { Button } from '../ui/button';
 import Filters from './Filters';
 import { useState } from 'react';
+import { useUserStore } from '@/store';
 
 export default function Header() {
+  const { user } = useUserStore();
   const [searchOpen, setSearchOpen] = useState(false);
   return (
     <div className="flex justify-between">
@@ -16,7 +18,9 @@ export default function Header() {
         <div className="flex flex-col gap-1">
           <div className="flex gap-2">
             <MapPinIcon className="h-4 w-4 stroke-pink" />
-            <span className="text-sm font-semibold">Lyon</span>
+            <span className="text-sm font-semibold">
+              {user?.city || 'Everywhere'}
+            </span>
           </div>
           <h2 className="text-3xl font-extrabold text-black dark:text-white">
             Discover

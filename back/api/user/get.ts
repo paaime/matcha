@@ -28,7 +28,7 @@ router.get('/discovery/results', async (req: RequestUser, res: Response) => {
 });
 
 router.get('/getlove', async (req: RequestUser, res: Response) => {
-  await getLove(req, res);
+  await getLove(req, res, true);
 });
 
 router.get('/me', async (req: RequestUser, res: Response) => {

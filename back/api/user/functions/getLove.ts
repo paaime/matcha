@@ -335,6 +335,7 @@ export async function getLove(
         city: row.city || '',
         pictures: row.pictures || '',
         distance: myConsent && row.consentLocation ? Math.round(row.distance) : -1,
+        fameRating: row.fameRating,
         compatibilityScore: Math.round(Math.min(100, Math.max(0, row.compatibilityScore))),
       };
 

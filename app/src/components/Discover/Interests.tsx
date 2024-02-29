@@ -2,7 +2,11 @@
 
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
-import { useFiltersStore, useInterestsListStore, useInterestsStore } from '@/store';
+import {
+  useFiltersStore,
+  useInterestsListStore,
+  useInterestsStore,
+} from '@/store';
 
 export const Interest = ({
   value,
@@ -50,12 +54,14 @@ export const OnlineInterests = () => {
     } else {
       setInterests(interests?.filter((interest: string) => interest !== value));
     }
-  }
+  };
 
   return (
     <div className="flex flex-col">
       <div className="flex justify-between">
-        <p className="text-xl text-black dark:text-white font-extrabold">Interest</p>
+        <p className="text-xl text-black dark:text-white font-extrabold">
+          Interest
+        </p>
         <p className="text-pink hover:underline cursor-pointer">
           {interestsList?.length} interests
         </p>
@@ -68,7 +74,7 @@ export const OnlineInterests = () => {
               key={index}
               value={interest}
               changeInterests={changeInterests}
-              checked={false}
+              checked={interests?.includes(interest)}
             />
           ))}
         </div>
@@ -79,17 +85,18 @@ export const OnlineInterests = () => {
               key={index}
               value={interest}
               changeInterests={changeInterests}
-              checked={false}
+              checked={interests?.includes(interest)}
             />
           ))}
         </div>
 
-        {!interestsList || interestsList.length === 0 && (
-          <div className="flex mt-3 gap-4">
-            <StaticInterest value="🙁 No user found" />
-            <StaticInterest value="🔭 Broaden your criteria" />
-          </div>
-        )}
+        {!interestsList ||
+          (interestsList.length === 0 && (
+            <div className="flex mt-3 gap-4">
+              <StaticInterest value="🙁 No user found" />
+              <StaticInterest value="🔭 Broaden your criteria" />
+            </div>
+          ))}
       </div>
     </div>
   );
