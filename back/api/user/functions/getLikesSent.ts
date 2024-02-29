@@ -23,9 +23,29 @@ export async function getLikesSent(
 
     const db = await connectToDatabase();
 
-    // Get my sexual preferences
-    const [rowsPreferences] = (await db.query(
-      'SELECT age FROM User WHERE id = ?',
+    // Get my infos
+    const [rowsPreferences] = (await db.query(`
+      SELECT 
+        u.age,
+        u.loc,
+        u.consentLocation,
+        u.gender,
+        u.sexualPreferences,
+        u.fameRating,
+        GROUP_CONCAT(ti.tagName) AS interests
+      FROM
+        User u
+        LEFT JOIN Tags ti ON u.id = ti.user_id
+      WHERE
+        u.id = ?
+      GROUP BY
+        u.id,
+        u.age,
+        u.loc,
+        u.consentLocation,
+        u.gender,
+        u.sexualPreferences;
+      `,
       [userId]
     )) as any;
 
@@ -38,6 +58,12 @@ export async function getLikesSent(
     }
 
     const myAge = rowsPreferences[0].age;
+    const myLoc = rowsPreferences[0].loc;
+    const myInterests = rowsPreferences[0].interests;
+    const myFame = rowsPreferences[0].fameRating;
+    
+    const myLat = myLoc?.split(',')[0];
+    const myLon = myLoc?.split(',')[1];
 
     // Query to get users to whom the current user has sent likes
     const query = `
@@ -55,11 +81,22 @@ export async function getLikesSent(
         u.fameRating,
         ul.isSuperLike,
         (
-          (100 - ABS(u.age - :myAge)) + (u.fameRating / 100)
+          GREATEST(0, 50 - (ABS(u.age - :myAge) * 2)) +
+          GREATEST(0, 20 - ((6371 * 
+            acos(
+              cos(radians(:myLat)) * 
+              cos(radians(SUBSTRING_INDEX(u.loc, ',', 1))) * 
+              cos(radians(SUBSTRING_INDEX(u.loc, ',', -1)) - radians(:myLon)) + 
+              sin(radians(:myLat)) * 
+              sin(radians(SUBSTRING_INDEX(u.loc, ',', 1)))
+            ) - 20) / 30)) +
+          LEAST(30, 10 * COUNT(ti.tagName)) +
+          GREATEST(-10, -1 * (ABS(:myFame - u.fameRating) / 3))
         ) AS compatibilityScore,
         m.user_id IS NOT NULL AS isMatch
       FROM
         User u
+        LEFT JOIN Tags ti ON u.id = ti.user_id AND ti.tagName IN (:myInterests)
       LEFT JOIN
         Matchs m
       ON
@@ -70,12 +107,38 @@ export async function getLikesSent(
         UserLike ul ON u.id = ul.liked_user_id
       WHERE
         ul.user_id = :userId
+        AND u.id NOT IN (
+          SELECT
+            ub.blocked_user_id
+          FROM
+            Blocked ub
+          WHERE
+            ub.user_id = :userId
+        )
+      GROUP BY
+        u.id,
+        u.username,
+        u.firstName,
+        u.isOnline,
+        u.age,
+        u.consentLocation,
+        u.loc,
+        u.gender,
+        u.city,
+        u.pictures,
+        u.fameRating,
+        ul.isSuperLike,
+        m.user_id
     `;
 
     // Execute the query
     const [rows] = await db.query(query, {
-      myAge,
       userId,
+      myAge,
+      myLat,
+      myLon,
+      myFame,
+      myInterests: myInterests ? myInterests.split(',') : [],
     }) as any;
 
     // Close the connection
@@ -103,7 +166,7 @@ export async function getLikesSent(
         distance: -1,
         isMatch: !!row.isMatch,
         isSuperLike: row.isSuperLike === 1,
-        compatibilityScore: Math.min(100, Math.max(0, row.compatibilityScore)),
+        compatibilityScore: Math.round(Math.min(100, Math.max(0, row.compatibilityScore))),
       };
 
       // Push liked user object to the array

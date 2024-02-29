@@ -11,23 +11,23 @@ import { randVisits } from './functions/randVisits';
 const router = express.Router();
 
 // ! Remove or keep, I don't know
-// router.get('/init/users/:total', async (req: Request) => {
-//   const total = parseInt(req.params.total);
+router.get('/init/users/:total', async (req: Request) => {
+  const total = parseInt(req.params.total);
 
-//   await randUser(total);
-// });
+  await randUser(total);
+});
 
-// router.get('/init/likes/:total', async (req: Request) => {
-//   const total = parseInt(req.params.total);
+router.get('/init/likes/:total', async (req: Request) => {
+  const total = parseInt(req.params.total);
 
-//   await randLikes(total);
-// });
+  await randLikes(total);
+});
 
-// router.get('/init/tags/:total', async (req: Request) => {
-//   const total = parseInt(req.params.total);
+router.get('/init/tags/:total', async (req: Request) => {
+  const total = parseInt(req.params.total);
 
-//   await randTags(total);
-// });
+  await randTags(total);
+});
 
 router.get('/init/visits/:total', async (req: Request) => {
   const total = parseInt(req.params.total);
