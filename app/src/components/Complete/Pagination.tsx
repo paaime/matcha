@@ -7,7 +7,7 @@ export default function Pagination({ step }: { step: number }) {
       <div className="w-full h-2 bg-pink/10 rounded-full">
         <div
           className="h-full bg-pink rounded-full transition-all duration-500"
-          style={{ width: `${(step / 6) * 100}%` }}
+          style={{ width: `${(step / 7) * 100}%` }}
         />
       </div>
     </div>

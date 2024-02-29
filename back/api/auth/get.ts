@@ -1,21 +1,13 @@
 import { Request, Response } from 'express';
 import express from 'express';
 
-import { addRandom } from './functions/addRandom';
 import { randomScript } from './functions/randomScript';
 import { confirmEmail } from './functions/confirmEmail';
 import { googleAuth } from './functions/googleAuth';
 
 const router = express.Router();
 
-router.get('/random', async (req: Request, res: Response) => {
-  // Clear cookie
-  res.clearCookie('token');
-
-  await addRandom(res);
-});
-
-router.get('/randomScript', async (req: Request, res: Response) => {
+router.get('/init', async (req: Request, res: Response) => {
   // Clear cookie
   res.clearCookie('token');
 
