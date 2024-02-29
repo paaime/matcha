@@ -16,12 +16,15 @@ export default function Map({ user }: { user: IUser }) {
 
     return () => {
       setIsMounted(false);
-    }
+    };
   }, []);
 
   if (!isMounted) return null;
 
-  const userLoc = user?.loc?.split(',')?.map((loc) => parseFloat(loc)) || ['45.750000', '4.850000']
+  const userLoc = user?.loc?.split(',')?.map((loc) => parseFloat(loc)) || [
+    '45.750000',
+    '4.850000',
+  ];
 
   if (!userLoc || user.consentLocation === false) return null;
 
@@ -44,21 +47,18 @@ export default function Map({ user }: { user: IUser }) {
   });
 
   return (
-    <div onClick={() => router.push("/map")}>
-
-    <MapContainer
-      center={userLoc as [number, number]}
-      zoom={12}
-      className="h-96 rounded-3xl"
-      scrollWheelZoom={false}
-      zoomControl={false}
-      dragging={false}
+    <div onClick={() => router.push('/map')}>
+      <MapContainer
+        center={userLoc as [number, number]}
+        zoom={12}
+        className="h-96 rounded-3xl"
+        scrollWheelZoom={false}
+        zoomControl={false}
+        dragging={false}
       >
-      <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-      <Marker
-        position={userLoc as [number, number]}
-        icon={iconPerson} />
-    </MapContainer>
-        </div>
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+        <Marker position={userLoc as [number, number]} icon={iconPerson} />
+      </MapContainer>
+    </div>
   );
 }
