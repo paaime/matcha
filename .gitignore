@@ -10,7 +10,8 @@ back/.vercel/
 back/node_modules
 back/.pnpm-store
 back/dist/
-back/uploads/
+back/public/
+back/public/uploads/
 
 # dependencies
 /node_modules
