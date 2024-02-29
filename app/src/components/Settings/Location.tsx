@@ -12,6 +12,7 @@ import { useUserStore } from '@/store';
 const MapClick = ({ icon, setLocation }) => {
   const map = useMapEvent('click', (e) => {
     const { lat, lng } = e.latlng;
+
     // remove previous marker
     map.eachLayer((layer) => {
       if (layer instanceof L.Marker) {
@@ -59,7 +60,7 @@ export default function Location() {
       if (!location) toast.error('Please select a location');
       setLoading(true);
       await customAxios.put('/user/location', {
-        location,
+        location
       });
       setUser({ ...user, loc: location });
       toast.success('Updated');

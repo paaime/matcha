@@ -42,7 +42,7 @@ export default function Filters() {
   const { setDiscover } = useDiscoverStore();
   const { filters, setFilters } = useFiltersStore();
   const { interests } = useInterestsStore();
-  const { interestsList, setInterestsList } = useInterestsListStore();
+  const { setInterestsList } = useInterestsListStore();
   const [filterLimit, setFilterLimit] = useState<Filters>({
     interests: [],
     minAge: 18,
