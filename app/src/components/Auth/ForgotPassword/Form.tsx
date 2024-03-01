@@ -43,7 +43,7 @@ export default function ForgotPasswordForm() {
 
       setOpen(true);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       if (err.response?.data?.message)
         toast(err.response?.data?.message, { description: 'Error' });
       else

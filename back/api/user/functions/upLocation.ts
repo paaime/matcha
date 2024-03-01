@@ -78,7 +78,7 @@ export async function upLocation(
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     res.status(501).json({
       error: 'Server error',
