@@ -86,7 +86,7 @@ export default function Location() {
       <MapContainer
         center={userLoc as [number, number]}
         zoom={12}
-        className="h-96 rounded-3xl"
+        className="h-96 rounded-3xl z-10"
         scrollWheelZoom={false}
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
