@@ -23,7 +23,7 @@ export default function More({ user_id, isBlocked }: Props) {
         await customAxios.post(`/user/block/${user_id}`);
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err.response?.data?.message) toast.error(err.response?.data?.message);
       else toast.error('An error occured while blocking user');
     }
@@ -33,7 +33,7 @@ export default function More({ user_id, isBlocked }: Props) {
     try {
       await customAxios.post(`/user/report/${user_id}`);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err.response?.data?.message) toast.error(err.response?.data?.message);
       else toast.error('An error occured while reporting user');
     }

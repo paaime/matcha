@@ -97,7 +97,7 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
       return;
     }
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',

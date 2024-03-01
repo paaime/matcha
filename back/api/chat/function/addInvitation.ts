@@ -69,7 +69,7 @@ export async function addInvitation(
     await db.end();
 
     if (!rows || rows.length === 0) {
-      console.error('No match found');
+      // console.error('No match found');
 
       res.status(404).json({
         error: 'Not found',
@@ -98,8 +98,6 @@ export async function addInvitation(
     const email =
       user_id === match.user_id ? match.other_user_email : match.user_email;
 
-    console.log(firstName, invitatorFirstName, activity);
-
     const mailData = {
       from: process.env.MAIL_USER,
       to: email,
@@ -122,7 +120,7 @@ export async function addInvitation(
     });
     return;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(400).json({ // 500 for real but not tolerated by 42
       error: 'Internal server error',
       message: 'An error occured while adding the invitation',

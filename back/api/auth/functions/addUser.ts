@@ -196,7 +196,7 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
       email: newUser.email,
     });
   } catch (error) {
-    console.error('Error while adding user:', error);
+    // console.error('Error while adding user:', error);
 
     res.status(401).json({
       // 501 for real but not tolerated by 42

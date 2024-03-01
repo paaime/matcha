@@ -23,16 +23,16 @@ export default function LoveCarousel() {
   const [direction, setDirection] = useState<'left' | 'right' | ''>('');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const getUsers = async () => {
-    try {
-      const res = await customAxios.get('/user/getlove');
-      setUsers(res.data);
-      setCurrentIndex(res.data.length - 1);
-    } catch (err) {
-      console.log(err);
-      toast('Error', { description: 'An error occured while fetching data.' });
-    }
-  };
+  // const getUsers = async () => {
+  //   try {
+  //     const res = await customAxios.get('/user/getlove');
+  //     setUsers(res.data);
+  //     setCurrentIndex(res.data.length - 1);
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast('Error', { description: 'An error occured while fetching data.' });
+  //   }
+  // };
 
   // useEffect(() => {
   //   getUsers();
@@ -62,7 +62,7 @@ export default function LoveCarousel() {
       setCurrentIndex(currentIndex - 1);
       setDirection('right');
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err.response?.data?.message)
         toast(err.response?.data?.message, { description: 'Error' });
       else
@@ -81,7 +81,7 @@ export default function LoveCarousel() {
       setCurrentIndex(currentIndex - 1);
       setDirection('right');
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err.response?.data?.message)
         toast(err.response?.data?.message, { description: 'Error' });
       else
