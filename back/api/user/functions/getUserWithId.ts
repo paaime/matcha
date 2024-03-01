@@ -149,6 +149,9 @@ export async function getUserWithId(
       connectedUserId,
     })) as any;
 
+    const getMyLike = `SELECT isSuperLike FROM UserLike WHERE user_id = ? AND liked_user_id = ?`;
+    const []
+
     // Close the connection
     await db.end();
 
