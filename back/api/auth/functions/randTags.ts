@@ -36,7 +36,7 @@ export async function randTags(total: number): Promise<boolean>{
 
     return true;
   } catch (error) {
-    console.error('Error while adding user', ':', error);
+    // console.error('Error while adding user', ':', error);
 
     return false;
   }

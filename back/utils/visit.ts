@@ -41,7 +41,7 @@ export async function addVisit(
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     return false;
   }

@@ -20,14 +20,14 @@ export const fameUpdaters: Fame[] = [
   },
   {
     name: 'dislike',
-    value: -3,
+    value: -5,
   },
   {
     name: 'newMatch',
     value: 10,
   },
   {
-    name: 'newMessage', // TODO: implement
+    name: 'newMessage',
     value: 1,
   },
   {
@@ -36,11 +36,11 @@ export const fameUpdaters: Fame[] = [
   },
   {
     name: 'newBlock',
-    value: -5,
+    value: -15,
   },
   {
     name: 'newReport',
-    value: -10,
+    value: -30,
   }
 ];
 
@@ -66,7 +66,7 @@ export const updateFame = async (userId: number, fameName: FameName): Promise<bo
     const updateQuery = 'UPDATE User SET fameRating = fameRating + ? WHERE id = ?';
     await db.query(updateQuery, [fameValue, userId]);
 
-    console.log(`User ${userId} fame updated by ${fameValue} for ${fameName}`);
+    // console.info(`User ${userId} fame updated by ${fameValue} for ${fameName}`);
 
     // Close the connection
     db.end();
@@ -78,7 +78,7 @@ export const updateFame = async (userId: number, fameName: FameName): Promise<bo
     const code = e?.code || "Unknown error";
     const message = e?.message || "Unknown message";
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     return false;
   }

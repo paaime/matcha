@@ -118,7 +118,7 @@ const addRandom = async(db: Connection): Promise<boolean> => {
 
     return true;
   } catch (error) {
-    console.error('Error while generating random user:', error);
+    // console.error('Error while generating random user:', error);
 
     return false;
   }
@@ -157,7 +157,7 @@ export async function randUser(total: number): Promise<boolean>{
     await db.end();
     return true;
   } catch (error) {
-    console.error('Error while adding user', ':', error);
+    // console.error('Error while adding user', ':', error);
     return false;
   }
 }

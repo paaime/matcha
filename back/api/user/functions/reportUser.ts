@@ -116,7 +116,7 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
       return;
     }
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',

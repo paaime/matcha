@@ -107,7 +107,7 @@ export async function googleAuth(
     res.redirect(process.env.DOMAIN + '/');
     return;
   } catch (error) {
-    console.log(error);
+    // console.error(error);
     res.redirect(process.env.DOMAIN + '/auth/sign-in');
     return;
   }

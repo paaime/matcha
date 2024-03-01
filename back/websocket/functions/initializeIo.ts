@@ -20,7 +20,7 @@ export function initializeIO(server: any) {
 
   // Gérer la connexion des sockets
   io.on('connection', async (socket) => {
-    console.log('A client just arrived with id:', socket.id);
+    // console.log('A client just arrived with id:', socket.id);
 
     if (!socket.request.headers.cookie) {
       return;
@@ -45,26 +45,25 @@ export function initializeIO(server: any) {
       !Number.isInteger(decoded.id) ||
       decoded.id < 1
     ) {
-      console.log('Invalid token');
       return;
     }
 
     socket.join(decoded.id.toString());
-    console.log('User', decoded.id, 'just joined');
+    // console.log('User', decoded.id, 'just joined');
 
     await setOnline(decoded.id, true);
 
-    io.emit(
-      'notification',
-      JSON.stringify({
-        content: 'Hello from server',
-        redirect: '/',
-        related_user_id: decoded.id,
-      })
-    );
+    // io.emit(
+    //   'notification',
+    //   JSON.stringify({
+    //     content: 'Hello from server',
+    //     redirect: '/',
+    //     related_user_id: decoded.id,
+    //   })
+    // );
 
     socket.on('disconnect', async () => {
-      console.log('A client has just left:', decoded.id);
+      // console.log('A client has just left:', decoded.id);
 
       await setOnline(decoded.id, false);
 
@@ -72,7 +71,7 @@ export function initializeIO(server: any) {
     });
 
     socket.on('message', (data) => {
-      console.log('Message from client:', data);
+      // console.log('Message from client:', data);
       socket.emit('message', 'Hello from server');
     });
   });

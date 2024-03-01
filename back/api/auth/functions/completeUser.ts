@@ -156,7 +156,7 @@ export async function completeUser(
       success: true,
     });
   } catch (error) {
-    console.error('Error while completing user:', error);
+    // console.error('Error while completing user:', error);
 
     res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',

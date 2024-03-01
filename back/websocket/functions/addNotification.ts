@@ -11,7 +11,7 @@ export async function addNotification(user_id: number, body: Notification): Prom
       throw new Error('Missing fields');
     }
 
-    console.log('user_id', user_id, content);
+    // console.log('user_id', user_id, content);
 
     const db = await connectToDatabase();
 
@@ -33,7 +33,7 @@ export async function addNotification(user_id: number, body: Notification): Prom
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     return false;
   }

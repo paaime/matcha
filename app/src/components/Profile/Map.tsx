@@ -6,10 +6,13 @@ import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { IUser } from '@/types/user';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store';
 
 export default function Map({ user }: { user: IUser }) {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+
+  const datas = useUserStore();
 
   useEffect(() => {
     setIsMounted(true);
@@ -29,14 +32,29 @@ export default function Map({ user }: { user: IUser }) {
   if (!userLoc || user.consentLocation === false) return null;
 
   const pictures = user.pictures?.split(',') || [];
+  const myPictures = datas?.user?.pictures?.split(',') || [];
 
   if (!pictures[0]) return null;
 
-  const profilePicture = `${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0]}`
+  const profilePicture = `${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0]}`;
+  const myProfilePicture = `${myPictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${myPictures[0]}`;
 
   const iconPerson = new L.Icon({
     iconUrl: profilePicture,
     iconRetinaUrl: profilePicture,
+    iconAnchor: null,
+    popupAnchor: null,
+    shadowUrl: null,
+    shadowSize: null,
+    shadowAnchor: null,
+    iconSize: new L.Point(60, 75),
+    className: 'leaflet-marker',
+  });
+
+  // My location if consent
+  const myIcon = new L.Icon({
+    iconUrl: myProfilePicture,
+    iconRetinaUrl: myProfilePicture,
     iconAnchor: null,
     popupAnchor: null,
     shadowUrl: null,
@@ -58,6 +76,13 @@ export default function Map({ user }: { user: IUser }) {
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
         <Marker position={userLoc as [number, number]} icon={iconPerson} />
+
+        {user.id !== datas?.user?.id && datas.user?.consentLocation && (
+          <Marker
+            position={datas.user?.loc?.split(',')?.map((loc) => parseFloat(loc)) as [number, number]}
+            icon={myIcon}
+          />
+        )}
       </MapContainer>
     </div>
   );

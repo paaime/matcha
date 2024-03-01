@@ -79,7 +79,7 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=serverError');
   }

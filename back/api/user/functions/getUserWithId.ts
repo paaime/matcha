@@ -23,7 +23,7 @@ export async function getUserWithId(
     }
 
     if (!Number.isInteger(connectedUserId) || connectedUserId < 1) {
-      console.error('Invalid connected user id:', connectedUserId);
+      // console.error('Invalid connected user id:', connectedUserId);
 
       res.status(400).json({
         error: 'Bad request',
@@ -41,7 +41,7 @@ export async function getUserWithId(
     ])) as any;
 
     if (!rowsUserInfos || rowsUserInfos.length === 0) {
-      console.error('No user found with id:', connectedUserId);
+      // console.error('No user found with id:', connectedUserId);
 
       db.end();
 
@@ -153,7 +153,7 @@ export async function getUserWithId(
     await db.end();
 
     if (!rows || rows.length === 0) {
-      console.error('No user found with username:', username);
+      // console.error('No user found with username:', username);
 
       res.status(404).json({
         error: 'Not found',
@@ -219,11 +219,13 @@ export async function getUserWithId(
     user.interests = Array.from(interestsSet);
 
     // Send notifications
-    await sendNotification(userId.toString(), {
-      content: 'Someone visited your profile',
-      redirect: '/settings',
-      related_user_id: connectedUserId
-    } as Notification);
+    if (userId !== connectedUserId) {
+      await sendNotification(userId.toString(), {
+        content: 'Someone visited your profile',
+        redirect: '/settings',
+        related_user_id: connectedUserId
+      } as Notification);
+    }
 
     res.status(200).json(user);
   } catch (error) {
@@ -232,7 +234,7 @@ export async function getUserWithId(
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',

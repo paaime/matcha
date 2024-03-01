@@ -35,7 +35,7 @@ export default function Page({ params }) {
         setUser({ ...user, isLiked: true });
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err.response?.data?.message) toast.error(err.response.data.message);
       else toast.error('An error occured while liking user');
     }
