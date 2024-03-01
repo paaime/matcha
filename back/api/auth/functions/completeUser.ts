@@ -116,8 +116,8 @@ export async function completeUser(
     const db = await connectToDatabase();
 
     // Check if username is already taken
-    const queryUsername = 'SELECT id FROM User WHERE username = ?';
-    const [rowsUsername] = (await db.execute(queryUsername, [username])) as any;
+    const queryUsername = 'SELECT id FROM User WHERE username = ? AND id != ?';
+    const [rowsUsername] = (await db.execute(queryUsername, [username, user_id])) as any;
 
     if (rowsUsername[0]) {
       res.status(400).json({
