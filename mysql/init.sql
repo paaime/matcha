@@ -9,7 +9,7 @@ CREATE TABLE User (
   email VARCHAR(255) UNIQUE NOT NULL,
   emailToken VARCHAR(255) DEFAULT NULL,
   loc VARCHAR(255) DEFAULT '45.780967712402344,4.750461101531982',
-  city VARCHAR(255) DEFAULT 'Charbonnières-les-Bains' COLLATE utf8mb3_general_ci,
+  city VARCHAR(255) DEFAULT 'Charbonnieres-les-Bains' COLLATE utf8mb3_general_ci,
   consentLocation BOOLEAN DEFAULT 0,
   gender ENUM('female', 'male', 'other') DEFAULT 'other' NOT NULL,
   sexualPreferences ENUM('female', 'male', 'other') DEFAULT 'other' NOT NULL,

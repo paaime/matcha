@@ -1,7 +1,7 @@
 import { CompleteForm } from '@/types/type';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { toast } from 'sonner';
 import customAxios from '@/utils/axios';
 import { useRouter } from 'next/navigation';
@@ -25,6 +25,7 @@ export default function Bio({
     ) {
       return toast.error('Biography must be between 10 and 1000 characters.');
     }
+
     try {
       await customAxios.post('/auth/complete', data);
       toast.success('Thank you for completing your profile!');
@@ -35,6 +36,7 @@ export default function Bio({
       } else toast.error('An error occurred');
     }
   };
+
   return (
     <div className="flex flex-col animate__animated animate__fadeIn animate__faster">
       <h3 className="text-2xl font-extrabold text-center mb-1">

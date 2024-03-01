@@ -12,23 +12,11 @@ import { transporter } from '../../..';
 export async function loginUser(body: any, res: Response): Promise<undefined> {
   try {
     // Get infos from body
-    const { username, password, coords } = body;
+    const { username, password } = body;
 
     // Check if fields exist
     if (checkIfFieldExist('username', username, res)) return;
     if (checkIfFieldExist('password', password, res)) return;
-
-    const lat = coords?.lat || null;
-    const lon = coords?.lon || null;
-
-    let updateCoords = true;
-
-    // Check if coords are valid
-    if (lat && lon) {
-      if (typeof lat !== 'number' || typeof lon !== 'number') {
-        updateCoords = false;
-      }
-    }
 
     const datas = {
       username: username?.trim(),
@@ -152,15 +140,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
       });
 
       return;
-    }
-
-    if (updateCoords) {
-      const locString = `${lat},${lon}`;
-      
-      if (user.loc !== locString && locString !== '0,0') {
-        const query = 'UPDATE User SET loc = ? WHERE username = ?';
-        await db.execute(query, [locString, datas.username]);
-      }
     }
 
     // Close the connection
