@@ -20,14 +20,14 @@ export const fameUpdaters: Fame[] = [
   },
   {
     name: 'dislike',
-    value: -3,
+    value: -5,
   },
   {
     name: 'newMatch',
     value: 10,
   },
   {
-    name: 'newMessage', // TODO: implement
+    name: 'newMessage',
     value: 1,
   },
   {
@@ -36,11 +36,11 @@ export const fameUpdaters: Fame[] = [
   },
   {
     name: 'newBlock',
-    value: -5,
+    value: -15,
   },
   {
     name: 'newReport',
-    value: -10,
+    value: -30,
   }
 ];
 
