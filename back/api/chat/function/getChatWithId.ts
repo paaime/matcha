@@ -25,27 +25,44 @@ export async function getChatWithId(
 
     const db = await connectToDatabase();
 
+    // Get username and first name and pictures
+    const [rowsUser] = (await db.query(
+      `
+      SELECT
+        u.id AS user_id,
+        u.username AS username,
+        u.firstName AS firstName,
+        u.pictures AS pictures
+      FROM
+        User u
+      INNER JOIN
+        Matchs m ON (m.user_id = u.id AND m.id = :matchId)
+              OR (m.other_user_id = u.id AND m.id = :matchId)
+      `,
+      {
+        matchId,
+      }
+    )) as any;
+
     // Query to get all chats
     const query = `
-    SELECT
-    m.id AS chat_id,
-    MAX(u.username) AS username,
-    MAX(u.pictures) AS pictures,
-    c.id AS message_id,
-    c.user_id AS message_user_id,
-    c.content AS message_content,
-    c.type AS message_type,
-    MAX(c.created_at) AS message_created_at
-FROM
-    Matchs m
-    INNER JOIN User u ON (m.user_id = u.id OR m.other_user_id = u.id)
-    LEFT JOIN Chat c ON m.id = c.match_id
-WHERE
-    m.id = :matchId
-GROUP BY
-    c.id
-ORDER BY
-    MAX(c.created_at);
+      SELECT
+        m.id AS chat_id,
+        c.id AS message_id,
+        c.user_id AS message_user_id,
+        c.content AS message_content,
+        c.type AS message_type,
+        MAX(c.created_at) AS message_created_at
+      FROM
+        Matchs m
+      LEFT JOIN
+        Chat c ON m.id = c.match_id
+      WHERE
+        m.id = :matchId
+      GROUP BY
+        c.id
+      ORDER BY
+        MAX(c.created_at);
     `;
 
     // Execute the query
@@ -61,19 +78,29 @@ ORDER BY
       return;
     }
 
-    // Create an array to store users who liked
+    const otherUsername = rowsUser.find(
+      (row: any) => row.user_id !== userId
+    ).username;
+    const otherFirstName = rowsUser.find(
+      (row: any) => row.user_id !== userId
+    ).firstName;
+    const otherPictures = rowsUser.find(
+      (row: any) => row.user_id !== userId
+    ).pictures;
 
     // Iterate over the rows and create user objects
     const chat: IChat = {
       id: rows[0].match_id,
-      username: rows[0].username,
+      username: otherUsername,
+      firstName: otherFirstName,
       messages: rows
         .filter((row: any) => row.message_id != null)
         .map((row: any) => ({
           id: row.message_id,
           match_id: matchId,
+          username: row.message_user_id === userId ? 'me' : otherUsername,
           user_id: row.message_user_id,
-          pictures: row.pictures,
+          pictures: otherPictures,
           content: row.message_content,
           type: row.message_type,
           created_at: row.message_created_at,

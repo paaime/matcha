@@ -18,7 +18,7 @@ const Chat = ({ chat }: { chat: IPreviewChat }) => {
     >
       <Image
         loader={({ src }) => src}
-        src={process.env.NEXT_PUBLIC_API + pictures[0]}
+        src={`${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0]}`}
         alt={chat.username}
         width={200}
         height={300}
@@ -27,9 +27,15 @@ const Chat = ({ chat }: { chat: IPreviewChat }) => {
         unoptimized
       />
       <div className="max-w-[50%] flex flex-col text-dark dark:text-white justify-center">
-        <p className="text-lg font-bold">{chat.username}</p>
+        <div className="flex items-center justify-start">
+          {chat.isOnline && (
+              <div className="bg-green-300 h-2.5 w-2.5 rounded-full mr-3" />
+          )}
+          <p className="text-lg font-bold">{chat.firstName}</p>
+        </div>
         <p className=" truncate">{chat.lastMessage ?? 'No messages'}</p>
       </div>
+      
       {chat.lastMessage && (
         <div className="flex flex-col items-end ml-auto">
           <div className="bg-pink h-3 w-3 rounded-full"></div>

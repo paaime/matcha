@@ -1,11 +1,9 @@
 // Import necessary modules and types
 import { Response } from 'express';
 import { ThrownError } from '../../../types/type';
-import { ILove } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
-import { IPreviewChat } from '../../../types/chat';
 import { messageRegex } from '../../../types/regex';
 import { sendMessage } from '../../../websocket/functions/initializeIo';
 
@@ -91,7 +89,7 @@ export async function addMessage(
         : rowsMatch[0].user_id;
 
     // Get the pictures of the current user
-    const userQuery = 'SELECT pictures FROM User WHERE id = ?';
+    const userQuery = 'SELECT pictures, username FROM User WHERE id = ?';
     const [rowsUser] = (await db.query(userQuery, [userId])) as any;
 
     if (!rowsUser || rowsUser.length === 0) {
@@ -109,6 +107,7 @@ export async function addMessage(
       id: rowsChat.insertId,
       match_id: matchId,
       user_id: userId,
+      username: rowsUser[0].username,
       pictures: rowsUser[0].pictures,
       content,
       type: imageUrl ? 'image' : 'text',

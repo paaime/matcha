@@ -23,27 +23,26 @@ export async function getChats(req: RequestUser, res: Response): Promise<void> {
 
     // Query to get all chats
     const query = `
-    SELECT
-    m.id AS match_id,
-    u.id AS user_id,
-    u.username AS username,
-    u.pictures AS user_pictures,
-    c.content AS lastMessage,
-    c.created_at AS lastMessageDate
-FROM
-    Matchs m
-    INNER JOIN User u ON (m.user_id = u.id AND m.other_user_id = :userId)
-    OR (m.other_user_id = u.id AND m.user_id = :userId)
-    LEFT JOIN Chat c ON m.id = c.match_id
-    INNER JOIN (
-        SELECT
-            match_id,
-            MAX(created_at) AS maxCreated_at
-        FROM
-            Chat
-        GROUP BY
-            match_id
-    ) latestChat ON c.match_id = latestChat.match_id AND c.created_at = latestChat.maxCreated_at`;
+      SELECT
+        m.id AS match_id,
+        u.id AS user_id,
+        u.username AS username,
+        u.firstName AS firstName,
+        u.isOnline AS isOnline,
+        u.pictures AS user_pictures,
+        c.content AS lastMessage,
+        c.created_at AS lastMessageDate
+      FROM
+        Matchs m
+      INNER JOIN
+        User u ON (m.user_id = u.id AND m.other_user_id = :userId)
+              OR (m.other_user_id = u.id AND m.user_id = :userId)
+      LEFT JOIN Chat c ON m.id = c.match_id AND c.created_at = (
+        SELECT MAX(created_at)
+        FROM Chat
+        WHERE match_id = m.id
+      )
+    `;
 
     // Execute the query
     const [rows] = (await db.query(query, {
@@ -66,6 +65,8 @@ FROM
       const user: IPreviewChat = {
         id: row.match_id,
         username: row.username,
+        firstName: row.firstName,
+        isOnline: row.isOnline,
         pictures: row.user_pictures,
         lastMessage: row.lastMessage,
         lastMessageDate: row.lastMessageDate,
