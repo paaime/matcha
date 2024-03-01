@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -73,13 +73,13 @@ export async function removeLike(liked_id: number, req: RequestUser, res: Respon
         content: 'You lost a match',
         redirect: '/likes',
         related_user_id: user_id,
-      });
+      } as Notification);
       
       await sendNotification(user_id.toString(), {
         content: 'You lost a match',
         redirect: '/likes',
         related_user_id: liked_id,
-      });
+      } as Notification);
 
       res.status(200).json({
         unliked: true,
@@ -92,13 +92,13 @@ export async function removeLike(liked_id: number, req: RequestUser, res: Respon
       content: 'Someone unliked you',
       redirect: '/likes',
       related_user_id: user_id,
-    });
+    } as Notification);
 
     await sendNotification(user_id.toString(), {
       content: 'You unliked ' + firstName,
       redirect: '/likes',
       related_user_id: liked_id,
-    });
+    } as Notification);
 
     res.status(200).json({
       unliked: true,

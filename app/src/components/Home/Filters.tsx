@@ -34,16 +34,16 @@ import { OnlineInterests } from '../Discover/Interests';
 const getResultsLink = (filters: Filters, interests: string[]) => {
   const { minAge, maxAge, minFameRating, maxFameRating, maxDistance } = filters;
 
-  const interestsString = interests.join(',');
+  const interestsString = interests.join(',')?.replaceAll('#', '');
 
   return `/user/getLove?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`;
 };
 
 export default function Filters() {
-  const { users, setUsers } = useCarouselStore();
+  const { setUsers } = useCarouselStore();
   const { filters, setFilters } = useFiltersStore();
-  const { interests, setInterests } = useInterestsStore();
-  const { interestsList, setInterestsList } = useInterestsListStore();
+  const { interests } = useInterestsStore();
+  const { setInterestsList } = useInterestsListStore();
   const [filterLimit, setFilterLimit] = useState<Filters>({
     interests: [],
     minAge: 18,
@@ -125,7 +125,7 @@ export default function Filters() {
                 <SelectGroup>
                   <SelectLabel>Location</SelectLabel>
                   <SelectItem value="0">People nearby</SelectItem>
-                  <SelectItem value="10">10 km +</SelectItem>
+                  <SelectItem value="30">30 km +</SelectItem>
                   <SelectItem value="50">50 km +</SelectItem>
                   <SelectItem value="100">100 km +</SelectItem>
                 </SelectGroup>

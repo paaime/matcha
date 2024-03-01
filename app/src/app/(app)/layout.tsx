@@ -10,7 +10,6 @@ import { useSocketStore, useUserStore } from '@/store';
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { connect } = useSocketStore();
   const [loading, setLoading] = useState(true);
-  const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const { push } = useRouter();
 

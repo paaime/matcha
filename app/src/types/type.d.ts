@@ -1,9 +1,10 @@
 export type Notification = {
   id?: number;
+  isRead?: boolean;
   content: string;
-  redirect: string;
-  related_user_id: number;
-  created_at?: string;
+  redirect?: string;
+  related_user_id?: number;
+  created_at: string;
 };
 
 export type Filters = {

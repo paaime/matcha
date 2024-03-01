@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
@@ -78,12 +78,12 @@ export async function unblockUser(unblock_id: number, req: RequestUser, res: Res
     await sendNotification(unblock_id.toString(), {
       content: 'Someone unblocked you',
       related_user_id: user_id,
-    });
+    } as Notification);
     await sendNotification(user_id.toString(), {
       content: `You unblocked ${firstName}`,
       redirect: `/profile/${unblock_id}`,
       related_user_id: unblock_id,
-    });
+    } as Notification);
 
     res.status(200).json({
       unblocked: true

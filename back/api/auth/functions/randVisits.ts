@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { connectToDatabase } from '../../../utils/db';
 import { updateFame } from '../../../utils/fame';
 import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { Notification } from '../../../types/type';
 
 const NB_RANDOM_VISITS = 15;
 
@@ -41,7 +42,7 @@ export async function randVisits(total: number): Promise<boolean>{
           content: 'Someone visited your profile',
           redirect: '/settings',
           related_user_id: userId,
-        });
+        } as Notification);
       }
     }
 

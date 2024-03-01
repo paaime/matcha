@@ -14,6 +14,7 @@ import { upImage } from './functions/upImage';
 import { safeUserId } from '../../middlewares/authCheck';
 import { upConsentLocation } from './functions/upConsentLocation';
 import { upLocation } from './functions/upLocation';
+import { readNotifications } from './functions/readNotifications';
 
 const router = express.Router();
 
@@ -68,6 +69,10 @@ router.put('/email', async (req: RequestUser, res: Response) => {
 
 router.put('/password', async (req: RequestUser, res: Response) => {
   await upPassword(req, res);
+});
+
+router.put('/notifications', async (req: RequestUser, res: Response) => {
+  await readNotifications(req, res);
 });
 
 export default router;

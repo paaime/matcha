@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { IUserList, IUserSettings } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
@@ -46,6 +46,7 @@ export async function getUserConnected(
         u.fameRating,
         t.tagName AS interestName,
         n.id AS notificationId,
+        n.isRead AS notificationIsRead,
         n.content AS notificationContent,
         n.redirect AS notificationRedirect,
         n.related_user_id AS notificationRelatedUserId,
@@ -206,19 +207,44 @@ export async function getUserConnected(
     user.interests = Array.from(interestsSet);
 
     // Get all notifications
+    const notifications: Notification[] = [];
+
     for (const row of rows) {
       if (
         row.notificationId &&
         !user.notifications.some((n) => n.id === row.notificationId)
       )
-        user.notifications.push({
+        notifications.push({
           id: row.notificationId,
+          isRead: !!row.notificationIsRead,
           content: row.notificationContent,
           redirect: row.notificationRedirect,
           related_user_id: row.notificationRelatedUserId,
           created_at: row.notificationCreatedAt,
         });
     }
+
+    // Remove duplicates ids
+    const notificationsIds = new Set<number>();
+
+    for (const notification of notifications) {
+      if (!notificationsIds.has(notification.id)) {
+        notificationsIds.add(notification.id);
+      }
+    }
+
+    const notificationsFiltered: Notification[] = [];
+
+    for (const id of notificationsIds) {
+      const notification = notifications.find((n) => n.id === id);
+
+      if (notification && !notificationsFiltered.some((n) => n.id === id)) {
+        notificationsFiltered.push(notification);
+      }
+    }
+
+    // Set notifications sorted by id
+    user.notifications = notificationsFiltered.sort((a, b) => b.id - a.id);
 
     res.status(200).json(user);
   } catch (error) {
