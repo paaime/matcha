@@ -66,13 +66,16 @@ ORDER BY
     const chat: IChat = {
       id: rows[0].match_id,
       username: rows[0].username,
-      messages: rows.map((row: any) => ({
-        id: row.message_id,
-        user_id: row.message_user_id,
-        pictures: row.pictures,
-        content: row.message_content,
-        created_at: row.message_created_at,
-      })),
+      messages: rows
+        .filter((row: any) => row.message_id != null)
+        .map((row: any) => ({
+          id: row.message_id,
+          match_id: matchId,
+          user_id: row.message_user_id,
+          pictures: row.pictures,
+          content: row.message_content,
+          created_at: row.message_created_at,
+        })),
     };
 
     // Send the array of liked users as JSON response

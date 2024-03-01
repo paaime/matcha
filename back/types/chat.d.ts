@@ -1,5 +1,6 @@
 export interface IMessage {
   id: number;
+  match_id: number;
   user_id: number;
   pictures: string;
   content: string;

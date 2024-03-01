@@ -23,6 +23,9 @@ export const usernameRegex = /^[a-z]{3,40}$/;
 export const picturesRegex = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
 export const urlRegex = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
 
+// Message regex : 1-500 characters, digits, letters, space, hyphen, apostrophe, comma, dot, exclamation mark, question mark, colon, semicolon, slash, parenthesis, quotes
+export const messageRegex = /^[a-zA-Z0-9\s'-,.!?;:/()"]{1,500}$/;
+
 /* === ENUM === */
 export const genderEnum = ['male', 'female', 'other'];
 export const preferenceEnum = ['male', 'female', 'other'];

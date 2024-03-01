@@ -24,19 +24,26 @@ export async function getChats(req: RequestUser, res: Response): Promise<void> {
     // Query to get all chats
     const query = `
     SELECT
-        m.id AS match_id,
-        u.id AS user_id,
-        u.username AS username,
-        u.pictures AS user_pictures,
-        MAX(c.content) AS lastMessage,
-        MAX(c.created_at) AS lastMessageDate
-    FROM
-        Matchs m
-        INNER JOIN User u ON (m.user_id = u.id AND m.other_user_id = :userId)
-        OR (m.other_user_id = u.id AND m.user_id = :userId)
-        LEFT JOIN Chat c ON m.id = c.match_id
-    GROUP BY
-        m.id, u.id, u.username, u.pictures;`;
+    m.id AS match_id,
+    u.id AS user_id,
+    u.username AS username,
+    u.pictures AS user_pictures,
+    c.content AS lastMessage,
+    c.created_at AS lastMessageDate
+FROM
+    Matchs m
+    INNER JOIN User u ON (m.user_id = u.id AND m.other_user_id = :userId)
+    OR (m.other_user_id = u.id AND m.user_id = :userId)
+    LEFT JOIN Chat c ON m.id = c.match_id
+    INNER JOIN (
+        SELECT
+            match_id,
+            MAX(created_at) AS maxCreated_at
+        FROM
+            Chat
+        GROUP BY
+            match_id
+    ) latestChat ON c.match_id = latestChat.match_id AND c.created_at = latestChat.maxCreated_at`;
 
     // Execute the query
     const [rows] = (await db.query(query, {
