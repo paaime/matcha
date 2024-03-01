@@ -9,7 +9,7 @@ import { IChat } from '@/types/chat';
 import customAxios from '@/utils/axios';
 import clsx from 'clsx';
 import { MoreVerticalIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Page({ params }) {
@@ -17,6 +17,7 @@ export default function Page({ params }) {
   const { user } = useUserStore();
   const [chat, setChat] = useState<IChat>();
   const chatId = params.id;
+  const messagesEndRef = useRef(null);
 
   const getChat = async () => {
     try {
@@ -28,23 +29,36 @@ export default function Page({ params }) {
     }
   };
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     socket.on('message', (body) => {
-  //       let message = JSON.parse(body);
-  //       setChat((prev) => {
-  //         return {
-  //           ...prev,
-  //           messages: [message, ...prev.messages],
-  //         };
-  //       });
-  //     });
-  //   }
-  // }, [socket]);
+  useEffect(() => {
+    if (socket) {
+      socket.on('message', (body) => {
+        let message = JSON.parse(body);
+        if (message.match_id.toString() !== chatId) return;
+        setChat((prev) => {
+          return {
+            ...prev,
+            messages: [...prev.messages, message],
+          };
+        });
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('message');
+      }
+    };
+  }, [socket]);
 
   useEffect(() => {
     getChat();
   }, []);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chat]);
 
   return (
     <div>
@@ -52,7 +66,12 @@ export default function Page({ params }) {
         <GoBack white={false} />
         <p className="font-extrabold text-2xl mx-auto">{chat?.username}</p>
       </div>
-      <div className="flex flex-col gap-5 mt-10">
+      <div
+        className="flex flex-col gap-5 mt-10 overflow-scroll"
+        style={{
+          height: 'calc(100vh - 275px)',
+        }}
+      >
         {chat?.messages?.map((message, index) => (
           <Message
             isMe={message.user_id === user.id}
@@ -70,8 +89,9 @@ export default function Page({ params }) {
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
-      <InputBar chatId={chatId} />
+      <InputBar chatId={chatId} chat={chat} setChat={setChat} />
     </div>
   );
 }

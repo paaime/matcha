@@ -4,6 +4,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import { JwtDatas, Notification } from '../../types/type';
 import { addNotification } from './addNotification';
 import { setOnline } from '../../utils/setOnline';
+import { IMessage } from '../../types/chat';
 
 // Définir une variable globale io
 let io: SocketIOServer;
@@ -91,4 +92,20 @@ export const sendNotification = async (
   io.to(userId).emit('notification', JSON.stringify(body));
 
   return await addNotification(Number(userId), body);
+};
+
+// Fonction pour envoyer un message
+export const sendMessage = async (
+  userId: string,
+  body: IMessage
+): Promise<boolean> => {
+  const { content } = body;
+
+  if (!content || content.length < 1) {
+    return false;
+  }
+
+  io.to(userId).emit('message', JSON.stringify(body));
+
+  return true;
 };

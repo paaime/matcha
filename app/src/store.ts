@@ -11,7 +11,7 @@ type CarouselStore = {
 
 type ChatsStore = {
   chats: IPreviewChat[];
-  setChats: (chats: []) => void;
+  setChats: (chats: IPreviewChat[]) => void;
 };
 
 type DiscoverStore = {

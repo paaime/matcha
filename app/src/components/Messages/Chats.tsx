@@ -60,19 +60,34 @@ export default function Chats() {
     getChats();
   }, []);
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     socket.on('message', (body) => {
-  //       let message = JSON.parse(body);
-  //       setChats((prev) => {
-  //         return {
-  //           ...prev,
-  //           messages: [message, ...prev.messages],
-  //         };
-  //       });
-  //     });
-  //   }
-  // }, [socket]);
+  useEffect(() => {
+    if (socket) {
+      socket.on('message', (body) => {
+        let message = JSON.parse(body);
+        // check if in the chats there is a chat with id === to match_id
+        const chat = chats.find((c) => c.id === message.match_id);
+        if (chat) {
+          let newChats = chats.map((c) => {
+            if (c.id === chat.id) {
+              return {
+                ...c,
+                lastMessage: message.content,
+                lastMessageDate: message.created_at,
+              };
+            }
+            return c;
+          });
+          setChats(newChats);
+        }
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('message');
+      }
+    };
+  }, [socket]);
 
   return (
     <div
