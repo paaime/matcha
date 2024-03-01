@@ -1,7 +1,7 @@
 import { CompleteForm } from '@/types/type';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { toast } from 'sonner';
 import customAxios from '@/utils/axios';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ export default function Bio({
   setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {
   const { push } = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleFinish = async () => {
     if (
@@ -26,6 +27,7 @@ export default function Bio({
       return toast.error('Biography must be between 10 and 1000 characters.');
     }
     try {
+      setLoading(true);
       await customAxios.post('/auth/complete', data);
       toast.success('Thank you for completing your profile!');
       push('/');
@@ -33,6 +35,8 @@ export default function Bio({
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else toast.error('An error occurred');
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -55,6 +59,7 @@ export default function Bio({
       <Button
         className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input"
         onClick={handleFinish}
+        isLoading={loading}
       >
         Finish
       </Button>
