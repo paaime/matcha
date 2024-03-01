@@ -158,8 +158,8 @@ export async function getUserWithId(
 
     // Get my like infos
     const [rowsMyLike] = (await db.query('SELECT * FROM UserLike WHERE user_id = ? AND liked_user_id = ?', [
-      rows[0].id,
       connectedUserId,
+      rows[0].id,
     ])) as any;
 
     if (rowsMyLike && rowsMyLike.length > 0) {
@@ -170,8 +170,8 @@ export async function getUserWithId(
 
     // Get his like infos
     const [rowsHisLike] = (await db.query('SELECT * FROM UserLike WHERE user_id = ? AND liked_user_id = ?', [
-      connectedUserId,
       rows[0].id,
+      connectedUserId,
     ])) as any;
 
     if (rowsHisLike && rowsHisLike.length > 0) {
