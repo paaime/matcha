@@ -120,7 +120,7 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
       newUser.username,
     ])) as any;
 
-    if (rowsCheckEmail.length > 0) {
+    if (rowsCheckUsername.length > 0) {
       db.end();
 
       res.status(400).json({
