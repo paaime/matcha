@@ -254,7 +254,7 @@ export async function getUserWithId(
       await sendNotification(userId.toString(), {
         content: 'Someone visited your profile',
         redirect: '/settings',
-        related_user_id: connectedUserId
+        related_user_id: userId
       } as Notification);
     }
 
