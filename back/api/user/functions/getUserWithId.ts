@@ -149,6 +149,37 @@ export async function getUserWithId(
       connectedUserId,
     })) as any;
 
+    let isLiked = false;
+    let isSuperLike = false;
+    let isLikedTime = null;
+    let hasLiked = false;
+    let hasSuperLike = false;
+    let hasLikedTime = null;
+
+    // Get my like infos
+    const [rowsMyLike] = (await db.query('SELECT * FROM UserLike WHERE user_id = ? AND liked_user_id = ?', [
+      rows[0].id,
+      connectedUserId,
+    ])) as any;
+
+    if (rowsMyLike && rowsMyLike.length > 0) {
+      isLiked = true;
+      isSuperLike = !!rowsMyLike[0].isSuperLike;
+      isLikedTime = rowsMyLike[0].created_at;
+    }
+
+    // Get his like infos
+    const [rowsHisLike] = (await db.query('SELECT * FROM UserLike WHERE user_id = ? AND liked_user_id = ?', [
+      connectedUserId,
+      rows[0].id,
+    ])) as any;
+
+    if (rowsHisLike && rowsHisLike.length > 0) {
+      hasLiked = true;
+      hasSuperLike = !!rowsHisLike[0].isSuperLike;
+      hasLikedTime = rowsHisLike[0].created_at;
+    }
+
     // Close the connection
     await db.end();
 
@@ -193,12 +224,12 @@ export async function getUserWithId(
       isMatch: !!rows[0].isMatch,
       matchId: rows[0].matchId || undefined,
       matchTime: rows[0].matchTime || undefined,
-      isLiked: !!rows[0].isLiked,
-      isSuperLike: !!rows[0].isSuperLike,
-      isLikeTime: rows[0].likeTime || undefined,
-      hasLiked: !!rows[0].hasLiked,
-      hasSuperLike: !!rows[0].hasSuperLike,
-      hasLikeTime: rows[0].hasLikeTime || undefined,
+      isLiked: isLiked,
+      isSuperLike: isSuperLike,
+      isLikeTime: isLikedTime || undefined,
+      hasLiked: hasLiked,
+      hasSuperLike: hasSuperLike,
+      hasLikeTime: hasLikedTime || undefined,
       isBlocked: !!rows[0].isBlocked,
       hasBlocked: !!rows[0].hasBlocked,
       isVerified: !!rows[0].isVerified,
