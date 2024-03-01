@@ -77,7 +77,7 @@ export default function Map({ user }: { user: IUser }) {
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
         <Marker position={userLoc as [number, number]} icon={iconPerson} />
 
-        {datas.user?.consentLocation && (
+        {user.id !== datas?.user?.id && datas.user?.consentLocation && (
           <Marker
             position={datas.user?.loc?.split(',')?.map((loc) => parseFloat(loc)) as [number, number]}
             icon={myIcon}
