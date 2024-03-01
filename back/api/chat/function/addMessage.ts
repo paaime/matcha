@@ -26,6 +26,7 @@ export const checkIfFieldExist = (
 
 export async function addMessage(
   matchId: number,
+  imageUrl: string | null,
   req: RequestUser,
   res: Response
 ): Promise<void> {
@@ -40,31 +41,34 @@ export async function addMessage(
       return;
     }
 
-    const { content } = req.body;
+    const content = imageUrl || req.body.content;
 
     if (checkIfFieldExist('content', content, res)) return;
 
     // Test values with regex
-    if (!messageRegex.test(content)) {
-      res.status(400).json({
-        error: 'Bad request',
-        message: 'Invalid message',
-      });
-      return;
+    if (!imageUrl) {
+      if (!messageRegex.test(content)) {
+        res.status(400).json({
+          error: 'Bad request',
+          message: 'Invalid message',
+        });
+        return;
+      }
     }
 
     const db = await connectToDatabase();
 
     // Insert new message into the Chat table
     const query = `
-      INSERT INTO Chat (match_id, user_id, content)
-      VALUES (?, ?, ?);
+      INSERT INTO Chat (match_id, user_id, content, type)
+      VALUES (?, ?, ?, ?);
     `;
 
     const [rowsChat] = (await db.query(query, [
       matchId,
       userId,
       content,
+      imageUrl ? 'image' : 'text',
     ])) as any;
 
     // Get the id of the user who is not the current user
@@ -106,6 +110,7 @@ export async function addMessage(
       username: rowsUser[0].username,
       pictures: rowsUser[0].pictures,
       content,
+      type: imageUrl ? 'image' : 'text',
       created_at: new Date().toUTCString(),
     };
 

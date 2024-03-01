@@ -5,6 +5,7 @@ export interface IMessage {
   username: string;
   pictures: string;
   content: string;
+  type: string;
   created_at: string;
 }
 
