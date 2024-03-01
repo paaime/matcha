@@ -24,7 +24,20 @@ export default function Message({
         unoptimized
       />
       <div className="rounded-3xl bg-white flex flex-col py-3 px-5 shadow-sm dark:bg-gray-950 dark:border dark:border-input">
-        <p className="text-black dark:text-white">{message.content}</p>
+        {message.type === 'image' ? (
+          <Image
+            loader={({ src }) => src}
+            src={process.env.NEXT_PUBLIC_API + message.content}
+            width={200}
+            height={200}
+            className="max-h-30 w-auto rounded-md object-cover mb-3"
+            alt={message.created_at}
+            priority
+            unoptimized
+          />
+        ) : (
+          <p className="text-black dark:text-white">{message.content}</p>
+        )}
         <p className="text-xs text-gray-400 font-semibold ml-3 self-end">
           {timeSince(message.created_at.replace('Z', ''))}
         </p>

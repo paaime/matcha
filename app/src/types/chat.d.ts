@@ -4,6 +4,7 @@ export interface IMessage {
   user_id: number;
   pictures: string;
   content: string;
+  type: string;
   created_at: string;
 }
 

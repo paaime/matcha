@@ -34,6 +34,7 @@ export async function getChatWithId(
     c.id AS message_id,
     c.user_id AS message_user_id,
     c.content AS message_content,
+    c.type AS message_type,
     MAX(c.created_at) AS message_created_at
 FROM
     Matchs m
@@ -74,6 +75,7 @@ ORDER BY
           user_id: row.message_user_id,
           pictures: row.pictures,
           content: row.message_content,
+          type: row.message_type,
           created_at: row.message_created_at,
         })),
     };
