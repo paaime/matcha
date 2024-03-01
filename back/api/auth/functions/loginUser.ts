@@ -12,11 +12,23 @@ import { transporter } from '../../..';
 export async function loginUser(body: any, res: Response): Promise<undefined> {
   try {
     // Get infos from body
-    const { username, password } = body;
+    const { username, password, coords } = body;
 
     // Check if fields exist
     if (checkIfFieldExist('username', username, res)) return;
     if (checkIfFieldExist('password', password, res)) return;
+
+    const lat = coords?.lat || null;
+    const lon = coords?.lon || null;
+
+    let updateCoords = true;
+
+    // Check if coords are valid
+    if (lat && lon) {
+      if (typeof lat !== 'number' || typeof lon !== 'number') {
+        updateCoords = false;
+      }
+    }
 
     const datas = {
       username: username?.trim(),
@@ -52,9 +64,9 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     // Execute the query and check the result
     const [rows] = (await db.execute(query, [datas.username])) as any;
 
-    db.end();
-
     if (rows.length === 0) {
+      db.end();
+      
       res.status(401).json({
         error: 'Unauthorized',
         message: 'Invalid username or password',
@@ -65,6 +77,8 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const user = rows[0];
 
     if (user.isGoogle === 1) {
+      db.end();
+
       res.status(403).json({
         error: 'Forbidden',
         message: 'User is a google user',
@@ -79,6 +93,8 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     );
 
     if (!passwordCorrect) {
+      db.end();
+
       res.status(401).json({
         error: 'Unauthorized',
         message: 'Invalid username or password',
@@ -137,6 +153,18 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
 
       return;
     }
+
+    if (updateCoords) {
+      const locString = `${lat},${lon}`;
+      
+      if (user.loc !== locString && locString !== '0,0') {
+        const query = 'UPDATE User SET loc = ? WHERE username = ?';
+        await db.execute(query, [locString, datas.username]);
+      }
+    }
+
+    // Close the connection
+    db.end();
 
     // Generate token
     const token = jwt.sign(
