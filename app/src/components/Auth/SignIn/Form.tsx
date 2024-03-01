@@ -30,59 +30,8 @@ export default function SignInForm({
     type: string;
   };
 }) {
-  const getGPSLocation = async () => {
-    const gpsSuccess = (pos) => {
-      if (pos.coords) {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-  
-        return { lat, lon };
-      } else {
-        return null;
-      }
-    };
-  
-    const options = {
-      enableHighAccuracy: true,
-      timeout: 3000,
-      maximumAge: Infinity
-    };
-  
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, options);
-      });
-  
-      return gpsSuccess(position) || null;
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const getIPLocation = async() => {
-    const datas = await fetch('https://ipapi.co/json/')
-    const data = await datas.json();
-
-    let lat = data.latitude;
-    let lon = data.longitude;
-
-    if (lat && lon) {
-      return { lat, lon };
-    }
-
-    return null;
-  };
-
-  const getCoords = async () => {
-    const coords = await getGPSLocation();
-    if (coords) {
-      return coords;
-    } else {
-      return await getIPLocation();
-    }
-  }
-
   const { push } = useRouter();
+
   // Form
   const form = useForm<FormFields>({
     resolver: zodResolver(SignInSchema),
@@ -91,19 +40,16 @@ export default function SignInForm({
       password: '',
     },
   });
+  
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
     const { username, password } = data;
 
-    
     try {
-      const coords = await getCoords();
-
       await axios.post(
         `${process.env.NEXT_PUBLIC_API}/auth/login`,
         {
           username,
-          password,
-          coords
+          password
         },
         {
           withCredentials: true,

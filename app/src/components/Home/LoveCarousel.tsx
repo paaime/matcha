@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import LoveCard from './LoveCard';
 import Header from './Header';
 import { useCarouselStore } from '@/store';
+import { updateCoords } from '@/utils/updateCoords';
 
 const easeOutExpo = [0.16, 1, 0.3, 1];
 
@@ -23,20 +24,15 @@ export default function LoveCarousel() {
   const [direction, setDirection] = useState<'left' | 'right' | ''>('');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  // const getUsers = async () => {
-  //   try {
-  //     const res = await customAxios.get('/user/getlove');
-  //     setUsers(res.data);
-  //     setCurrentIndex(res.data.length - 1);
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast('Error', { description: 'An error occured while fetching data.' });
-  //   }
-  // };
+  useEffect(() => {
+    updateCoords().then((location: string) => {
+      console.log(location);
 
-  // useEffect(() => {
-  //   getUsers();
-  // }, []);
+      customAxios.put('/user/location', {
+        location
+      })
+    })
+  }, []);
 
   useEffect(() => {
     setCurrentIndex(users.length - 1);
