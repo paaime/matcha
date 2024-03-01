@@ -219,11 +219,13 @@ export async function getUserWithId(
     user.interests = Array.from(interestsSet);
 
     // Send notifications
-    await sendNotification(userId.toString(), {
-      content: 'Someone visited your profile',
-      redirect: '/settings',
-      related_user_id: connectedUserId
-    } as Notification);
+    if (userId !== connectedUserId) {
+      await sendNotification(userId.toString(), {
+        content: 'Someone visited your profile',
+        redirect: '/settings',
+        related_user_id: connectedUserId
+      } as Notification);
+    }
 
     res.status(200).json(user);
   } catch (error) {
