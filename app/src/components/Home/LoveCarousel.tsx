@@ -3,11 +3,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
-import { Button, buttonVariants } from '../ui/button';
+import { buttonVariants } from '../ui/button';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { ILove } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 import LoveCard from './LoveCard';

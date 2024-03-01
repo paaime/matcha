@@ -3,7 +3,7 @@
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
-import { IMapUser, IUser } from '@/types/user';
+import { IMapUser } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
