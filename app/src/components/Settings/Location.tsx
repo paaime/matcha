@@ -2,7 +2,6 @@
 
 import { Button } from '../ui/button';
 import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useState } from 'react';
 import { toast } from 'sonner';

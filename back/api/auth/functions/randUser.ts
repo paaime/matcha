@@ -131,19 +131,19 @@ export async function randUser(total: number): Promise<boolean>{
   try {
     const db = await connectToDatabase();
 
-    console.info('Clearing database...')
-    // Clean database
-    await db.query('DELETE FROM Blocked');
-    await db.query('DELETE FROM Reported');
-    await db.query('DELETE FROM History');
-    await db.query('DELETE FROM Tags');
-    await db.query('DELETE FROM UserLike');
-    await db.query('DELETE FROM Notification');
-    await db.query('DELETE FROM Chat');
-    await db.query('DELETE FROM Matchs');
-    await db.query('DELETE FROM User');
+    // console.info('Clearing database...')
+    // // Clean database
+    // await db.query('DELETE FROM Blocked');
+    // await db.query('DELETE FROM Reported');
+    // await db.query('DELETE FROM History');
+    // await db.query('DELETE FROM Tags');
+    // await db.query('DELETE FROM UserLike');
+    // await db.query('DELETE FROM Notification');
+    // await db.query('DELETE FROM Chat');
+    // await db.query('DELETE FROM Matchs');
+    // await db.query('DELETE FROM User');
 
-    console.info('Database cleared');
+    // console.info('Database cleared');
     console.info('Adding random users...');
 
     // First, generate users

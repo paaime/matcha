@@ -1,8 +1,6 @@
 'use client';
 import ProfileCard from '../ProfileCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/pagination';
 import { useEffect, useState } from 'react';
 import { ILove } from '@/types/user';
 import customAxios from '@/utils/axios';

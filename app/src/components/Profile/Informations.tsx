@@ -15,6 +15,8 @@ const Map = dynamic(() => import('./Map'), { ssr: false });
 export default function Informations({ user }: { user: IUser }) {
   const [snap, setSnap] = useState<number | string | null>(0.35);
 
+  console.log({user})
+
   // Function to calculate elapsed time (ex: 10 minutes ago)
 
   const getGender = (gender: string) => {
