@@ -3,13 +3,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { HeartIcon, StarIcon, XIcon } from 'lucide-react';
-import { Button, buttonVariants } from '../ui/button';
+import { buttonVariants } from '../ui/button';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import { ILove } from '@/types/user';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 import LoveCard from './LoveCard';
@@ -26,7 +23,7 @@ export default function LoveCarousel() {
 
   useEffect(() => {
     updateCoords().then((location: string) => {
-      console.log(location);
+      // console.log(location);
 
       customAxios.put('/user/location', {
         location
