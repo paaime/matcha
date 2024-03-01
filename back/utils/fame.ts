@@ -27,7 +27,7 @@ export const fameUpdaters: Fame[] = [
     value: 10,
   },
   {
-    name: 'newMessage', // TODO: implement
+    name: 'newMessage',
     value: 1,
   },
   {

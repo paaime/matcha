@@ -6,6 +6,7 @@ import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { messageRegex } from '../../../types/regex';
 import { sendMessage } from '../../../websocket/functions/initializeIo';
+import { updateFame } from '../../../utils/fame';
 
 export const checkIfFieldExist = (
   name: string,
@@ -116,6 +117,9 @@ export async function addMessage(
 
     // Send socket notification to the other user
     await sendMessage(otherUserId.toString(), message);
+
+    // Update fame
+    await updateFame(otherUserId, 'newMessage');
 
     // Send the array of liked users as JSON response
     res.status(200).json(message);
