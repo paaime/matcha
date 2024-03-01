@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     try {
       const response = await customAxios.get('/user/me');
       if (!response.data.isComplete) {
-        push('/auth/complete');
+        push(`/auth/complete${response.data.username ? "?username="+response.data.username : ""}`);
         return;
       }
       setUser(response.data);

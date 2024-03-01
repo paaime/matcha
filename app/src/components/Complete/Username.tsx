@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { CompleteForm } from '@/types/type';
@@ -13,6 +13,18 @@ export default function Username({
   data: CompleteForm;
   setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {
+  
+  useEffect(() => {
+    // get username from params
+    const username = new URLSearchParams(window.location.search).get('username');
+    
+    // Check if username is valid
+    const isValid = /^[a-z]{3,40}$/.test(username);
+    
+    // Update data
+    if (isValid && !data.username) setData((prev) => ({ ...prev, username }));
+  }, []);
+
   const handleNext = () => {
     if (!/^[a-z]{3,40}$/.test(data.username) || !data.username)
       return toast.error(
@@ -20,6 +32,7 @@ export default function Username({
       );
     setStep((prev) => prev + 1);
   };
+
   return (
     <div className="flex flex-col animate__animated animate__fadeIn animate__faster">
       <h3 className="text-2xl font-extrabold text-center mb-5">
