@@ -15,7 +15,7 @@ const Match = ({ chat }: { chat: IPreviewChat }) => {
   return (
     <Image
       loader={({ src }) => src}
-      src={process.env.NEXT_PUBLIC_API + pictures[0]}
+      src={`${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0]}`}
       alt={chat.username}
       width={200}
       height={300}
