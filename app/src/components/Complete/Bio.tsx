@@ -16,6 +16,7 @@ export default function Bio({
   setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {
   const { push } = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleFinish = async () => {
     if (
@@ -27,6 +28,7 @@ export default function Bio({
     }
 
     try {
+      setLoading(true);
       await customAxios.post('/auth/complete', data);
       toast.success('Thank you for completing your profile!');
       push('/');
@@ -34,6 +36,8 @@ export default function Bio({
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else toast.error('An error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,6 +61,7 @@ export default function Bio({
       <Button
         className="mx-auto mt-10 w-52 dark:bg-background dark:text-white dark:border dark:border-input"
         onClick={handleFinish}
+        isLoading={loading}
       >
         Finish
       </Button>
