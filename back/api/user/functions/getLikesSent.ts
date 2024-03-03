@@ -138,7 +138,7 @@ export async function getLikesSent(
       myLat,
       myLon,
       myFame,
-      myInterests: myInterests ? myInterests.split(',') : [],
+      myInterests: myInterests ? myInterests.split(',') : [''],
     }) as any;
 
     // Close the connection

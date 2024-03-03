@@ -311,7 +311,7 @@ export async function getLove(
       minFame,
       maxFame,
       myFame,
-      myInterests: myInterests ? myInterests.split(',') : [],
+      myInterests: myInterests ? myInterests.split(',') : [''],
     })) as any;
 
     // Close the connection
@@ -353,7 +353,7 @@ export async function getLove(
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    // console.error({ code, message });
+    console.error({ code, message });
 
     res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',

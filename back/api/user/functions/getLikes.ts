@@ -135,7 +135,7 @@ export async function getLikes(req: RequestUser, res: Response): Promise<void> {
       myLat,
       myLon,
       myFame,
-      myInterests: myInterests ? myInterests.split(',') : [],
+      myInterests: myInterests ? myInterests.split(',') : [''],
     }) as any;
 
     // Close the connection

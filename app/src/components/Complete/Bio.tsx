@@ -26,6 +26,7 @@ export default function Bio({
     ) {
       return toast.error('Biography must be between 10 and 1000 characters.');
     }
+
     try {
       setLoading(true);
       await customAxios.post('/auth/complete', data);
@@ -39,6 +40,7 @@ export default function Bio({
       setLoading(false);
     }
   };
+
   return (
     <div className="flex flex-col animate__animated animate__fadeIn animate__faster">
       <h3 className="text-2xl font-extrabold text-center mb-1">
