@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import Logo from '@/components/icons/Logo';
@@ -48,7 +49,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               alt="Background"
               className="absolute right-0 z-10 top-[20%] w-auto"
               fill
-              sizes='(max-width: 768px) 100vw, 300px'
+              sizes="(max-width: 768px) 100vw, 300px"
               priority
             />
           </div>

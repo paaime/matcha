@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Notifications from './Notifications';
 import Logo from '../icons/Logo';
-import Logout from './Logout';
 import More from './More';
 
 export default function Header() {

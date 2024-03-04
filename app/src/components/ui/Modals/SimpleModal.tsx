@@ -1,22 +1,17 @@
-import { Fragment, useEffect, useState } from 'react';
-// import { Dialog, Transition } from '@headlessui/react';
+import { useEffect, useState } from 'react';
 import {
   CheckIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '../button';
-import { Label } from '../label';
-import { Input } from '../input';
 
 export default function SimpleModal({
   title,

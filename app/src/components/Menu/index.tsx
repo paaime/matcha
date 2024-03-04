@@ -6,8 +6,6 @@ import {
   HomeIcon,
   MapIcon,
   MessageCircleIcon,
-  PlusIcon,
-  SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
 import Link from 'next/link';

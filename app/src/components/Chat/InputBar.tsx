@@ -3,27 +3,20 @@
 import { GalleryVerticalEndIcon, LandPlotIcon, SendIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { useSocketStore } from '@/store';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { toast } from 'sonner';
-import { GalleryModal } from './GalleryModal';
 import { InvitationModal } from './InvitationModal';
 import customAxios from '@/utils/axios';
 import { IChat } from '@/types/chat';
 
 export default function InputBar({
   chatId,
-  chat,
   setChat,
 }: {
   chatId: string;
-  chat: IChat;
   setChat: Dispatch<SetStateAction<IChat>>;
 }) {
-  const { socket } = useSocketStore();
-  const [isMounted, setIsMounted] = useState(false);
   const [openInvitation, setOpenInvitation] = useState(false);
-  const [openGallery, setOpenGallery] = useState(false);
   const [input, setInput] = useState('');
 
   const handleUpload = async (event) => {

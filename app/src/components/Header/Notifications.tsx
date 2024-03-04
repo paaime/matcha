@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,15 +60,23 @@ export default function Notifications() {
     let count = user?.notifications?.filter((n) => !n.isRead)?.length || 0;
 
     return count > 99 ? '99+' : count;
-  }
+  };
 
   const markAsRead = async (open: boolean = false) => {
     if (open) return;
     try {
       await customAxios.put('/user/notifications');
-      setUser({ ...user, notifications: user?.notifications?.map((n) => ({ ...n, isRead: true })) });
+      setUser({
+        ...user,
+        notifications: user?.notifications?.map((n) => ({
+          ...n,
+          isRead: true,
+        })),
+      });
     } catch (error) {
-      toast('An error occurred while updating the status of the notification. Please try again.');
+      toast(
+        'An error occurred while updating the status of the notification. Please try again.'
+      );
     }
   };
 
@@ -101,7 +110,6 @@ export default function Notifications() {
     } else {
       document.title = 'Matcha';
     }
-
   }, [user?.notifications]);
 
   return (
@@ -119,7 +127,6 @@ export default function Notifications() {
       <DropdownMenuContent align="end" className="w-[300px]">
         <DropdownMenuLabel>
           Notifications
-
           {hasUnread && (
             <span className="ml-2 px-2 py-1 bg-red-500 text-white rounded-full">
               {user?.notifications?.filter((n) => !n.isRead).length}

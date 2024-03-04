@@ -1,8 +1,6 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import SignUpForm from '@/components/Auth/SignUp/Form';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { FaGithub, FaGoogle } from 'react-icons/fa';
+import { buttonVariants } from '@/components/ui/button';
 import clsx from 'clsx';
 import Google from '@/components/Auth/Google';
 
