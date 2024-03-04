@@ -5,9 +5,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useChatsStore } from '@/store';
-import Link from 'next/link';
-import clsx from 'clsx';
-import { buttonVariants } from '../ui/button';
 import { IPreviewChat } from '@/types/chat';
 
 const Match = ({ chat }: { chat: IPreviewChat }) => {

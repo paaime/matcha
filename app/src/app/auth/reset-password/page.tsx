@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { buttonVariants } from '@/components/ui/button';
 import clsx from 'clsx';
 import ResetPasswordForm from '@/components/Auth/ResetPassword/Form';

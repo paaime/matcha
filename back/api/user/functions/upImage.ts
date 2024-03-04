@@ -4,6 +4,7 @@ import { RequestUser } from '../../../types/express';
 import { Response } from 'express';
 import { connectToDatabase } from '../../../utils/db';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { uploadImage } from '../../../utils/image';
 
 export async function upImage(
   req: RequestUser,
@@ -41,7 +42,7 @@ export async function upImage(
       }
 
       // Update the user's image
-      const imageUrl = `/uploads/${req.file.filename}`;
+      const imageUrl = await uploadImage(req.file.buffer);
 
       const db = await connectToDatabase();
 
@@ -87,8 +88,8 @@ export async function upImage(
       db.end();
       res.json({ success: true, newPictures });
     } catch (error) {
-      // console.error('upImage:', error);
-      res.status(401).json({ // 501 for real but not tolerated by 42
+      res.status(401).json({
+        // 501 for real but not tolerated by 42
         error: 'Server error',
         message: 'An error occurred while updating the pictures',
       });

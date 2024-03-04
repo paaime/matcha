@@ -1,11 +1,9 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { buttonVariants } from '@/components/ui/button';
 import clsx from 'clsx';
 import ForgotPasswordForm from '@/components/Auth/ForgotPassword/Form';
 
 export default async function ForgotPassword() {
-
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
       <Link

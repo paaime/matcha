@@ -12,7 +12,7 @@ export default function Google() {
       redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       access_type: 'offline',
-      response_type: 'code',
+      response_type: 'code', 
       prompt: 'consent',
       scope: [
         'https://www.googleapis.com/auth/userinfo.profile',

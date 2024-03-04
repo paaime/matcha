@@ -3,7 +3,6 @@
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
-  useFiltersStore,
   useInterestsListStore,
   useInterestsStore,
 } from '@/store';
