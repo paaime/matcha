@@ -23,7 +23,7 @@ export default function LoveCarousel() {
 
   useEffect(() => {
     updateCoords().then((location: string) => {
-      // console.log(location);
+      // console.log({location});
 
       customAxios.put('/user/location', {
         location

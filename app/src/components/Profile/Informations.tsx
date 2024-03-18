@@ -15,7 +15,7 @@ const Map = dynamic(() => import('./Map'), { ssr: false });
 export default function Informations({ user }: { user: IUser }) {
   const [snap, setSnap] = useState<number | string | null>(0.35);
 
-  console.log({user})
+  // console.log({user})
 
   // Function to calculate elapsed time (ex: 10 minutes ago)
 
@@ -29,6 +29,8 @@ export default function Informations({ user }: { user: IUser }) {
         return 'Other';
     }
   };
+
+  const isMatch = user.isLiked && user.hasLiked;
 
   return (
     <Drawer
@@ -122,7 +124,7 @@ export default function Informations({ user }: { user: IUser }) {
             )}
           </div>
 
-          {!user.isMatch && user.isLiked && (
+          {!isMatch && user.isLiked && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
                 You {user.isSuperLike && 'super'} liked {user.firstName}{' '}
@@ -134,7 +136,7 @@ export default function Informations({ user }: { user: IUser }) {
             </div>
           )}
 
-          {!user.isMatch && user.hasLiked && (
+          {!isMatch && user.hasLiked && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
                 {user.firstName} {user.hasSuperLike && 'super'} liked you{' '}
@@ -157,7 +159,7 @@ export default function Informations({ user }: { user: IUser }) {
               </div>
             ))}
 
-          {user.isMatch && (
+          {isMatch && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
                 You matched with {user.firstName}
