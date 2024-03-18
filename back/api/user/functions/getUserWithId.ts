@@ -180,6 +180,23 @@ export async function getUserWithId(
       hasLikedTime = rowsHisLike[0].created_at;
     }
 
+    // Get match infos
+    let isMatch = false;
+    let matchId = null;
+    let matchTime = null;
+    const [rowsMatch] = (await db.query('SELECT * FROM Matchs WHERE user_id IN (?, ?) AND other_user_id IN (?, ?)', [
+      connectedUserId,
+      rows[0].id,
+      connectedUserId,
+      rows[0].id,
+    ])) as any;
+
+    if (rowsMatch && rowsMatch.length > 0) {
+      isMatch = true;
+      matchId = rowsMatch[0].id;
+      matchTime = rowsMatch[0].created_at;
+    }
+
     // Close the connection
     await db.end();
 
@@ -221,9 +238,9 @@ export async function getUserWithId(
       biography: rows[0].biography,
       pictures: rows[0].pictures,
       fameRating: rows[0].fameRating,
-      isMatch: !!rows[0].isMatch,
-      matchId: rows[0].matchId || undefined,
-      matchTime: rows[0].matchTime || undefined,
+      isMatch: isMatch,
+      matchId: matchId,
+      matchTime: matchTime,
       isLiked: isLiked,
       isSuperLike: isSuperLike,
       isLikeTime: isLikedTime || undefined,

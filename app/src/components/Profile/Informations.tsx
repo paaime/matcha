@@ -30,8 +30,6 @@ export default function Informations({ user }: { user: IUser }) {
     }
   };
 
-  const isMatch = user.isLiked && user.hasLiked;
-
   return (
     <Drawer
       shouldScaleBackground={true}
@@ -124,7 +122,7 @@ export default function Informations({ user }: { user: IUser }) {
             )}
           </div>
 
-          {!isMatch && user.isLiked && (
+          {!user.isMatch && user.isLiked && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
                 You {user.isSuperLike && 'super'} liked {user.firstName}{' '}
@@ -136,7 +134,7 @@ export default function Informations({ user }: { user: IUser }) {
             </div>
           )}
 
-          {!isMatch && user.hasLiked && (
+          {!user.isMatch && user.hasLiked && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
                 {user.firstName} {user.hasSuperLike && 'super'} liked you{' '}
@@ -159,7 +157,7 @@ export default function Informations({ user }: { user: IUser }) {
               </div>
             ))}
 
-          {isMatch && (
+          {user.isMatch && (
             <div className="flex flex-col gap-3">
               <p className="text-gray-400 font-semibold">
                 You matched with {user.firstName}
