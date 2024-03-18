@@ -1,7 +1,7 @@
 'use client';
 
 import { MapPinIcon } from 'lucide-react';
-import Filters from './Filters';
+import FiltersComp from './Filters';
 import { useUserStore } from '@/store';
 
 export default function Header() {
@@ -25,7 +25,7 @@ export default function Header() {
       </div>
 
       <div className="flex gap-3 items-center">
-        <Filters />
+        <FiltersComp />
       </div>
     </div>
   );
