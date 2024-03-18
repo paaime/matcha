@@ -65,6 +65,9 @@ export default function Location() {
       const { data } = await customAxios.get('/user/me');
       setUser(data);
       toast.success('Updated');
+
+      // Save to local storage
+      localStorage.setItem('loc-updated', "true");
     } catch (err) {
       if (err?.response?.data?.message) {
         toast.error(err.response.data.message, {

@@ -22,6 +22,9 @@ export default function LoveCarousel() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   useEffect(() => {
+    // Check if localsotrage has location
+    if (localStorage.getItem('loc-updated')) return;
+
     updateCoords().then((location: string) => {
       // console.log({location});
 

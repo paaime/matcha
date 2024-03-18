@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import SimpleModal from '@/components/ui/Modals/SimpleModal';
@@ -40,6 +41,10 @@ export default function SignInForm({
       password: '',
     },
   });
+
+  useEffect(() => {
+    localStorage.removeItem('loc-updated');
+  }, []);
   
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
     const { username, password } = data;
