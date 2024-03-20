@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { Gender} from '@/types/type';
 import customAxios from '@/utils/axios';
 
-export default function Gender() {
+export default function GenderComp() {
   const [loading, setLoading] = useState(false);
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);

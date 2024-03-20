@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import Notifications from './Notifications';
+import NotificationsComp from './Notifications';
 import Logo from '../icons/Logo';
-import Logout from './Logout';
 import More from './More';
 
 export default function Header() {
@@ -12,7 +11,7 @@ export default function Header() {
         <h1 className="text-3xl font-extrabold">Matcha</h1>
       </Link>
       <div className="flex gap-4">
-        <Notifications />
+        <NotificationsComp />
         <More />
       </div>
     </div>

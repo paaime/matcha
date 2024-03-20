@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import customAxios from '@/utils/axios';
 
-const Notification = ({ notification }: { notification: Notification }) => {
+const NotificationItem = ({ notification }: { notification: Notification }) => {
   const actualDate = new Date() as any;
   let date;
   let newDate;
@@ -48,7 +48,7 @@ const Notification = ({ notification }: { notification: Notification }) => {
   );
 };
 
-export default function Notifications() {
+export default function NotificationsComp() {
   const [hasUnread, setHasUnread] = useState(false);
 
   const socket = useSocketStore((state) => state.socket);
@@ -135,7 +135,7 @@ export default function Notifications() {
         >
           {user?.notifications?.map((notification, index) => (
             <DropdownMenuItem key={index}>
-              <Notification notification={notification} />
+              <NotificationItem notification={notification} />
             </DropdownMenuItem>
           ))}
         </div>
