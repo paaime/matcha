@@ -77,7 +77,7 @@ export async function googleAuth(
 
     // Insert the user into the database and return the id
     const [rowsQuery] = (await db.query(insertQuery, [
-      googleUser.family_name,
+      googleUser.family_name ?? googleUser.given_name,
       googleUser.given_name,
       googleUser.email,
       '',
@@ -107,7 +107,6 @@ export async function googleAuth(
     res.redirect(process.env.DOMAIN + '/');
     return;
   } catch (error) {
-    // console.error(error);
     res.redirect(process.env.DOMAIN + '/auth/sign-in');
     return;
   }
