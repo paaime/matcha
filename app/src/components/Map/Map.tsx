@@ -1,7 +1,10 @@
 'use client';
 
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+<<<<<<< HEAD
+=======
 import 'leaflet/dist/leaflet.css';
+>>>>>>> main
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { IMapUser } from '@/types/user';
@@ -9,6 +12,7 @@ import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store';
+
 
 export default function Map() {
   const { user } = useUserStore();
@@ -80,7 +84,7 @@ export default function Map() {
       style={{
         height: 'calc(100vh - 270px)',
       }}
-    >
+      >
       <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
       {maps?.map(renderMarker)}
     </MapContainer>

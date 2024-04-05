@@ -2,8 +2,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/pagination';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { IUser } from '@/types/user';

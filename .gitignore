@@ -12,6 +12,7 @@ back/.pnpm-store
 back/dist/
 back/public/
 back/public/uploads/
+back/uploads/
 
 # dependencies
 /node_modules

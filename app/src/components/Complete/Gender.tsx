@@ -8,7 +8,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { CompleteForm, Gender } from '@/types/type';
 import { toast } from 'sonner';
 
-export default function Gender({
+export default function GenderComp({
   setStep,
   data,
   setData,

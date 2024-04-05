@@ -66,7 +66,7 @@ export const OnlineInterests = () => {
         </p>
       </div>
 
-      <div className="flex flex-col overflow-scroll relative">
+      <div className="flex flex-col overflow-scroll relative hide-scrollbar">
         <div className="flex mt-3 gap-4">
           {interestsList?.slice(0, 6).map((interest, index) => (
             <Interest

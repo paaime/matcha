@@ -13,7 +13,7 @@ import {
 import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
 import { ArrowDown01Icon, ArrowUp01Icon } from 'lucide-react';
-import Filters from './Filters';
+import FiltersComp from './Filters';
 import { useCarouselStore } from '@/store';
 
 export default function Header() {
@@ -79,7 +79,7 @@ export default function Header() {
 
   return (
     <div className="flex justify-between">
-      <Filters />
+      <FiltersComp />
       <div className="flex gap-3">
         <Select onValueChange={(value) => setSort(value)}>
           <SelectTrigger className="w-auto text-gray-400 font-bold border-0 text-md">

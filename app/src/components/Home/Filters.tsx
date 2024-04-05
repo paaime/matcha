@@ -40,7 +40,7 @@ const getResultsLink = (filters: Filters, interests: string[]) => {
   return `/user/getLove?minAge=${minAge}&maxAge=${maxAge}&minFame=${minFameRating}&maxFame=${maxFameRating}&maxDistance=${maxDistance}&interests=${interestsString}`;
 };
 
-export default function Filters() {
+export default function FiltersComp() {
   const { setUsers } = useCarouselStore();
   const { filters, setFilters } = useFiltersStore();
   const { interests } = useInterestsStore();

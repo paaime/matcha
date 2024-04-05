@@ -1,7 +1,6 @@
 'use client';
 
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { IUser } from '@/types/user';
