@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '../ui/button';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 import { toast } from 'sonner';

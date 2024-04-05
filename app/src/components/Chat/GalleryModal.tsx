@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import {
   Dialog,
@@ -6,7 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
 import { GalleryVerticalEnd } from 'lucide-react';
@@ -59,7 +58,9 @@ export const GalleryModal = ({ open, setOpen }) => {
               />
               <Image
                 loader={({ src }) => src}
-                src={`${picture.startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${picture}`}
+                src={`${
+                  picture.startsWith('http') ? '' : process.env.NEXT_PUBLIC_API
+                }${picture}`}
                 alt={`Photo ${index}`}
                 width={500}
                 height={500}

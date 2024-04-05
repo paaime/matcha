@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import InputBar from '@/components/Chat/InputBar';
@@ -89,7 +90,7 @@ export default function Page({ params }) {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <InputBar chatId={chatId} chat={chat} setChat={setChat} />
+      <InputBar chatId={chatId} setChat={setChat} />
     </div>
   );
 }

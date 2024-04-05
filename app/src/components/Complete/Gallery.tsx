@@ -1,9 +1,7 @@
 'use client';
 
-import { CameraIcon, PlusIcon } from 'lucide-react';
 import { Button } from '../ui/button';
-import { FaSmile } from 'react-icons/fa';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useUserStore } from '@/store';
 import { GalleryImage } from '../Settings/Gallery';
 import { toast } from 'sonner';

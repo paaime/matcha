@@ -2,7 +2,7 @@
 import ProfileCard from '../ProfileCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useUserStore } from '@/store';
-import { ILove, IUserList } from '@/types/user';
+import { ILove } from '@/types/user';
 
 export default function Blocked() {
   const user = useUserStore((state) => state.user);

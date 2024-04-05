@@ -2,10 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import SimpleModal from '@/components/ui/Modals/SimpleModal';
-import { PasswordSchema, SignUpSchema } from '@/utils/validator';
+import { PasswordSchema } from '@/utils/validator';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {

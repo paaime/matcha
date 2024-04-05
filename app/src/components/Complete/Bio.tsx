@@ -7,11 +7,9 @@ import customAxios from '@/utils/axios';
 import { useRouter } from 'next/navigation';
 
 export default function Bio({
-  setStep,
   data,
   setData,
 }: {
-  setStep: Dispatch<SetStateAction<number>>;
   data: CompleteForm;
   setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {

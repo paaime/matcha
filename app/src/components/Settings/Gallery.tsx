@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { CameraIcon, PlusIcon } from 'lucide-react';
@@ -35,7 +36,9 @@ export const GalleryImage = ({ id, picture }) => {
     <div
       className={`photo-${id} flex flex-col items-center justify-between pb-5 rounded-3xl bg-white dark:bg-background`}
       style={{
-        backgroundImage: `url('${picture?.startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${picture}')`,
+        backgroundImage: `url('${
+          picture?.startsWith('http') ? '' : process.env.NEXT_PUBLIC_API
+        }${picture}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}

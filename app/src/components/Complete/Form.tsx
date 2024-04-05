@@ -53,7 +53,7 @@ export default function CompleteFormComp() {
         <Interests setStep={setStep} data={data} setData={setData} />
       )}
       {step === 6 && <Gallery setStep={setStep} />}
-      {step === 7 && <Bio setStep={setStep} data={data} setData={setData} />}
+      {step === 7 && <Bio data={data} setData={setData} />}
       <Pagination step={step} />
     </>
   );

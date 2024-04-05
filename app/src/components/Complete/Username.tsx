@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -13,14 +14,15 @@ export default function Username({
   data: CompleteForm;
   setData: Dispatch<SetStateAction<CompleteForm>>;
 }) {
-  
   useEffect(() => {
     // get username from params
-    const username = new URLSearchParams(window.location.search).get('username');
-    
+    const username = new URLSearchParams(window.location.search).get(
+      'username'
+    );
+
     // Check if username is valid
     const isValid = /^[a-z]{3,40}$/.test(username);
-    
+
     // Update data
     if (isValid && !data.username) setData((prev) => ({ ...prev, username }));
   }, []);
