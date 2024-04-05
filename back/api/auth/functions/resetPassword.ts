@@ -10,6 +10,16 @@ export async function resetPassword(
   req: RequestUser,
   res: Response
 ): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     // Get infos from body
     const { email, token, password } = req.body;
@@ -39,25 +49,17 @@ export async function resetPassword(
       return;
     }
 
-    const db = await connectToDatabase();
 
     // Check if the user is Google
     const googleQuery = 'SELECT isGoogle FROM User WHERE email = ?';
     const [googleResult] = (await db.query(googleQuery, [email])) as any;
 
-    if (googleResult && googleResult.length > 0) {
-      const { isGoogle } = googleResult[0];
-
-      // Close the connection
-      db.end();
-
-      if (isGoogle) {
-        res.status(400).json({
-          error: 'Bad request',
-          message: "Google user can't do that",
-        });
-        return;
-      }
+    if (googleResult && googleResult.length > 0 && googleResult[0].isGoogle) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: "Google user can't do that",
+      });
+      return;
     }
 
     // Check if the email is already used
@@ -65,9 +67,6 @@ export async function resetPassword(
     const [emailResult] = (await db.query(emailQuery, [email])) as any;
 
     if (!emailResult || emailResult.length === 0) {
-      // Close the connection
-      await db.end();
-
       res.status(404).json({
         error: 'Email not found',
         message: 'Email not found',
@@ -82,9 +81,6 @@ export async function resetPassword(
     const validToken = bcrypt.compareSync(token, emailToken);
 
     if (!validToken) {
-      // Close the connection
-      await db.end();
-
       res.status(400).json({
         error: 'Bad request',
         message: 'Invalid token',
@@ -96,12 +92,8 @@ export async function resetPassword(
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Update the user's password
-    const updateQuery =
-      'UPDATE User SET passwordHashed = ?, emailToken = ? WHERE id = ?';
+    const updateQuery = 'UPDATE User SET passwordHashed = ?, emailToken = ? WHERE id = ?';
     (await db.query(updateQuery, [hashedPassword, null, user_id])) as any;
-
-    // Close the connection
-    db.end();
 
     res.status(200).json({
       user_id,
@@ -120,5 +112,8 @@ export async function resetPassword(
       message:
         'An error occurred while resetting the password. Please try again later.',
     });
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

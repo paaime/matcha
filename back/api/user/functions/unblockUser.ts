@@ -37,6 +37,14 @@ export async function unblockUser(unblock_id: number, req: RequestUser, res: Res
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Check if the user exists
     const [rows] = (await db.query('SELECT firstName FROM User WHERE id = ?', [unblock_id])) as any;
 

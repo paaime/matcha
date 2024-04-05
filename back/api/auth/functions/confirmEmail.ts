@@ -6,6 +6,16 @@ import { emailRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 
 export async function confirmEmail(params: any, res: Response): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     // Get infos from body
     const { email, token } = params;
@@ -31,7 +41,6 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
       return;
     }
 
-    const db = await connectToDatabase();
 
     const query = 'SELECT id, emailToken, isVerified FROM User WHERE email = ?';
 
@@ -39,9 +48,6 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
     const [rows] = (await db.execute(query, [safeEmail])) as any;
 
     if (rows.length === 0) {
-      // Close the connection
-      db.end();
-
       res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=notFound');
       return;
     }
@@ -49,18 +55,12 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
     const user = rows[0];
 
     if (user.isVerified === 1) {
-      // Close the connection
-      db.end();
-
       res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=alreadyVerified');
       return;
     }
 
     // Check if token is valid
     if (!bcrypt.compareSync(safeToken, user.emailToken)) {
-      // Close the connection
-      db.end();
-
       res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=tokenNotValid');
       return;
     }
@@ -68,9 +68,6 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
     // Update the user to set isVerified to 1
     const queryUpdate = 'UPDATE User SET emailToken = ?, isVerified = ? WHERE id = ?';
     await db.execute(queryUpdate, [null, 1, user.id]);
-
-    // Close the connection
-    db.end();
 
     res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=true');
   } catch (error) {
@@ -82,5 +79,8 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
     // console.error({ code, message });
 
     res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=serverError');
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

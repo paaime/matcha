@@ -21,6 +21,14 @@ export async function getChats(req: RequestUser, res: Response): Promise<void> {
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Query to get all chats
     const query = `
       SELECT

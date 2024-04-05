@@ -34,6 +34,14 @@ export async function getUserWithId(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Get user infos
     const userInfos = 'SELECT id, loc, consentLocation FROM User WHERE id = ?';
     const [rowsUserInfos] = (await db.query(userInfos, [

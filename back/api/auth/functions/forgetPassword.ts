@@ -12,6 +12,16 @@ export async function forgetPassword(
   req: RequestUser,
   res: Response
 ): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     // Get infos from body
     const { email } = req.body;
@@ -24,56 +34,12 @@ export async function forgetPassword(
       return;
     }
 
-    console.log('Forget password for !!', email);
+    // Check if the user is Google and get user's infos
+    const usrQuery = 'SELECT id, firstName, isGoogle FROM User WHERE email = ? LIMIT 1';
+    const [usrResult] = (await db.query(usrQuery, [email])) as any;
 
-    const db = await connectToDatabase();
-
-    console.log('Forget password for 1', email);
-
-    // Check if the user is Google
-    const googleQuery = 'SELECT isGoogle FROM User WHERE email = ?';
-    const [googleResult] = (await db.query(googleQuery, [email])) as any;
-
-    console.log('Forget password for 2', email);
-
-    if (googleResult && googleResult.length > 0) {
-      const { isGoogle } = googleResult[0];
-
-      // Close the connection
-      db.end();
-
-      if (isGoogle) {
-        res.status(400).json({
-          error: 'Bad request',
-          message: "Google user can't do that",
-        });
-        return;
-      }
-    }
-
-    console.log('Forget password for 3', email);
-    console.log('TEST 3.1');
-
-    // Check if the email is already used
-    const emailQuery = 'SELECT id FROM User LIMIT 1';
-    // const emailQuery = 'SELECT id FROM User WHERE email = ?';
-    // const emailResult = (await db.query(emailQuery, [email])) as any;
-    console.log(
-      db.query,
-      emailQuery
-    )
-    console.log(
-      await db.query(emailQuery, [email])
-    )
-    const emailResult: any = [];
-
-    console.log('Forget password for 4', emailResult);
-
-
-    if (!emailResult || emailResult.length === 0) {
-      // Close the connection
-      await db.end();
-
+    // Check if user exists
+    if (!usrResult || usrResult.length === 0) {
       res.status(404).json({
         error: 'Email not found',
         message: 'Email not found',
@@ -81,8 +47,18 @@ export async function forgetPassword(
       return;
     }
 
-    const user_id = emailResult[0].id;
-    const firstName = emailResult[0].firstName;
+    // Check if the user is Google
+    const isGoogle = usrResult[0].isGoogle;
+    if (isGoogle === 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: "Google user can't do that",
+      });
+      return;
+    }
+
+    const user_id = usrResult[0].id;
+    const firstName = usrResult[0].firstName;
 
     // Generate token to verify email
     const token =
@@ -94,17 +70,12 @@ export async function forgetPassword(
     const updateQuery = 'UPDATE User SET emailToken = ? WHERE id = ?';
     (await db.query(updateQuery, [tokenHashed, user_id])) as any;
 
-    // Close the connection
-    db.end();
-
     // Send email
     const emailData = getEmailData('resetPassword');
 
     if (!emailData) {
       throw new Error('Email template not found');
     }
-
-    console.log('Sending email to 2', email);
 
     const mailData = {
       from: process.env.MAIL_USER,
@@ -118,8 +89,6 @@ export async function forgetPassword(
           `${process.env.DOMAIN}/auth/reset-password/?token=${token}&email=${email}`
         ),
     };
-
-    console.log('Sending email to', mailData.to);
 
     transporter.sendMail(mailData, function (err, info) {
       if (err) {
@@ -143,5 +112,8 @@ export async function forgetPassword(
       error: 'Server error',
       message: 'An error occurred while sending the email',
     });
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

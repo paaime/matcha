@@ -43,6 +43,14 @@ export async function addLike(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     const isSuper = superLike === true;
 
     // Check if the user exists

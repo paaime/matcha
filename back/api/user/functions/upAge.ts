@@ -32,6 +32,14 @@ export async function upAge(req: RequestUser, res: Response): Promise<undefined>
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Update the user's age
     const updateQuery = 'UPDATE User SET age = ? WHERE id = ?';
     await db.query(updateQuery, [age, user_id]);

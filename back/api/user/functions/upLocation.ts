@@ -61,6 +61,14 @@ export async function upLocation(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Update the user's biography
     const updateQuery = 'UPDATE User SET loc = ?, city = ? WHERE id = ?';
     await db.query(updateQuery, [location, city, user_id]);
