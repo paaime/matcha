@@ -2,10 +2,7 @@
 
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
-import {
-  useInterestsListStore,
-  useInterestsStore,
-} from '@/store';
+import { useInterestsListStore, useInterestsStore } from '@/store';
 
 export const Interest = ({
   value,
@@ -17,7 +14,7 @@ export const Interest = ({
   checked: boolean;
 }) => {
   return (
-    <Label className="[&:has([data-state=checked])]:bg-pink border [&:has([data-state=checked])>p]:text-white border-gray-300 flex min-w-max rounded-full py-2 px-4 hover:bg-pink cursor-pointer group transition-all">
+    <Label className="[&:has([data-state=checked])]:bg-pink border [&:has([data-state=checked])>p]:text-white border-gray-300 flex min-w-max rounded-full py-2 px-4 hover:bg-pink/80 cursor-pointer group transition-all">
       <Checkbox
         className="sr-only"
         value={value}

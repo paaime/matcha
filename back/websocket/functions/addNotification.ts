@@ -1,7 +1,10 @@
 import { connectToDatabase } from '../../utils/db';
 import { Notification, ThrownError } from '../../types/type';
 
-export async function addNotification(user_id: number, body: Notification): Promise<boolean>{
+export async function addNotification(
+  user_id: number,
+  body: Notification
+): Promise<boolean> {
   try {
     // Get infos from body
     const { content, redirect, related_user_id } = body;
@@ -18,8 +21,14 @@ export async function addNotification(user_id: number, body: Notification): Prom
     }
 
     // Add the notification
-    const query = 'INSERT INTO Notification (user_id, content, redirect, related_user_id) VALUES (?, ?, ?, ?)';
-    const [rows] = await db.query(query, [user_id, content, redirect, related_user_id]) as any;
+    const query =
+      'INSERT INTO Notification (user_id, content, redirect, related_user_id) VALUES (?, ?, ?, ?)';
+    const [rows] = (await db.query(query, [
+      user_id,
+      content,
+      redirect,
+      related_user_id,
+    ])) as any;
 
     // Close the connection
     await db.end();
@@ -34,8 +43,6 @@ export async function addNotification(user_id: number, body: Notification): Prom
 
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
-
-    // console.error({ code, message });
 
     return false;
   }

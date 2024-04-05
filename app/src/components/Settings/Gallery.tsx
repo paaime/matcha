@@ -47,13 +47,13 @@ export const GalleryImage = ({ id, picture }) => {
         <FaSmile className="w-10 text-gray-200 dark:text-gray-500 h-full py-4" />
       )}
       {picture?.length > 0 ? (
-        <Button className="bg-white/30 backdrop-blur-sm rounded-full border border-[#ffffff1a] hover:bg-white/40 mt-auto dark:text-white">
+        <Button className="bg-white/30 backdrop-blur-sm rounded-full border border-[#ffffff1a] hover:bg-white/40 mt-auto dark:text-white relative">
           <form encType="multipart/form-data">
             <input
               type="file"
               accept="image/*"
               name="image"
-              className="opacity-0 w-full h-full absolute cursor-pointer"
+              className="opacity-0 w-full h-full absolute cursor-pointer mt-[-15px] ml-[-15px]"
               onChange={(e) => handleUpload(e, id)}
             />
           </form>
@@ -67,7 +67,7 @@ export const GalleryImage = ({ id, picture }) => {
               type="file"
               accept="image/*"
               name="image"
-              className="opacity-0 w-full h-full absolute cursor-pointer"
+              className="opacity-0 w-full h-full absolute cursor-pointer mt-[-15px] ml-[-15px]"
               onChange={(e) => handleUpload(e, id)}
             />
           </form>

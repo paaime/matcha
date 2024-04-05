@@ -1,11 +1,14 @@
 // Import necessary modules and types
 import { Response } from 'express';
-import { ThrownError } from '../../../types/type';
+import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { messageRegex } from '../../../types/regex';
-import { sendMessage } from '../../../websocket/functions/initializeIo';
+import {
+  sendMessage,
+  sendNotification,
+} from '../../../websocket/functions/initializeIo';
 import { updateFame } from '../../../utils/fame';
 
 export const checkIfFieldExist = (
@@ -125,6 +128,12 @@ export async function addMessage(
 
     // Send socket notification to the other user
     await sendMessage(otherUserId.toString(), message);
+
+    await sendNotification(otherUserId.toString(), {
+      content: 'You have a new message',
+      redirect: `/chat/${matchId}`,
+      related_user_id: userId,
+    } as Notification);
 
     // Update fame
     await updateFame(otherUserId, 'newMessage');
