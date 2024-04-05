@@ -153,6 +153,14 @@ export async function getLove(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Get my infos
     const [rowsPreferences] = (await db.query(`
       SELECT 
@@ -353,7 +361,7 @@ export async function getLove(
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    console.error({ code, message });
+    // console.error({ code, message });
 
     res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',

@@ -32,6 +32,14 @@ export async function upPreference(req: RequestUser, res: Response): Promise<und
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Update the user's preference
     const updateQuery = 'UPDATE User SET sexualPreferences = ? WHERE id = ?';
     await db.query(updateQuery, [preference, user_id]);

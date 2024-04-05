@@ -28,6 +28,16 @@ export const checkIfFieldExist = (
 };
 
 export async function addUser(body: any, res: Response): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     // Get infos from body
     const { lastName, firstName, password, confirmPassword, email, username } =
@@ -96,7 +106,6 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
       return;
     }
 
-    const db = await connectToDatabase();
 
     // Check if email already exists
     const queryCheckEmail = 'SELECT * FROM User WHERE email = ?';
@@ -105,8 +114,6 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
     ])) as any;
 
     if (rowsCheckEmail.length > 0) {
-      db.end();
-
       res.status(400).json({
         error: 'Bad request',
         message: 'Email already exists',
@@ -121,8 +128,6 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
     ])) as any;
 
     if (rowsCheckUsername.length > 0) {
-      db.end();
-
       res.status(400).json({
         error: 'Bad request',
         message: 'Username already exists',
@@ -153,9 +158,6 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
     ])) as any;
 
     const id = rows.insertId;
-
-    // Close the connection
-    await db.end();
 
     if (!id) {
       throw new Error('User not added');
@@ -203,5 +205,8 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
       error: 'Server error',
       message: 'An error occurred while adding the user',
     });
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

@@ -7,6 +7,16 @@ export async function googleAuth(
   req: Request,
   res: Response
 ): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     const code = req.query.code;
     if (!code) {
@@ -29,11 +39,7 @@ export async function googleAuth(
       return;
     }
 
-    // Check if user exists
-    const db = await connectToDatabase();
-
-    const query =
-      'SELECT id, firstName, lastName, email, isGoogle FROM User WHERE email = ?';
+    const query = 'SELECT id, username, firstName, lastName, email, isGoogle FROM User WHERE email = ?';
 
     // Execute the query and check the result
     const [rows] = (await db.execute(query, [googleUser.email])) as any;
@@ -41,8 +47,8 @@ export async function googleAuth(
     // If the user already exists but is not a google user, redirect to sign in
     if (rows[0]) {
       const user = rows[0];
+
       if (!user.isGoogle) {
-        db.end();
         res.redirect(process.env.DOMAIN + '/auth/sign-in');
         return;
       } else {
@@ -105,9 +111,10 @@ export async function googleAuth(
     });
 
     res.redirect(process.env.DOMAIN + '/');
-    return;
   } catch (error) {
     res.redirect(process.env.DOMAIN + '/auth/sign-in');
-    return;
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

@@ -32,6 +32,14 @@ export async function upName(req: RequestUser, res: Response): Promise<undefined
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Update the user's name
     const updateQuery = 'UPDATE User SET lastName = ?, firstName = ? WHERE id = ?';
     await db.query(updateQuery, [last, first, user_id]);

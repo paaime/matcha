@@ -26,6 +26,10 @@ export async function addVisit(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      return false;
+    }
+
     // Add visit
     const updateQuery =
       'INSERT INTO History (user_id, visited_user_id) VALUES (?, ?)';

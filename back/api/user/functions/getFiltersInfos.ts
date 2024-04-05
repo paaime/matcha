@@ -41,6 +41,14 @@ export async function getFiltersInfos(req: RequestUser, res: Response): Promise<
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Get my sexual preferences
     const [rowsPreferences] = (await db.query(
       'SELECT age, loc, consentLocation, gender, sexualPreferences FROM User WHERE id = ?',

@@ -32,6 +32,14 @@ export async function upGender(req: RequestUser, res: Response): Promise<undefin
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Update the user's gender
     const updateQuery = 'UPDATE User SET gender = ? WHERE id = ?';
     await db.query(updateQuery, [gender, user_id]);

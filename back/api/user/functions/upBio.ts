@@ -35,6 +35,14 @@ export async function upBio(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Update the user's biography
     const updateQuery = 'UPDATE User SET biography = ? WHERE id = ?';
     await db.query(updateQuery, [bio, user_id]);

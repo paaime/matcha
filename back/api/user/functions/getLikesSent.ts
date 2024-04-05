@@ -23,6 +23,14 @@ export async function getLikesSent(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Get my infos
     const [rowsPreferences] = (await db.query(`
       SELECT 

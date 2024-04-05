@@ -1,19 +1,16 @@
-import { Response } from 'express';
+import { Connection } from 'mysql2/promise';
 
-import { connectToDatabase } from '../../../utils/db';
 import { updateFame } from '../../../utils/fame';
 import { sendNotification } from '../../../websocket/functions/initializeIo';
 import { Notification } from '../../../types/type';
 
 const NB_RANDOM_VISITS = 15;
 
-export async function randVisits(total: number): Promise<boolean>{
+export async function randVisits(total: number, db: Connection): Promise<boolean>{
   total = total > NB_RANDOM_VISITS ? NB_RANDOM_VISITS : total;
   total = total < 1 ? 1 : total;
 
   try {
-    const db = await connectToDatabase();
-
     // Then, get the users
     const [rows] = await db.query('SELECT * FROM User') as any;
 
@@ -45,9 +42,6 @@ export async function randVisits(total: number): Promise<boolean>{
         } as Notification);
       }
     }
-
-    // Close the connection
-    await db.end();
 
     return true;
   } catch (error) {

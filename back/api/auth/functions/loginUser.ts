@@ -10,6 +10,16 @@ import { getEmailData } from '../../../utils/emails';
 import { transporter } from '../../..';
 
 export async function loginUser(body: any, res: Response): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     // Get infos from body
     const { username, password } = body;
@@ -44,7 +54,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
       return;
     }
 
-    const db = await connectToDatabase();
 
     const query =
       'SELECT id, firstName, lastName, email, passwordHashed, isVerified, isGoogle FROM User WHERE username = ? AND isVerified = 1';
@@ -53,8 +62,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const [rows] = (await db.execute(query, [datas.username])) as any;
 
     if (rows.length === 0) {
-      db.end();
-      
       res.status(401).json({
         error: 'Unauthorized',
         message: 'Invalid username or password',
@@ -65,8 +72,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const user = rows[0];
 
     if (user.isGoogle === 1) {
-      db.end();
-
       res.status(403).json({
         error: 'Forbidden',
         message: 'User is a google user',
@@ -81,8 +86,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     );
 
     if (!passwordCorrect) {
-      db.end();
-
       res.status(401).json({
         error: 'Unauthorized',
         message: 'Invalid username or password',
@@ -101,9 +104,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
 
       // Execute the query and check the result
       await db.execute(query, [tokenHashed, user.username]);
-
-      // Close the connection
-      await db.end();
 
       const confirmLink =
         process.env.NEXT_PUBLIC_API +
@@ -141,9 +141,6 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
 
       return;
     }
-
-    // Close the connection
-    db.end();
 
     // Generate token
     const token = jwt.sign(
@@ -186,5 +183,8 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
       error: 'Server error',
       message: 'An error occurred while login the user',
     });
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

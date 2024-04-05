@@ -46,6 +46,14 @@ export async function upImage(
 
       const db = await connectToDatabase();
 
+      if (!db) {
+        res.status(400).json({
+          error: 'Internal server error',
+          message: 'Database connection error',
+        });
+        return;
+      }
+
       // Get the user's pictures
 
       const getQuery = 'SELECT pictures FROM User WHERE id = ?';

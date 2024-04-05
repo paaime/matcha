@@ -59,6 +59,14 @@ export async function addMessage(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Insert new message into the Chat table
     const query = `
       INSERT INTO Chat (match_id, user_id, content, type)

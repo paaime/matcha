@@ -24,6 +24,14 @@ export async function getDiscovery(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Get my sexual preferences
     const [rowsPreferences] = (await db.query(
       'SELECT loc, consentLocation FROM User WHERE id = ?',

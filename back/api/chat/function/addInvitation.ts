@@ -47,20 +47,28 @@ export async function addInvitation(
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     const query = `
-  SELECT
-    m.id AS match_id,
-    u1.firstName AS user_firstName,
-    u2.firstName AS other_user_firstName,
-    u1.email AS user_email,
-    u2.email AS other_user_email
-  FROM
-    Matchs m
-    JOIN User u1 ON m.user_id = u1.id
-    JOIN User u2 ON m.other_user_id = u2.id
-  WHERE
-    m.id = ? AND (m.user_id = ? OR m.other_user_id = ?);
-`;
+      SELECT
+        m.id AS match_id,
+        u1.firstName AS user_firstName,
+        u2.firstName AS other_user_firstName,
+        u1.email AS user_email,
+        u2.email AS other_user_email
+      FROM
+        Matchs m
+        JOIN User u1 ON m.user_id = u1.id
+        JOIN User u2 ON m.other_user_id = u2.id
+      WHERE
+        m.id = ? AND (m.user_id = ? OR m.other_user_id = ?);
+    `;
 
     // Execute the query with correct placeholders
     const [rows] = (await db.query(query, [match_id, user_id, user_id])) as any;

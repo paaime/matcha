@@ -62,6 +62,10 @@ export const updateFame = async (userId: number, fameName: FameName): Promise<bo
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      return false;
+    }
+
     // Update the user's fame
     const updateQuery = 'UPDATE User SET fameRating = fameRating + ? WHERE id = ?';
     await db.query(updateQuery, [fameValue, userId]);
