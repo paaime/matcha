@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import customAxios from '@/utils/axios';
+import { usePathname } from 'next/navigation';
 
 const NotificationItem = ({ notification }: { notification: Notification }) => {
   const actualDate = new Date() as any;
@@ -51,6 +52,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
 
 export default function NotificationsComp() {
   const [hasUnread, setHasUnread] = useState(false);
+  const pathname = usePathname();
 
   const socket = useSocketStore((state) => state.socket);
   const user = useUserStore((state) => state.user);
@@ -61,6 +63,10 @@ export default function NotificationsComp() {
 
     return count > 99 ? '99+' : count;
   };
+
+  useEffect(() => {
+    console.log(user?.notifications);
+  }, [user?.notifications]);
 
   const markAsRead = async (open: boolean = false) => {
     if (open) return;
@@ -82,7 +88,7 @@ export default function NotificationsComp() {
 
   useEffect(() => {
     if (socket) {
-      socket.on('notification', (body) => {
+      socket.on('notification', async (body) => {
         let notification: Notification = JSON.parse(body);
 
         // Mark incoming notification as read
@@ -90,15 +96,25 @@ export default function NotificationsComp() {
 
         let newUser = {
           ...user,
-          notifications: [notification, ...user.notifications],
+          notifications: [notification, ...user?.notifications],
         };
         setUser(newUser);
+
+        // If this is a message notification and the user it already on the chat page, don't show the toast
+        if (notification.redirect === pathname) return;
+
         toast(notification.content, {
           description: 'Just now',
         });
       });
     }
-  }, [socket]);
+
+    return () => {
+      if (socket) {
+        socket.off('notification');
+      }
+    };
+  }, [socket, pathname, user?.notifications]);
 
   useEffect(() => {
     const hasUnread = user?.notifications?.some((n) => !n.isRead);
