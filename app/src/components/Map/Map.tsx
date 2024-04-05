@@ -1,10 +1,7 @@
 'use client';
 
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
-<<<<<<< HEAD
-=======
 import 'leaflet/dist/leaflet.css';
->>>>>>> main
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { IMapUser } from '@/types/user';
