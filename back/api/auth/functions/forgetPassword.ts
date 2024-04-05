@@ -24,11 +24,17 @@ export async function forgetPassword(
       return;
     }
 
+    console.log('Forget password for !!', email);
+
     const db = await connectToDatabase();
+
+    console.log('Forget password for 1', email);
 
     // Check if the user is Google
     const googleQuery = 'SELECT isGoogle FROM User WHERE email = ?';
     const [googleResult] = (await db.query(googleQuery, [email])) as any;
+
+    console.log('Forget password for 2', email);
 
     if (googleResult && googleResult.length > 0) {
       const { isGoogle } = googleResult[0];
@@ -45,9 +51,24 @@ export async function forgetPassword(
       }
     }
 
+    console.log('Forget password for 3', email);
+    console.log('TEST 3.1');
+
     // Check if the email is already used
-    const emailQuery = 'SELECT id, firstName FROM User WHERE email = ?';
-    const [emailResult] = (await db.query(emailQuery, [email])) as any;
+    const emailQuery = 'SELECT id FROM User LIMIT 1';
+    // const emailQuery = 'SELECT id FROM User WHERE email = ?';
+    // const emailResult = (await db.query(emailQuery, [email])) as any;
+    console.log(
+      db.query,
+      emailQuery
+    )
+    console.log(
+      await db.query(emailQuery, [email])
+    )
+    const emailResult: any = [];
+
+    console.log('Forget password for 4', emailResult);
+
 
     if (!emailResult || emailResult.length === 0) {
       // Close the connection
@@ -83,6 +104,8 @@ export async function forgetPassword(
       throw new Error('Email template not found');
     }
 
+    console.log('Sending email to 2', email);
+
     const mailData = {
       from: process.env.MAIL_USER,
       to: email,
@@ -95,6 +118,8 @@ export async function forgetPassword(
           `${process.env.DOMAIN}/auth/reset-password/?token=${token}&email=${email}`
         ),
     };
+
+    console.log('Sending email to', mailData.to);
 
     transporter.sendMail(mailData, function (err, info) {
       if (err) {
