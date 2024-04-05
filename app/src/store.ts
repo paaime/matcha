@@ -94,7 +94,7 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
   socket: null,
   // Connect to the WebSocket server
   connect: () => {
-    const socket = io('http://localhost:3001', {
+    const socket = io(process.env.NEXT_PUBLIC_API, {
       withCredentials: true,
     });
     socket.on('connect', () => {

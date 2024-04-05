@@ -2,7 +2,7 @@
 
 import 'animate.css';
 import Age from './Age';
-import Gender from './Gender';
+import GenderComp from './Gender';
 import Interests from './Interests';
 import Pagination from './Pagination';
 import Gallery from './Gallery';
@@ -14,7 +14,7 @@ import SexualPreference from './SexualPreference';
 import { CompleteForm } from '@/types/type';
 import Username from './Username';
 
-export default function CompleteForm() {
+export default function CompleteFormComp() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<CompleteForm>({
     username: null,
@@ -44,7 +44,7 @@ export default function CompleteForm() {
       {step === 1 && (
         <Username setStep={setStep} data={data} setData={setData} />
       )}
-      {step === 2 && <Gender setStep={setStep} data={data} setData={setData} />}
+      {step === 2 && <GenderComp setStep={setStep} data={data} setData={setData} />}
       {step === 3 && (
         <SexualPreference setStep={setStep} data={data} setData={setData} />
       )}

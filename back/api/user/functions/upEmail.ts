@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { Response } from 'express';
 
 import { connectToDatabase } from '../../../utils/db';
@@ -10,6 +11,16 @@ export async function upEmail(
   req: RequestUser,
   res: Response
 ): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     const user_id = getAuthId(req);
 
@@ -33,44 +44,38 @@ export async function upEmail(
       return;
     }
 
-    const db = await connectToDatabase();
+    // Check if the user is Google
+    const userQuery = 'SELECT id, isGoogle FROM User WHERE id = ? LIMIT 1';
+    const [usrResult] = (await db.query(userQuery, [user_id])) as any;
+    
+
+    // Check if user exists
+    if (!usrResult || usrResult.length === 0) {
+      res.status(404).json({
+        error: 'User not found',
+        message: 'User not found',
+      });
+      return;
+    }
 
     // Check if the user is Google
-    const googleQuery = 'SELECT isGoogle FROM User WHERE id = ?';
-    const [googleResult] = (await db.query(googleQuery, [user_id])) as any;
-
-    if (googleResult && googleResult.length > 0) {
-      const { isGoogle } = googleResult[0];
-
-      // Close the connection
-      db.end();
-
-      if (isGoogle) {
-        res.status(400).json({
-          error: 'Bad request',
-          message: 'Google user cannot update email',
-        });
-        return;
-      }
+    const isGoogle = usrResult[0].isGoogle;
+    if (isGoogle === 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: "Google user can't do that",
+      });
+      return;
     }
 
     // Check if the email is already used
-    const emailQuery = 'SELECT id, email FROM User WHERE email = ?';
+    const emailQuery = 'SELECT id, email FROM User WHERE email = ? LIMIT 1';
     const [emailResult] = (await db.query(emailQuery, [email, user_id])) as any;
 
     if (emailResult && emailResult.length > 0) {
       const { id } = emailResult[0];
 
-      // Close the connection
-      db.end();
-
-      if (id === user_id) {
-        res.status(400).json({
-          user_id,
-          updated: false,
-        });
-        return;
-      } else {
+      if (id !== user_id) {
         res.status(400).json({
           error: 'Bad request',
           message: 'Email already used',
@@ -83,8 +88,27 @@ export async function upEmail(
     const updateQuery = 'UPDATE User SET email = ? WHERE id = ?';
     await db.query(updateQuery, [email, user_id]);
 
-    // Close the connection
-    db.end();
+    // Clear token
+    res.clearCookie('token');
+
+    // Generate token
+    const token = jwt.sign(
+      {
+        id: user_id,
+        email: email,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: '1h',
+      }
+    );
+
+    // Add token in httpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
 
     res.status(200).json({
       user_id,
@@ -102,5 +126,8 @@ export async function upEmail(
       error: 'Server error',
       message: 'An error occurred while updating the email',
     });
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

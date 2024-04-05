@@ -43,6 +43,14 @@ export async function upInterests(req: RequestUser, res: Response): Promise<unde
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Reset the user's interests
     const resetQuery = 'DELETE FROM Tags WHERE user_id = ?';
     await db.query(resetQuery, [user_id]);

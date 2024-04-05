@@ -1,19 +1,16 @@
-import { Response } from 'express';
+import { Connection } from 'mysql2/promise';
 
-import { connectToDatabase } from '../../../utils/db';
 import { updateFame } from '../../../utils/fame';
 import { sendNotification } from '../../../websocket/functions/initializeIo';
 import { Notification } from '../../../types/type';
 
 const MAX_LIKES = 30;
 
-export async function randLikes(total: number): Promise<boolean>{
+export async function randLikes(total: number, db: Connection): Promise<boolean>{
   total = total > MAX_LIKES ? MAX_LIKES : total;
   total = total < 1 ? 1 : total;
 
   try {
-    const db = await connectToDatabase();
-
     // Get the users
     const [rows] = await db.query('SELECT * FROM User') as any;
 
@@ -57,9 +54,6 @@ export async function randLikes(total: number): Promise<boolean>{
         related_user_id: m.user_id,
       } as Notification);
     }
-
-    // Close the connection
-    await db.end();
 
     return true;
   } catch (error) {

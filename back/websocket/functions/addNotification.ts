@@ -11,9 +11,11 @@ export async function addNotification(user_id: number, body: Notification): Prom
       throw new Error('Missing fields');
     }
 
-    // console.log('user_id', user_id, content);
-
     const db = await connectToDatabase();
+
+    if (!db) {
+      return false;
+    }
 
     // Add the notification
     const query = 'INSERT INTO Notification (user_id, content, redirect, related_user_id) VALUES (?, ?, ?, ?)';

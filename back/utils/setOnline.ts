@@ -10,6 +10,10 @@ export async function setOnline(user_id: number, isOnline: boolean): Promise<boo
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      return false;
+    }
+
     // Update the user's isOnline and lastConnection
     if (isOnline) {
       const updateQuery = 'UPDATE User SET isOnline = ?, lastConnection = NOW() WHERE id = ?';

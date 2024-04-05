@@ -1,9 +1,10 @@
-import express, { Request, Response } from 'express';
 import http from 'http';
-import cookieParser from 'cookie-parser';
+import path from 'path';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import express, { Request, Response } from 'express';
 
 import userGet from './api/user/get';
 import userPost from './api/user/post';
@@ -12,10 +13,10 @@ import authGet from './api/auth/get';
 import authPost from './api/auth/post';
 import chatPost from './api/chat/post';
 import chatGet from './api/chat/get';
+
 import { authCheck } from './middlewares/authCheck';
 import { initializeIO } from './websocket/functions/initializeIo';
-import path from 'path';
-import { randUser } from './api/auth/functions/randUser';
+import { randScript } from './api/auth/functions/randScript';
 
 const PORT = process.env.BACK_PORT;
 
@@ -28,8 +29,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Serve static files
-app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
-// app.use('/uploads', express.static(path.join(__dirname, "..", "public", "uploads"))); // ! Works in production
+// app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, "..", "public", "uploads"))); // ! Works in production
 
 // Middlewares
 app.use(
@@ -60,7 +61,7 @@ initializeIO(server);
 
 // Start web server
 server.listen(PORT, async () => {
-  // await randUser(5); // ! Uncomment to generate random users
+  await randScript();
 
   console.log(
     `API and WebSocket server is running at ${process.env.NEXT_PUBLIC_API}`

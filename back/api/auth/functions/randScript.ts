@@ -1,10 +1,12 @@
-import { Response } from 'express';
-import { Connection } from 'mysql2/promise';
+import ora from 'ora-classic';
 import bcrypt from 'bcrypt';
+import { Connection } from 'mysql2/promise';
+
+import { randLikes } from './randLikes';
+import { randTags } from './randTags';
+import { randVisits } from './randVisits';
 
 import { connectToDatabase } from '../../../utils/db';
-
-const MAX_USERS = 500;
 
 const getRandomCoordinatesFrance = (): { lat: number; lon: number } => {
   const minLat = 41.333;
@@ -124,15 +126,26 @@ const addRandom = async(db: Connection): Promise<boolean> => {
   }
 }
 
-export async function randUser(total: number): Promise<boolean>{
-  total = total > MAX_USERS ? MAX_USERS : total;
-  total = total < 1 ? 1 : total;
+// TODO : Change the number of users, likes, tags and visits
+const NB_USERS = 20; // 500
+const NB_LIKES = 2; // 30
+const NB_TAGS = 3;
+const NB_VISITS = 2; // 15
+
+export async function randScript(): Promise<boolean> {
 
   try {
     const db = await connectToDatabase();
 
-    console.info('Clearing database...')
+    if (!db) {
+      // console.error('Database connection error');
+      return false;
+    }
+
+    console.log('\n\x1b[1m\x1b[32m%s\x1b[0m', 'Script started\n');
+
     // Clean database
+    const spinClean = ora('Cleaning database').start();
     await db.query('DELETE FROM Blocked');
     await db.query('DELETE FROM Reported');
     await db.query('DELETE FROM History');
@@ -142,16 +155,31 @@ export async function randUser(total: number): Promise<boolean>{
     await db.query('DELETE FROM Chat');
     await db.query('DELETE FROM Matchs');
     await db.query('DELETE FROM User');
+    spinClean.succeed('Database cleaned');
 
-    console.info('Database cleared');
-    console.info('Adding random users...');
-
-    // First, generate users
-    for (let i = 0; i < total; i++) {
+    // Generate users
+    const spinUser = ora('Adding random users').start();
+    for (let i = 0; i < NB_USERS; i++) {
       await addRandom(db);
     }
+    spinUser.succeed('Random users added');
 
-    console.info('Random users added');
+    // Generate likes
+    const spinLikes = ora('Adding random likes').start();
+    await randLikes(NB_LIKES, db);
+    spinLikes.succeed('Random likes added');
+
+    // Generate tags
+    const spinTags = ora('Adding random tags').start();
+    await randTags(NB_TAGS, db);
+    spinTags.succeed('Random tags added');
+
+    // Generate visits
+    const spinVisits = ora('Adding random visits').start();
+    await randVisits(NB_VISITS, db);
+    spinVisits.succeed('Random visits added');
+
+    console.log('\n\x1b[1m\x1b[32m%s\x1b[0m', 'Script finished\n');
 
     // Close the connection
     await db.end();

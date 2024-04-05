@@ -37,6 +37,14 @@ export async function removeLike(liked_id: number, req: RequestUser, res: Respon
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Check if the user exists
     const [rows] = (await db.query('SELECT id, firstName FROM User WHERE id = ?', [liked_id])) as any;
 

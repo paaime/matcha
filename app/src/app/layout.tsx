@@ -28,11 +28,11 @@ const hellix = localFont({
       weight: '800',
       style: 'normal',
     },
-    {
-      path: '../../public/fonts/Hellix/Hellix-ExtraBold.woff2',
-      weight: '900',
-      style: 'normal',
-    },
+    // {
+    //   path: '../../public/fonts/Hellix/Hellix-ExtraBold.woff2',
+    //   weight: '900',
+    //   style: 'normal',
+    // },
   ],
 });
 

@@ -2,7 +2,6 @@
 
 import { Button } from '../ui/button';
 import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -66,6 +65,9 @@ export default function Location() {
       const { data } = await customAxios.get('/user/me');
       setUser(data);
       toast.success('Updated');
+
+      // Save to local storage
+      localStorage.setItem('loc-updated', "true");
     } catch (err) {
       if (err?.response?.data?.message) {
         toast.error(err.response.data.message, {

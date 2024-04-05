@@ -20,6 +20,14 @@ export async function readNotifications(req: RequestUser, res: Response): Promis
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Update the status of the notification
     const updateQuery = 'UPDATE Notification SET isRead = 1 WHERE user_id = ?';
     await db.execute(updateQuery, [user_id]);

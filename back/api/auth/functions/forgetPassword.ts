@@ -12,6 +12,16 @@ export async function forgetPassword(
   req: RequestUser,
   res: Response
 ): Promise<undefined> {
+  const db = await connectToDatabase();
+
+  if (!db) {
+    res.status(400).json({
+      error: 'Internal server error',
+      message: 'Database connection error',
+    });
+    return;
+  }
+
   try {
     // Get infos from body
     const { email } = req.body;
@@ -24,35 +34,12 @@ export async function forgetPassword(
       return;
     }
 
-    const db = await connectToDatabase();
+    // Check if the user is Google and get user's infos
+    const usrQuery = 'SELECT id, firstName, isGoogle FROM User WHERE email = ? LIMIT 1';
+    const [usrResult] = (await db.query(usrQuery, [email])) as any;
 
-    // Check if the user is Google
-    const googleQuery = 'SELECT isGoogle FROM User WHERE email = ?';
-    const [googleResult] = (await db.query(googleQuery, [email])) as any;
-
-    if (googleResult && googleResult.length > 0) {
-      const { isGoogle } = googleResult[0];
-
-      // Close the connection
-      db.end();
-
-      if (isGoogle) {
-        res.status(400).json({
-          error: 'Bad request',
-          message: "Google user can't do that",
-        });
-        return;
-      }
-    }
-
-    // Check if the email is already used
-    const emailQuery = 'SELECT id, firstName FROM User WHERE email = ?';
-    const [emailResult] = (await db.query(emailQuery, [email])) as any;
-
-    if (!emailResult || emailResult.length === 0) {
-      // Close the connection
-      await db.end();
-
+    // Check if user exists
+    if (!usrResult || usrResult.length === 0) {
       res.status(404).json({
         error: 'Email not found',
         message: 'Email not found',
@@ -60,8 +47,18 @@ export async function forgetPassword(
       return;
     }
 
-    const user_id = emailResult[0].id;
-    const firstName = emailResult[0].firstName;
+    // Check if the user is Google
+    const isGoogle = usrResult[0].isGoogle;
+    if (isGoogle === 1) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: "Google user can't do that",
+      });
+      return;
+    }
+
+    const user_id = usrResult[0].id;
+    const firstName = usrResult[0].firstName;
 
     // Generate token to verify email
     const token =
@@ -72,9 +69,6 @@ export async function forgetPassword(
     // Update the user's email
     const updateQuery = 'UPDATE User SET emailToken = ? WHERE id = ?';
     (await db.query(updateQuery, [tokenHashed, user_id])) as any;
-
-    // Close the connection
-    db.end();
 
     // Send email
     const emailData = getEmailData('resetPassword');
@@ -118,5 +112,8 @@ export async function forgetPassword(
       error: 'Server error',
       message: 'An error occurred while sending the email',
     });
+  } finally {
+    // Close the connection
+    db.end();
   }
 }

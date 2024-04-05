@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store';
 
+
 export default function Map() {
   const { user } = useUserStore();
   const { push } = useRouter();
@@ -80,7 +81,7 @@ export default function Map() {
       style={{
         height: 'calc(100vh - 270px)',
       }}
-    >
+      >
       <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
       {maps?.map(renderMarker)}
     </MapContainer>

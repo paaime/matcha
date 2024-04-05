@@ -39,6 +39,14 @@ export async function reportUser(report_id: number, req: RequestUser, res: Respo
 
     const db = await connectToDatabase();
 
+    if (!db) {
+      res.status(400).json({
+        error: 'Internal server error',
+        message: 'Database connection error',
+      });
+      return;
+    }
+
     // Check if the user exists
     const [rows] = (await db.query('SELECT firstName, email FROM User WHERE id = ?', [report_id])) as any;
 
