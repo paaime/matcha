@@ -127,10 +127,10 @@ const addRandom = async(db: Connection): Promise<boolean> => {
 }
 
 // TODO : Change the number of users, likes, tags and visits
-const NB_USERS = 20; // 500
-const NB_LIKES = 2; // 30
+const NB_USERS = 500;
+const NB_LIKES = 15;
 const NB_TAGS = 3;
-const NB_VISITS = 2; // 15
+const NB_VISITS = 7;
 
 export async function randScript(): Promise<boolean> {
 
@@ -185,7 +185,7 @@ export async function randScript(): Promise<boolean> {
     await db.end();
     return true;
   } catch (error) {
-    // console.error('Error while adding user', ':', error);
+    console.error('Error while adding user:', error);
     return false;
   }
 }
