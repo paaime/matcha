@@ -5,14 +5,11 @@ WORKDIR /app
 # Copy the project into the container
 COPY . .
 
-# Install pnpm
-RUN npm install -g pnpm
-
-RUN pnpm install
-RUN pnpm build # ! Next.js does not need a build step for dev
+RUN npm install
+RUN npm run build
 
 EXPOSE 3000
 
 # Start Next.js
-CMD ["pnpm", "start"]
+CMD ["npm", "run", "start"]
 # ! 'dev' pour le développement, 'start' pour la production

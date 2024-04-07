@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   db:
     image: mysql:latest
@@ -13,6 +13,31 @@ services:
     volumes:
       - ./mysql:/docker-entrypoint-initdb.d
       - ./mysql/my.cnf:/etc/mysql/my.cnf
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: back
+    restart: on-failure
+    volumes:
+      - ./back:/back
+      - /back/node_modules
+      - /back/dist
+    ports:
+      - '3001:3001'
+    environment:
+      - FAST_REFRESH=true # React's hot reload
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -45,24 +70,5 @@ services:
       - FAST_REFRESH=true # React's hot reload
     env_file:
       - ./app/.env
-    depends_on:
-      - db
-
-  back:
-    build:
-      context: ./back
-      dockerfile: Dockerfile
-    container_name: back
-    restart: always
-    volumes:
-      - ./back:/back
-      - /back/node_modules
-      - /back/dist
-    ports:
-      - '3001:3001'
-    environment:
-      - FAST_REFRESH=true # React's hot reload
-    env_file:
-      - .env
     depends_on:
       - db

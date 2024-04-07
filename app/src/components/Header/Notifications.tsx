@@ -65,7 +65,7 @@ export default function NotificationsComp() {
   };
 
   useEffect(() => {
-    console.log(user?.notifications);
+    // console.log(user?.notifications);
   }, [user?.notifications]);
 
   const markAsRead = async (open: boolean = false) => {
