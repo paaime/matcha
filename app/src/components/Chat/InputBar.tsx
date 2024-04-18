@@ -81,20 +81,23 @@ export default function InputBar({
             <SendIcon className="h-5 w-5 -ml-0.5 -mb-0.5 dark:text-white" />
           </Button>
         </form>
-        <Button className="h-10 w-10 dark:bg-background" type="button">
+        <Button
+          className="h-10 w-10 dark:bg-background relative cursor-pointer"
+          type="button"
+        >
           <form encType="multipart/form-data">
             <input
               type="file"
               accept="image/*"
               name="image"
-              className="opacity-0 w-full h-full absolute cursor-pointer"
+              className="opacity-0 w-full h-full absolute cursor-pointer mt-[-15px] ml-[-15px]"
               onChange={(e) => handleUpload(e)}
             />
           </form>
           <GalleryVerticalEndIcon className="h-5 w-5 -ml-0.5 -mb-0.5 dark:text-white" />
         </Button>
         <Button
-          className="h-10 w-10 dark:bg-background"
+          className="h-10 w-10 dark:bg-background relative"
           type="button"
           onClick={() => setOpenInvitation(true)}
         >

@@ -22,7 +22,6 @@ export default function Page({ params }) {
   const getChat = async () => {
     try {
       const { data } = await customAxios.get(`/chat/${chatId}`);
-      console.log(data);
       setChat(data);
     } catch (err) {
       if (err.response?.data?.message) toast.error(err.response.data.message);

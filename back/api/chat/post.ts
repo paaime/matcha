@@ -5,6 +5,7 @@ import { addInvitation } from './function/addInvitation';
 import { addMessage } from './function/addMessage';
 import { safeUserId } from '../../middlewares/authCheck';
 import { upload } from '../../middlewares/multer';
+import { uploadImage } from '../../utils/image';
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ router.post('/:id/image', async (req: RequestUser, res: Response) => {
       return;
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = await uploadImage(req.file.buffer);
 
     await addMessage(id, imageUrl, req, res);
   });

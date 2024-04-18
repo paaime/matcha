@@ -59,8 +59,10 @@ export async function addInvitation(
       SELECT
         m.id AS match_id,
         u1.firstName AS user_firstName,
-        u2.firstName AS other_user_firstName,
+        u1.id AS user_id,
         u1.email AS user_email,
+        u2.firstName AS other_user_firstName,
+        u2.id AS other_user_id,
         u2.email AS other_user_email
       FROM
         Matchs m
@@ -97,12 +99,12 @@ export async function addInvitation(
 
     const firstName =
       user_id === match.user_id
-        ? match.user_firstName
-        : match.other_user_firstName;
-    const invitatorFirstName =
-      user_id === match.user_id
         ? match.other_user_firstName
         : match.user_firstName;
+    const invitatorFirstName =
+      user_id === match.user_id
+      ? match.user_firstName
+      : match.other_user_firstName;
     const email =
       user_id === match.user_id ? match.other_user_email : match.user_email;
 
