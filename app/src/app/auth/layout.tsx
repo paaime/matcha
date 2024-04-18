@@ -20,6 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       setLoading(false);
     } catch (error) {
       setLoading(false);
+      push('/auth/sign-in');
     }
   };
 

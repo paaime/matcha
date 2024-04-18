@@ -55,7 +55,6 @@ export async function upImage(
       }
 
       // Get the user's pictures
-
       const getQuery = 'SELECT pictures FROM User WHERE id = ?';
       const [row] = (await db.query(getQuery, [user_id])) as any;
 
@@ -88,7 +87,6 @@ export async function upImage(
       const newPictures = picturesArray.join(',');
 
       // Update the user's pictures
-
       const updateQuery = 'UPDATE User SET pictures = ? WHERE id = ?';
       await db.query(updateQuery, [newPictures, user_id]);
 

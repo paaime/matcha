@@ -50,8 +50,8 @@ export const authCheck = async (req: Request, res: Response, next: NextFunction)
   ]) as any;
 
   if (!check || check.length === 0) {
-    return res.status(401).json({
-      error: 'Unauthorized',
+    return res.status(404).json({
+      error: 'Not found',
       message: 'User not found',
     });
   }

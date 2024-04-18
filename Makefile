@@ -8,6 +8,7 @@ install:
 	cd ./app && pnpm install
 
 build:
+	mkdir -p ./back/public/uploads
 	docker-compose -p $(NAME) -f $(YML_FILE) --env-file $(ENV_FILE) up --build --remove-orphans
 
 stop:
