@@ -31,22 +31,22 @@ const Chat = ({ chat }: { chat: IPreviewChat }) => {
       />
       <div className="max-w-[50%] flex flex-col text-dark dark:text-white justify-center">
         <div className="flex items-center justify-start">
-          {chat.isOnline && (
+          {chat.isOnline ? (
             <div className="bg-green-300 h-2.5 w-2.5 rounded-full mr-3" />
-          )}
+          ) : null}
           <p className="text-lg font-bold">{chat.firstName}</p>
         </div>
         <p className=" truncate">{chat.lastMessage ?? 'No messages'}</p>
       </div>
 
-      {chat.lastMessage && (
+      {chat.lastMessage ? (
         <div className="flex flex-col items-end ml-auto">
           <div className="bg-pink h-3 w-3 rounded-full"></div>
           <p className="text-sm text-gray-400 font-semibold mt-auto">
             {timeSince(chat.lastMessageDate.replace('Z', ''))}
           </p>
         </div>
-      )}
+      ) : null}
     </Link>
   );
 };
