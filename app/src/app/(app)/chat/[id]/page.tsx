@@ -8,6 +8,7 @@ import { useSocketStore, useUserStore } from '@/store';
 import { IChat } from '@/types/chat';
 import customAxios from '@/utils/axios';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -21,6 +22,7 @@ export default function Page({ params }) {
   const getChat = async () => {
     try {
       const { data } = await customAxios.get(`/chat/${chatId}`);
+      console.log(data);
       setChat(data);
     } catch (err) {
       if (err.response?.data?.message) toast.error(err.response.data.message);
@@ -63,7 +65,12 @@ export default function Page({ params }) {
     <div>
       <div className="flex justify-center items-center">
         <GoBack white={false} />
-        <p className="font-extrabold text-2xl mx-auto">{chat?.firstName}</p>
+        <Link
+          href={`/profile/${chat?.username}`}
+          className="font-extrabold text-2xl mx-auto"
+        >
+          {chat?.firstName}
+        </Link>
       </div>
       <div
         className="flex flex-col gap-5 mt-10 overflow-scroll"

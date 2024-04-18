@@ -4,20 +4,25 @@ import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useChatsStore } from '@/store';
 import { IPreviewChat } from '@/types/chat';
+import Link from 'next/link';
 
 const Match = ({ chat }: { chat: IPreviewChat }) => {
   const pictures = chat.pictures?.split(',') || [];
   return (
-    <Image
-      loader={({ src }) => src}
-      src={`${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0]}`}
-      alt={chat.username}
-      width={200}
-      height={300}
-      className="rounded-lg w-24 h-28 object-cover"
-      priority
-      unoptimized
-    />
+    <Link href={`/profile/${chat.username}`}>
+      <Image
+        loader={({ src }) => src}
+        src={`${
+          pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API
+        }${pictures[0]}`}
+        alt={chat.username}
+        width={200}
+        height={300}
+        className="rounded-lg w-24 h-28 object-cover"
+        priority
+        unoptimized
+      />
+    </Link>
   );
 };
 

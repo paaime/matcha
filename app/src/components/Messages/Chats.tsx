@@ -7,7 +7,7 @@ import customAxios from '@/utils/axios';
 import { timeSince } from '@/utils/time';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const Chat = ({ chat }: { chat: IPreviewChat }) => {
@@ -54,11 +54,19 @@ const Chat = ({ chat }: { chat: IPreviewChat }) => {
 export default function Chats() {
   const { socket } = useSocketStore();
   const { chats, setChats } = useChatsStore();
+  const [sortedChats, setSortedChats] = useState<IPreviewChat[]>([]);
 
   const getChats = async () => {
     try {
       const { data } = await customAxios.get('/chat');
-      setChats(data);
+
+      const sortedChats = [...data].sort((a, b) => {
+        const dateA = new Date(a.lastMessageDate).getTime();
+        const dateB = new Date(b.lastMessageDate).getTime();
+        return dateB - dateA; // Sort in descending order
+      });
+
+      setChats(sortedChats);
     } catch (err) {
       if (err.response?.data?.message) toast.error(err.response.data.message);
       else toast.error('An error occurred');
@@ -86,7 +94,14 @@ export default function Chats() {
             }
             return c;
           });
-          setChats(newChats);
+
+          const sortedChats = [...newChats].sort((a, b) => {
+            const dateA = new Date(a.lastMessageDate).getTime();
+            const dateB = new Date(b.lastMessageDate).getTime();
+            return dateB - dateA; // Sort in descending order
+          });
+
+          setChats(sortedChats);
         }
       });
     }
