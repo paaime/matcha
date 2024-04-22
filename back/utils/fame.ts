@@ -1,5 +1,6 @@
 import { ThrownError } from "../types/type";
 import { connectToDatabase } from "./db";
+import { logger } from "./logger";
 
 type Fame = {
   name: string;
@@ -70,8 +71,6 @@ export const updateFame = async (userId: number, fameName: FameName): Promise<bo
     const updateQuery = 'UPDATE User SET fameRating = fameRating + ? WHERE id = ?';
     await db.query(updateQuery, [fameValue, userId]);
 
-    // console.info(`User ${userId} fame updated by ${fameValue} for ${fameName}`);
-
     // Close the connection
     db.end();
 
@@ -79,10 +78,7 @@ export const updateFame = async (userId: number, fameName: FameName): Promise<bo
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
-
-    // console.error({ code, message });
+    logger(e);
 
     return false;
   }

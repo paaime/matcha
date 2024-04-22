@@ -10,6 +10,7 @@ import {
   sendNotification,
 } from '../../../websocket/functions/initializeIo';
 import { updateFame } from '../../../utils/fame';
+import { logger } from '../../../utils/logger';
 
 export const checkIfFieldExist = (
   name: string,
@@ -45,15 +46,15 @@ export async function addMessage(
       return;
     }
 
-    const content = imageUrl || req.body.content;
+    const content = imageUrl || req.body?.content;
 
     if (checkIfFieldExist('content', content, res)) return;
 
     // Test values with regex
     if (!imageUrl) {
       if (!messageRegex.test(content)) {
-        res.status(400).json({
-          error: 'Bad request',
+        res.status(422).json({
+          error: 'Unprocessable entity',
           message: 'Invalid message',
         });
         return;
@@ -63,7 +64,7 @@ export async function addMessage(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -143,13 +144,9 @@ export async function addMessage(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(401).json({
-      // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message: 'An error occurred while getting chats.',
     });

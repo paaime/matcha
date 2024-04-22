@@ -1,5 +1,6 @@
 import { connectToDatabase } from './db';
 import { ThrownError } from '../types/type';
+import { logger } from './logger';
 
 export async function setOnline(user_id: number, isOnline: boolean): Promise<boolean>{
   try {
@@ -30,10 +31,7 @@ export async function setOnline(user_id: number, isOnline: boolean): Promise<boo
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
-
-    // console.error({ code, message });
+    logger(e);
     
     return false;
   }

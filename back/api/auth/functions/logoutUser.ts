@@ -1,6 +1,7 @@
 import { Response, Request } from 'express';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
+import { logger } from '../../../utils/logger';
 
 export async function logoutUser(
   req: RequestUser,
@@ -15,8 +16,7 @@ export async function logoutUser(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Uxnknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
     res.status(500).json({
       error: 'Server error',

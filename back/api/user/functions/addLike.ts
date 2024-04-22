@@ -5,6 +5,7 @@ import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { sendNotification } from '../../../websocket/functions/initializeIo';
 import { updateFame } from '../../../utils/fame';
+import { logger } from '../../../utils/logger';
 
 export async function addLike(
   liked_id: number,
@@ -165,7 +166,8 @@ export async function addLike(
     const e = error as ThrownError;
 
     const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+
+    logger(e);
 
     // Check if duplicate entry
     if (code === 'ER_DUP_ENTRY') {
@@ -176,7 +178,6 @@ export async function addLike(
       return;
     }
 
-    // console.error({ code, message });
 
     res.status(401).json({ // 501 for real but not tolerated by 42
       error: 'Server error',

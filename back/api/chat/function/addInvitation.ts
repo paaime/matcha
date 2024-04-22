@@ -15,31 +15,36 @@ export async function addInvitation(
     const user_id = getAuthId(req);
 
     // Check activty
-    if (
-      !activity ||
-      activity === '' ||
-      !['Dinner', 'Movie', 'Park'].includes(activity)
-    ) {
+    if (!activity || !user_id || !match_id) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Invalid body',
+      });
+      return;
+    }
+
+    // Check activty
+    if (!['Dinner', 'Movie', 'Park'].includes(activity)) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid activity',
       });
       return;
     }
 
     // Check user_id
-    if (!user_id || user_id < 1) {
-      res.status(400).json({
-        error: 'Bad request',
+    if (user_id < 1) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid user id',
       });
       return;
     }
 
     // Check the match_id
-    if (!match_id || match_id < 1) {
-      res.status(400).json({
-        error: 'Bad request',
+    if (match_id < 1) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid match id',
       });
       return;
@@ -48,7 +53,7 @@ export async function addInvitation(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -79,8 +84,6 @@ export async function addInvitation(
     await db.end();
 
     if (!rows || rows.length === 0) {
-      // console.error('No match found');
-
       res.status(404).json({
         error: 'Not found',
         message: 'No match found',
@@ -130,8 +133,7 @@ export async function addInvitation(
     });
     return;
   } catch (err) {
-    // console.error(err);
-    res.status(400).json({ // 500 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Internal server error',
       message: 'An error occured while adding the invitation',
     });

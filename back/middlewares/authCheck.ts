@@ -37,7 +37,7 @@ export const authCheck = async (req: Request, res: Response, next: NextFunction)
   const db = await connectToDatabase();
 
   if (!db) {
-    return res.status(400).json({
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Database connection error',
     });

@@ -5,6 +5,7 @@ import { connectToDatabase } from '../../../utils/db';
 import { emailRegex, passwordRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
+import { logger } from '../../../utils/logger';
 
 export async function resetPassword(
   req: RequestUser,
@@ -110,8 +111,7 @@ export async function resetPassword(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
     res.status(500).json({
       error: 'Server error',

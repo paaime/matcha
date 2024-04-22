@@ -1,5 +1,6 @@
 import { connectToDatabase } from '../../utils/db';
 import { Notification, ThrownError } from '../../types/type';
+import { logger } from '../../utils/logger';
 
 export async function addNotification(
   user_id: number,
@@ -41,8 +42,7 @@ export async function addNotification(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
     return false;
   }

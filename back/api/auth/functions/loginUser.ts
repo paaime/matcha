@@ -8,6 +8,7 @@ import { usernameRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { getEmailData } from '../../../utils/emails';
 import { transporter } from '../../..';
+import { logger } from '../../../utils/logger';
 
 export async function loginUser(body: any, res: Response): Promise<undefined> {
   const db = await connectToDatabase();
@@ -174,8 +175,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
     res.status(500).json({
       error: 'Server error',

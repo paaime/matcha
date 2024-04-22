@@ -1,5 +1,6 @@
 import { connectToDatabase } from './db';
 import { ThrownError } from '../types/type';
+import { logger } from './logger';
 
 export async function addVisit(
   user_id: number,
@@ -42,10 +43,7 @@ export async function addVisit(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
-
-    // console.error({ code, message });
+    logger(e);
 
     return false;
   }

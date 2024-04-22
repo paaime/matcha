@@ -7,6 +7,7 @@ import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getEmailData } from '../../../utils/emails';
 import { transporter } from '../../..';
+import { logger } from '../../../utils/logger';
 
 export async function forgetPassword(
   req: RequestUser,
@@ -111,8 +112,7 @@ export async function forgetPassword(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
     res.status(500).json({
       error: 'Server error',

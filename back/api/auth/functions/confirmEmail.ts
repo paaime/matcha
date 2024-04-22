@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { connectToDatabase } from '../../../utils/db';
 import { emailRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
+import { logger } from '../../../utils/logger';
 
 export async function confirmEmail(params: any, res: Response): Promise<undefined> {
   const db = await connectToDatabase();
@@ -73,10 +74,7 @@ export async function confirmEmail(params: any, res: Response): Promise<undefine
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
-
-    // console.error({ code, message });
+    logger(e);
 
     res.redirect(process.env.DOMAIN + '/auth/sign-in?mailConfirm=false&error=serverError');
   } finally {
