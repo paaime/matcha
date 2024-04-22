@@ -114,7 +114,7 @@ ALTER TABLE History ADD FOREIGN KEY (visited_user_id) REFERENCES User(id) ON DEL
 CREATE TABLE Notification (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
-  content TEXT NOT NULL COLLATE utf8mb3_general_ci,
+  content TEXT NOT NULL COLLATE utf8mb4_general_ci,
   redirect VARCHAR(255) DEFAULT NULL,
   related_user_id INT DEFAULT NULL,
   isRead BOOLEAN DEFAULT 0,
