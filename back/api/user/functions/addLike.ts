@@ -45,7 +45,7 @@ export async function addLike(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -97,7 +97,7 @@ export async function addLike(
       // Close the connection
       await db.end();
 
-      res.status(401).json({ // 501 for real but not tolerated by 42
+      res.status(500).json({
         error: 'Server error',
         message: 'Like not added',
       });
@@ -106,8 +106,7 @@ export async function addLike(
 
     // Check if a match is created
     const [rowsMatch] = (await db.query(
-      `
-      SELECT id
+      `SELECT id
       FROM Matchs
       WHERE
         user_id IN (?, ?)
@@ -152,12 +151,6 @@ export async function addLike(
       related_user_id: user_id,
     } as Notification);
 
-    await sendNotification(user_id.toString(), {
-      content: isSuper ? `You have super liked ${firstName} ⭐️` : `You have liked ${firstName} 👍`,
-      redirect: '/likes',
-      related_user_id: liked_id,
-    } as Notification);
-
     res.status(200).json({
       liked: true,
       match: false,
@@ -176,11 +169,28 @@ export async function addLike(
         message: 'Like already added',
       });
       return;
+    } else if (code.startsWith('ER_NO_REFERENCED_ROW')) {
+      res.status(404).json({
+        error: 'Not found',
+        message: 'User not found',
+      });
+      return;
+    } else if (code === 'ER_DATA_TOO_LONG') {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Data too long',
+      });
+      return;
+    } else if (code === 'ER_BAD_NULL_ERROR') {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Bad request',
+      });
+      return;
     }
 
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'Like not added',
     });
   }

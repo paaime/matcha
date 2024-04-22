@@ -5,6 +5,7 @@ import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { sendNotification } from '../../../websocket/initializeIo';
 import { updateFame } from '../../../utils/fame';
+import { logger } from '../../../utils/logger';
 
 export async function blockUser(block_id: number, req: RequestUser, res: Response): Promise<void> {
   try {
@@ -38,7 +39,7 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -94,7 +95,8 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
     const e = error as ThrownError;
 
     const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+
+    logger(e);
 
     // Check if duplicate entry
     if (code === 'ER_DUP_ENTRY') {
@@ -103,11 +105,16 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
         message: 'You already blocked this user',
       });
       return;
+    } else if (code.startsWith('ER_')) {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Error while blocking the user',
+      });
+      return;
     }
 
-    // console.error({ code, message });
 
-    res.status(401).json({ // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message: 'Error while blocking the user',
     });
