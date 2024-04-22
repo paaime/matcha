@@ -8,7 +8,7 @@ import { messageRegex } from '../../../types/regex';
 import {
   sendMessage,
   sendNotification,
-} from '../../../websocket/functions/initializeIo';
+} from '../../../websocket/initializeIo';
 import { updateFame } from '../../../utils/fame';
 import { logger } from '../../../utils/logger';
 

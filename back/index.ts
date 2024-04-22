@@ -15,7 +15,7 @@ import chatPost from './api/chat/post';
 import chatGet from './api/chat/get';
 
 import { authCheck } from './middlewares/authCheck';
-import { initializeIO } from './websocket/functions/initializeIo';
+import { initializeIO } from './websocket/initializeIo';
 import { randScript } from './api/auth/functions/randScript';
 
 const PORT = process.env.BACK_PORT;

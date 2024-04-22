@@ -5,7 +5,7 @@ import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { addVisit } from '../../../utils/visit';
 import { updateFame } from '../../../utils/fame';
-import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { sendNotification } from '../../../websocket/initializeIo';
 import { usernameRegex } from '../../../types/regex';
 
 export async function getUserWithId(

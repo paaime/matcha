@@ -1,6 +1,6 @@
-import { connectToDatabase } from '../../utils/db';
-import { Notification, ThrownError } from '../../types/type';
-import { logger } from '../../utils/logger';
+import { connectToDatabase } from '../utils/db';
+import { Notification, ThrownError } from '../types/type';
+import { logger } from '../utils/logger';
 
 export async function addNotification(
   user_id: number,

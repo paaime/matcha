@@ -3,7 +3,7 @@ import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
-import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { sendNotification } from '../../../websocket/initializeIo';
 import { updateFame } from '../../../utils/fame';
 
 export async function unblockUser(unblock_id: number, req: RequestUser, res: Response): Promise<void> {

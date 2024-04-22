@@ -1,10 +1,10 @@
 import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import { Server as SocketIOServer } from 'socket.io';
-import { JwtDatas, Notification } from '../../types/type';
+import { JwtDatas, Notification } from '../types/type';
 import { addNotification } from './addNotification';
-import { setOnline } from '../../utils/setOnline';
-import { IMessage } from '../../types/chat';
+import { setOnline } from '../utils/setOnline';
+import { IMessage } from '../types/chat';
 
 let io: SocketIOServer;
 
