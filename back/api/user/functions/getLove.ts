@@ -155,7 +155,7 @@ export async function getLove(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });

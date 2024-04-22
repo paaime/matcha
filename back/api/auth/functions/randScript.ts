@@ -120,8 +120,6 @@ const addRandom = async(db: Connection): Promise<boolean> => {
 
     return true;
   } catch (error) {
-    // console.error('Error while generating random user:', error);
-
     return false;
   }
 }
@@ -138,7 +136,6 @@ export async function randScript(): Promise<boolean> {
     const db = await connectToDatabase();
 
     if (!db) {
-      // console.error('Database connection error');
       return false;
     }
 
@@ -185,7 +182,6 @@ export async function randScript(): Promise<boolean> {
     await db.end();
     return true;
   } catch (error) {
-    console.error('Error while adding user:', error);
     return false;
   }
 }

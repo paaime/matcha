@@ -38,7 +38,7 @@ export async function unblockUser(unblock_id: number, req: RequestUser, res: Res
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });

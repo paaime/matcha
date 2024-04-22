@@ -81,8 +81,6 @@ export async function getUserConnected(
       // Close the connection
       await db.end();
 
-      // console.error('No user found with id:', userId);
-
       res.status(404).json({
         error: 'Not found',
         message: 'User not found',
