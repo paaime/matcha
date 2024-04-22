@@ -57,8 +57,6 @@ export async function randLikes(total: number, db: Connection): Promise<boolean>
 
     return true;
   } catch (error) {
-    // console.error('Error while adding the likes:', error);
-
     return false;
   }
 }

@@ -18,9 +18,7 @@ export async function logoutUser(
     const code = e?.code || 'Uxnknown error';
     const message = e?.message || 'Unknown message';
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message: 'An error occurred while login the user',
     });

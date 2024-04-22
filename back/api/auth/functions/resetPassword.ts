@@ -13,7 +13,7 @@ export async function resetPassword(
   const db = await connectToDatabase();
 
   if (!db) {
-    res.status(400).json({
+    res.status(500).json({
       error: 'Internal server error',
       message: 'Database connection error',
     });
@@ -24,17 +24,25 @@ export async function resetPassword(
     // Get infos from body
     const { email, token, password } = req.body;
 
-    if (!emailRegex.test(email)) {
+    if (!email || !token || !password) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Invalid body',
+      });
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid email',
       });
       return;
     }
 
     if (!token || token.length < 5 || token.length > 100) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid token',
       });
       return;
@@ -42,8 +50,8 @@ export async function resetPassword(
 
     // Check new password
     if (!passwordRegex.test(password)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Password is not valid',
       });
       return;
@@ -55,8 +63,8 @@ export async function resetPassword(
     const [googleResult] = (await db.query(googleQuery, [email])) as any;
 
     if (googleResult && googleResult.length > 0 && googleResult[0].isGoogle) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(403).json({
+        error: 'Forbidden',
         message: "Google user can't do that",
       });
       return;
@@ -81,8 +89,8 @@ export async function resetPassword(
     const validToken = bcrypt.compareSync(token, emailToken);
 
     if (!validToken) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(401).json({
+        error: 'Unauthorized',
         message: 'Invalid token',
       });
       return;
@@ -105,9 +113,7 @@ export async function resetPassword(
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message:
         'An error occurred while resetting the password. Please try again later.',

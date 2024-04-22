@@ -71,36 +71,36 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
 
     // Test values with regex
     if (!nameRegex.test(newUser.firstName)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'First name is not valid',
       });
       return;
     }
     if (!nameRegex.test(newUser.lastName)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Last name is not valid',
       });
       return;
     }
     if (!emailRegex.test(newUser.email)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Email is not valid',
       });
       return;
     }
     if (!passwordRegex.test(newUser.passwordHashed)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Password is not valid',
       });
       return;
     }
     if (!usernameRegex.test(username)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Username is not valid',
       });
       return;
@@ -114,8 +114,8 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
     ])) as any;
 
     if (rowsCheckEmail.length > 0) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(409).json({
+        error: 'Conflict',
         message: 'Email already exists',
       });
       return;
@@ -128,8 +128,8 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
     ])) as any;
 
     if (rowsCheckUsername.length > 0) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(409).json({
+        error: 'Conflict',
         message: 'Username already exists',
       });
       return;
@@ -198,10 +198,7 @@ export async function addUser(body: any, res: Response): Promise<undefined> {
       email: newUser.email,
     });
   } catch (error) {
-    // console.error('Error while adding user:', error);
-
-    res.status(401).json({
-      // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message: 'An error occurred while adding the user',
     });

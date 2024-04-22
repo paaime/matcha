@@ -13,7 +13,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
   const db = await connectToDatabase();
 
   if (!db) {
-    res.status(400).json({
+    res.status(500).json({
       error: 'Internal server error',
       message: 'Database connection error',
     });
@@ -55,8 +55,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     }
 
 
-    const query =
-      'SELECT id, firstName, lastName, email, passwordHashed, isVerified, isGoogle FROM User WHERE username = ? AND isVerified = 1';
+    const query = 'SELECT id, firstName, lastName, email, passwordHashed, isVerified, isGoogle FROM User WHERE username = ?';
 
     // Execute the query and check the result
     const [rows] = (await db.execute(query, [datas.username])) as any;
@@ -93,6 +92,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
       return;
     }
 
+    // Check if the user is verified
     if (user.isVerified === 0) {
       const token =
         Math.random().toString(36).substring(2, 15) +
@@ -177,9 +177,7 @@ export async function loginUser(body: any, res: Response): Promise<undefined> {
     const code = e?.code || 'Unknown error';
     const message = e?.message || 'Unknown message';
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message: 'An error occurred while login the user',
     });
