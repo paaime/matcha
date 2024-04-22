@@ -34,7 +34,7 @@ const getRandomCoordinateLyon = (): { lat: number; lon: number } => {
 
 const addRandom = async(db: Connection): Promise<boolean> => {
   try {
-    const password = 'password';
+    const password = process.env.RANDOM_PASSWORD || 'password';
     const email = Math.random().toString(36).substring(2, 15) + '@gmail.com';
 
     // Api to get random user
@@ -124,7 +124,6 @@ const addRandom = async(db: Connection): Promise<boolean> => {
   }
 }
 
-// TODO : Change the number of users, likes, tags and visits
 const NB_USERS = 500;
 const NB_LIKES = 15;
 const NB_TAGS = 3;

@@ -62,10 +62,6 @@ initializeIO(server);
 // Start web server
 server.listen(PORT, async () => {
   await randScript();
-
-  console.log(
-    `API and WebSocket server is running at ${process.env.NEXT_PUBLIC_API}`
-  );
 });
 
 // Create mail transporter
