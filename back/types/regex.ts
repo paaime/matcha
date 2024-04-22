@@ -3,7 +3,7 @@ export const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 // Password regex : 6-20 characters, at least one uppercase, one lowercase, one number and one special character :;.,!?@#$%^&*()_+-=
 export const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{6,20}$/;
 
 // Firstname and Lastname regex : 1-40 letters, space, hyphen, apostrophe
 export const nameRegex = /^[a-zA-Z\s'-]{1,40}$/;

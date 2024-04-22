@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/form';
 import customAxios from '@/utils/axios';
 import { toast } from 'sonner';
+import PasswordChecklist from 'react-password-checklist';
 
 type FormFields = z.infer<typeof PasswordSchema>;
 
@@ -57,7 +58,13 @@ export default function Password() {
               <FormItem className="w-full">
                 <FormLabel>Current Password</FormLabel>
                 <FormControl>
-                  <Input {...field} autoComplete="password" type="password" value={field.value} onChange={field.onChange}  />
+                  <Input
+                    {...field}
+                    autoComplete="password"
+                    type="password"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -70,7 +77,12 @@ export default function Password() {
               <FormItem className="w-full">
                 <FormLabel>New Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
+                  <Input
+                    {...field}
+                    type="password"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,12 +95,35 @@ export default function Password() {
               <FormItem className="w-full">
                 <FormLabel>Confirm New Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" value={field.value} onChange={field.onChange}  />
+                  <Input
+                    {...field}
+                    type="password"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          {form.watch('newPassword').length > 0 && (
+            <PasswordChecklist
+              className="password-checklist"
+              rules={[
+                'minLength',
+                'maxLength',
+                'specialChar',
+                'number',
+                'capital',
+                'match',
+              ]}
+              minLength={6}
+              maxLength={20}
+              value={form.watch('newPassword')}
+              valueAgain={form.watch('confirmNewPassword')}
+              onChange={(isValid) => {}}
+            />
+          )}
           <Button
             isLoading={form.formState.isSubmitting}
             className="mt-10 w-full dark:bg-background dark:text-white dark:border dark:border-input"

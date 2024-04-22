@@ -30,12 +30,12 @@ export const SignUpSchema = z
     password: z
       .string({ invalid_type_error, required_error })
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{6,20}$/
       ),
     confirmPassword: z
       .string({ invalid_type_error, required_error })
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{6,20}$/,
         {
           message:
             'Passwords do not match',
@@ -104,7 +104,7 @@ export const PasswordSchema = z
     password: z
       .string({ invalid_type_error, required_error })
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{6,20}$/,
         {
           message:
             'Password must be at least 6 characters long and contain at least one uppercase, one lowercase, one number and one special character.',
@@ -113,7 +113,7 @@ export const PasswordSchema = z
     newPassword: z
       .string({ invalid_type_error, required_error })
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{6,20}$/,
         {
           message:
             'Password must be at least 6 characters long and contain at least one uppercase, one lowercase, one number and one special character.',
@@ -122,7 +122,7 @@ export const PasswordSchema = z
     confirmNewPassword: z
       .string({ invalid_type_error, required_error })
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{6,20}$/,
         {
           message:
             'Passwords do not match',
