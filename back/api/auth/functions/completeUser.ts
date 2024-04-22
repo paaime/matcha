@@ -144,7 +144,7 @@ export async function completeUser(
       gender,
       sexualPreferences,
       age,
-      biography,
+      biography.trim(),
       user_id,
     ]);
 

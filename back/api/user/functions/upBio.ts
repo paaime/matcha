@@ -45,7 +45,7 @@ export async function upBio(
 
     // Update the user's biography
     const updateQuery = 'UPDATE User SET biography = ? WHERE id = ?';
-    await db.query(updateQuery, [bio, user_id]);
+    await db.query(updateQuery, [bio.trim(), user_id]);
 
     // Close the connection
     db.end();
