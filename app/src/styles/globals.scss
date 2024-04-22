@@ -1233,3 +1233,16 @@ svg.leaflet-zoom-animated {
       print-color-adjust: exact
   }
 }
+
+.password-checklist {
+  padding-top: 15px !important;
+  li {
+    align-items: center !important;
+    span {
+      font-size: 15px;
+    }
+    svg {
+      height: 10px;
+    }
+  }
+}

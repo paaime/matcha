@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { toast } from 'sonner';
 import axios from 'axios';
+import PasswordChecklist from 'react-password-checklist';
 
 type FormFields = z.infer<typeof SignUpSchema>;
 
@@ -149,20 +150,6 @@ export default function SignUpForm() {
             />
           </div>
 
-          {/* <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input {...field} type="text" autoComplete='none' value={field.value} onChange={field.onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-
           <FormField
             control={form.control}
             name="password"
@@ -202,6 +189,25 @@ export default function SignUpForm() {
               </FormItem>
             )}
           />
+
+          {form.watch('password').length > 0 && (
+            <PasswordChecklist
+              className="password-checklist"
+              rules={[
+                'minLength',
+                'maxLength',
+                'specialChar',
+                'number',
+                'capital',
+                'match',
+              ]}
+              minLength={6}
+              maxLength={20}
+              value={form.watch('password')}
+              valueAgain={form.watch('confirmPassword')}
+              onChange={(isValid) => {}}
+            />
+          )}
 
           <Button
             isLoading={form.formState.isSubmitting}
