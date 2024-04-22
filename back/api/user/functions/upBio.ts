@@ -5,6 +5,7 @@ import { biographyRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { logger } from '../../../utils/logger';
 
 export async function upBio(
   req: RequestUser,
@@ -25,9 +26,17 @@ export async function upBio(
     // Get infos from body
     const { bio } = req.body;
 
-    if (!biographyRegex.test(bio)) {
+    if (!bio) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Missing biography',
+      });
+      return;
+    }
+
+    if (!biographyRegex.test(bio) || bio.trim().length === 0) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid biography',
       });
       return;
@@ -36,7 +45,7 @@ export async function upBio(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -57,13 +66,10 @@ export async function upBio(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while updating the biography',
     });
   }

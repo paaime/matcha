@@ -5,6 +5,7 @@ import { locationRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { logger } from '../../../utils/logger';
 
 export async function upLocation(
   req: RequestUser,
@@ -25,9 +26,17 @@ export async function upLocation(
     // Get infos from body
     const { location } = req.body;
 
-    if (!locationRegex.test(location)) {
+    if (!location) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Missing location',
+      });
+      return;
+    }
+
+    if (!locationRegex.test(location)) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid location',
       });
       return;
@@ -62,7 +71,7 @@ export async function upLocation(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -83,13 +92,10 @@ export async function upLocation(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(501).json({
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while updating the location',
     });
   }

@@ -5,6 +5,7 @@ import { genderEnum } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { logger } from '../../../utils/logger';
 
 export async function upGender(req: RequestUser, res: Response): Promise<undefined>{
   try {
@@ -22,9 +23,17 @@ export async function upGender(req: RequestUser, res: Response): Promise<undefin
     // Get infos from body
     const { gender } = req.body;
 
-    if (!gender || genderEnum.indexOf(gender) === -1) {
+    if (!gender) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Invalid gender'
+      });
+      return;
+    }
+
+    if (genderEnum.indexOf(gender) === -1) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid gender',
       });
       return;
@@ -33,7 +42,7 @@ export async function upGender(req: RequestUser, res: Response): Promise<undefin
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -54,13 +63,10 @@ export async function upGender(req: RequestUser, res: Response): Promise<undefin
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
-
-    // console.error({ code, message });
+    logger(e);
     
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while updating the gender'
     });
   }
