@@ -4,6 +4,7 @@ import { IMapUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { logger } from '../../../utils/logger';
 
 export async function getMapUsers(
   req: RequestUser,
@@ -23,7 +24,7 @@ export async function getMapUsers(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -112,13 +113,10 @@ export async function getMapUsers(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while getting map users',
     });
   }

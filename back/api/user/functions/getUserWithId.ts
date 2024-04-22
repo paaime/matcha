@@ -5,8 +5,9 @@ import { IUser } from '../../../types/user';
 import { connectToDatabase } from '../../../utils/db';
 import { addVisit } from '../../../utils/visit';
 import { updateFame } from '../../../utils/fame';
-import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { sendNotification } from '../../../websocket/initializeIo';
 import { usernameRegex } from '../../../types/regex';
+import { logger } from '../../../utils/logger';
 
 export async function getUserWithId(
   username: string,
@@ -23,8 +24,6 @@ export async function getUserWithId(
     }
 
     if (!Number.isInteger(connectedUserId) || connectedUserId < 1) {
-      // console.error('Invalid connected user id:', connectedUserId);
-
       res.status(400).json({
         error: 'Bad request',
         message: 'Invalid connected user id',
@@ -35,7 +34,7 @@ export async function getUserWithId(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -49,9 +48,7 @@ export async function getUserWithId(
     ])) as any;
 
     if (!rowsUserInfos || rowsUserInfos.length === 0) {
-      // console.error('No user found with id:', connectedUserId);
-
-      db.end();
+      await db.end();
 
       res.status(404).json({
         error: 'Not found',
@@ -209,8 +206,6 @@ export async function getUserWithId(
     await db.end();
 
     if (!rows || rows.length === 0) {
-      // console.error('No user found with username:', username);
-
       res.status(404).json({
         error: 'Not found',
         message: 'User not found',
@@ -287,13 +282,10 @@ export async function getUserWithId(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while getting user infos',
     });
   }

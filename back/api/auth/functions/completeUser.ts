@@ -59,29 +59,29 @@ export async function completeUser(
 
     // Test values with regex
     if (!usernameRegex.test(username)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'username is not valid',
       });
       return;
     }
     if (!genderEnum.includes(gender)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Gender invalid',
       });
       return;
     }
     if (!preferenceEnum.includes(sexualPreferences)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Sexual preferences invalid',
       });
       return;
     }
     if (!ageRegex.test(age.toString())) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Age invalid',
       });
       return;
@@ -89,8 +89,8 @@ export async function completeUser(
 
     // Check if interests are valid
     if (!interests || !Array.isArray(interests)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid interests',
       });
       return;
@@ -106,8 +106,8 @@ export async function completeUser(
     }
 
     if (!biographyRegex.test(biography)) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Biography is not valid',
       });
       return;
@@ -116,7 +116,7 @@ export async function completeUser(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -128,8 +128,8 @@ export async function completeUser(
     const [rowsUsername] = (await db.execute(queryUsername, [username, user_id])) as any;
 
     if (rowsUsername[0]) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(409).json({
+        error: 'Conflict',
         message: 'Username already taken',
       });
       return;
@@ -164,9 +164,7 @@ export async function completeUser(
       success: true,
     });
   } catch (error) {
-    // console.error('Error while completing user:', error);
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message: 'An error occurred while completing the user',
     });

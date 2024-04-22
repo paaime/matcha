@@ -6,6 +6,7 @@ import { addMessage } from './function/addMessage';
 import { safeUserId } from '../../middlewares/authCheck';
 import { upload } from '../../middlewares/multer';
 import { uploadImage } from '../../utils/image';
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -23,18 +24,25 @@ router.post('/:id/image', async (req: RequestUser, res: Response) => {
     });
     return;
   }
+
+  // Check if folder /back/puclic/uploads exists
+  const path = process.cwd() + '/public/uploads';
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path, { recursive: true });
+  }
+
   upload(req as Request, res, async (err) => {
     // Error handling for multer
     if (err) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(500).json({
+        error: 'Internal server error',
         message: err?.message || 'An error occurred while uploading the image',
       });
       return;
     }
     if (!req.file) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(500).json({
+        error: 'Internal server error',
         message: 'An error occurred while uploading the image',
       });
       return;

@@ -12,8 +12,6 @@ export async function connectToDatabase() {
     });
     return connection;
   } catch (error) {
-    // console.error('Erreur de connexion à MySQL :', error);
-    throw error;
     return null;
   }
 }

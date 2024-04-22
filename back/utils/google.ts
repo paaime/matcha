@@ -20,7 +20,6 @@ export const getGoogleOAuthTokens = async ({ code }: { code: any }) => {
     });
     return res.data;
   } catch (error) {
-    // console.log(error, 'Failed to fetch Google Oauth Tokens');
     return false;
   }
 };
@@ -43,7 +42,6 @@ export const getGoogleUser = async ({
     );
     return res.data;
   } catch (error) {
-    // console.log(error, 'Failed to fetch Google User');
     return false;
   }
 };

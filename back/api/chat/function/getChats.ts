@@ -6,6 +6,7 @@ import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { IPreviewChat } from '../../../types/chat';
+import { logger } from '../../../utils/logger';
 
 export async function getChats(req: RequestUser, res: Response): Promise<void> {
   try {
@@ -22,7 +23,7 @@ export async function getChats(req: RequestUser, res: Response): Promise<void> {
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -89,13 +90,9 @@ export async function getChats(req: RequestUser, res: Response): Promise<void> {
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(401).json({
-      // 501 for real but not tolerated by 42
+    res.status(500).json({
       error: 'Server error',
       message: 'An error occurred while getting chats.',
     });

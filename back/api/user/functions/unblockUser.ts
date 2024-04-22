@@ -3,8 +3,8 @@ import { Notification, ThrownError } from '../../../types/type';
 import { connectToDatabase } from '../../../utils/db';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
-import { sendNotification } from '../../../websocket/functions/initializeIo';
-import { updateFame } from '../../../utils/fame';
+import { sendNotification } from '../../../websocket/initializeIo';
+import { logger } from '../../../utils/logger';
 
 export async function unblockUser(unblock_id: number, req: RequestUser, res: Response): Promise<void> {
   try {
@@ -38,7 +38,7 @@ export async function unblockUser(unblock_id: number, req: RequestUser, res: Res
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -61,7 +61,7 @@ export async function unblockUser(unblock_id: number, req: RequestUser, res: Res
 
     const firstName = rows[0].firstName;
 
-    // Check if user is blocked
+    // Check if user is already blocked
     const [rowsBlocked] = (await db.query('SELECT id FROM Blocked WHERE user_id = ? AND blocked_user_id = ?', [user_id, unblock_id])) as any;
 
     if (!rowsBlocked || rowsBlocked.length === 0) {
@@ -99,13 +99,10 @@ export async function unblockUser(unblock_id: number, req: RequestUser, res: Res
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'Error while unblocking the user',
     });
   }

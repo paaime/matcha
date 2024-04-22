@@ -34,7 +34,7 @@ const getRandomCoordinateLyon = (): { lat: number; lon: number } => {
 
 const addRandom = async(db: Connection): Promise<boolean> => {
   try {
-    const password = 'password';
+    const password = process.env.RANDOM_PASSWORD || 'password';
     const email = Math.random().toString(36).substring(2, 15) + '@gmail.com';
 
     // Api to get random user
@@ -120,13 +120,10 @@ const addRandom = async(db: Connection): Promise<boolean> => {
 
     return true;
   } catch (error) {
-    // console.error('Error while generating random user:', error);
-
     return false;
   }
 }
 
-// TODO : Change the number of users, likes, tags and visits
 const NB_USERS = 500;
 const NB_LIKES = 15;
 const NB_TAGS = 3;
@@ -138,7 +135,6 @@ export async function randScript(): Promise<boolean> {
     const db = await connectToDatabase();
 
     if (!db) {
-      // console.error('Database connection error');
       return false;
     }
 
@@ -185,7 +181,6 @@ export async function randScript(): Promise<boolean> {
     await db.end();
     return true;
   } catch (error) {
-    console.error('Error while adding user:', error);
     return false;
   }
 }

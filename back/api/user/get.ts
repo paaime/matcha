@@ -51,9 +51,17 @@ router.get('/:id', async (req: RequestUser, res: Response) => {
   // Get user info by id
   const username = req.params?.id;
 
-  if (!username || !usernameRegex.test(username)) {
+  if (!username) {
     res.status(400).json({
       error: 'Bad request',
+      message: 'Missing username',
+    });
+    return;
+  }
+
+  if (!usernameRegex.test(username)) {
+    res.status(422).json({
+      error: 'Unprocessable entity',
       message: 'Invalid username',
     });
     return;

@@ -30,8 +30,6 @@ export async function randTags(total: number, db: Connection): Promise<boolean>{
 
     return true;
   } catch (error) {
-    // console.error('Error while adding user', ':', error);
-
     return false;
   }
 }

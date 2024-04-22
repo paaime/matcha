@@ -1,7 +1,7 @@
 import { Connection } from 'mysql2/promise';
 
 import { updateFame } from '../../../utils/fame';
-import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { sendNotification } from '../../../websocket/initializeIo';
 import { Notification } from '../../../types/type';
 
 const MAX_LIKES = 30;
@@ -57,8 +57,6 @@ export async function randLikes(total: number, db: Connection): Promise<boolean>
 
     return true;
   } catch (error) {
-    // console.error('Error while adding the likes:', error);
-
     return false;
   }
 }

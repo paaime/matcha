@@ -1,15 +1,13 @@
 import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import { Server as SocketIOServer } from 'socket.io';
-import { JwtDatas, Notification } from '../../types/type';
+import { JwtDatas, Notification } from '../types/type';
 import { addNotification } from './addNotification';
-import { setOnline } from '../../utils/setOnline';
-import { IMessage } from '../../types/chat';
+import { setOnline } from '../utils/setOnline';
+import { IMessage } from '../types/chat';
 
-// Définir une variable globale io
 let io: SocketIOServer;
 
-// Fonction pour initialiser io
 export function initializeIO(server: any) {
   io = new SocketIOServer(server, {
     cors: {
@@ -18,10 +16,7 @@ export function initializeIO(server: any) {
     },
   });
 
-  // Gérer la connexion des sockets
   io.on('connection', async (socket) => {
-    // console.log('A client just arrived with id:', socket.id);
-
     if (!socket.request.headers.cookie) {
       return;
     }
@@ -49,35 +44,22 @@ export function initializeIO(server: any) {
     }
 
     socket.join(decoded.id.toString());
-    // console.log('User', decoded.id, 'just joined');
 
     await setOnline(decoded.id, true);
 
-    // io.emit(
-    //   'notification',
-    //   JSON.stringify({
-    //     content: 'Hello from server',
-    //     redirect: '/',
-    //     related_user_id: decoded.id,
-    //   })
-    // );
 
     socket.on('disconnect', async () => {
-      // console.log('A client has just left:', decoded.id);
-
       await setOnline(decoded.id, false);
 
       socket.leave(decoded.id.toString());
     });
 
     socket.on('message', (data) => {
-      // console.log('Message from client:', data);
       socket.emit('message', 'Hello from server');
     });
   });
 }
 
-// Fonction pour envoyer une notification
 export const sendNotification = async (
   userId: string,
   body: Notification
@@ -93,7 +75,6 @@ export const sendNotification = async (
   return await addNotification(Number(userId), body);
 };
 
-// Fonction pour envoyer un message
 export const sendMessage = async (
   userId: string,
   body: IMessage

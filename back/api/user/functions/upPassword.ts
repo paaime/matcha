@@ -6,6 +6,7 @@ import { passwordRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { logger } from '../../../utils/logger';
 
 export async function upPassword(
   req: RequestUser,
@@ -14,7 +15,7 @@ export async function upPassword(
   const db = await connectToDatabase();
 
   if (!db) {
-    res.status(400).json({
+    res.status(500).json({
       error: 'Internal server error',
       message: 'Database connection error',
     });
@@ -36,9 +37,17 @@ export async function upPassword(
     // Get infos from body
     const { current, newPass } = req.body;
 
-    if (!passwordRegex.test(newPass)) {
+    if (!current || !newPass) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Missing password',
+      });
+      return;
+    }
+
+    if (!passwordRegex.test(newPass)) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid new password',
       });
       return;
@@ -59,8 +68,8 @@ export async function upPassword(
 
     // Check if the user is Google
     if (usrResult && usrResult.length > 0 && usrResult[0].isGoogle) {
-      res.status(400).json({
-        error: 'Bad request',
+      res.status(403).json({
+        error: 'Forbidden',
         message: 'Google user cannot update password',
       });
       return;
@@ -89,13 +98,10 @@ export async function upPassword(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while updating the password',
     });
   } finally {

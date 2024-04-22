@@ -1,10 +1,10 @@
 import { Response } from 'express';
 
 import { connectToDatabase } from '../../../utils/db';
-import { biographyRegex } from '../../../types/regex';
 import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { logger } from '../../../utils/logger';
 
 export async function upConsentLocation(
   req: RequestUser,
@@ -25,9 +25,17 @@ export async function upConsentLocation(
     // Get infos from body
     const { consent } = req.body;
 
-    if (typeof consent !== 'boolean') {
+    if (consent === undefined) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Missing consent',
+      });
+      return;
+    }
+
+    if (typeof consent !== 'boolean') {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid consent value',
       });
       return;
@@ -36,7 +44,7 @@ export async function upConsentLocation(
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -57,13 +65,10 @@ export async function upConsentLocation(
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || 'Unknown error';
-    const message = e?.message || 'Unknown message';
+    logger(e);
 
-    // console.error({ code, message });
-
-    res.status(501).json({
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while updating the consent location',
     });
   }

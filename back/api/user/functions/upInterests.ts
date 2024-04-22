@@ -5,6 +5,7 @@ import { ThrownError } from '../../../types/type';
 import { RequestUser } from '../../../types/express';
 import { getAuthId } from '../../../middlewares/authCheck';
 import { interestsList } from '../../../types/list';
+import { logger } from '../../../utils/logger';
 
 export async function upInterests(req: RequestUser, res: Response): Promise<undefined>{
   try {
@@ -22,9 +23,17 @@ export async function upInterests(req: RequestUser, res: Response): Promise<unde
     // Get infos from body
     const { interests } = req.body;
 
-    if (!interests || !Array.isArray(interests)) {
+    if (!interests) {
       res.status(400).json({
         error: 'Bad request',
+        message: 'Missing interests',
+      });
+      return;
+    }
+
+    if (!Array.isArray(interests)) {
+      res.status(422).json({
+        error: 'Unprocessable entity',
         message: 'Invalid interests',
       });
       return;
@@ -44,7 +53,7 @@ export async function upInterests(req: RequestUser, res: Response): Promise<unde
     const db = await connectToDatabase();
 
     if (!db) {
-      res.status(400).json({
+      res.status(500).json({
         error: 'Internal server error',
         message: 'Database connection error',
       });
@@ -70,13 +79,10 @@ export async function upInterests(req: RequestUser, res: Response): Promise<unde
   } catch (error) {
     const e = error as ThrownError;
 
-    const code = e?.code || "Unknown error";
-    const message = e?.message || "Unknown message";
-
-    // console.error({ code, message });
+    logger(e);
     
-    res.status(401).json({ // 501 for real but not tolerated by 42
-      error: 'Server error',
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'An error occurred while updating the interests'
     });
   }

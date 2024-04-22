@@ -1,16 +1,27 @@
+import fs from 'fs';
 import { Request } from 'express';
-import { upload } from '../../../middlewares/multer';
-import { RequestUser } from '../../../types/express';
 import { Response } from 'express';
-import { connectToDatabase } from '../../../utils/db';
+
+import { upload } from '../../../middlewares/multer';
 import { getAuthId } from '../../../middlewares/authCheck';
+import { RequestUser } from '../../../types/express';
+import { connectToDatabase } from '../../../utils/db';
 import { uploadImage } from '../../../utils/image';
+import { ThrownError } from '../../../types/type';
+import { logger } from '../../../utils/logger';
 
 export async function upImage(
   req: RequestUser,
   res: Response,
   image_id: number
 ): Promise<undefined> {
+
+  // Check if folder exists
+  const folder = process.cwd() + '/public/uploads';
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder, { recursive: true });
+  }
+
   upload(req as Request, res, async (err) => {
     try {
       const user_id = getAuthId(req);
@@ -26,7 +37,7 @@ export async function upImage(
 
       // Error handling for multer
       if (err) {
-        res.status(400).json({
+        res.status(500).json({
           error: 'Bad request',
           message:
             err?.message || 'An error occurred while uploading the image',
@@ -34,7 +45,7 @@ export async function upImage(
         return;
       }
       if (!req.file) {
-        res.status(400).json({
+        res.status(500).json({
           error: 'Bad request',
           message: 'An error occurred while uploading the image',
         });
@@ -47,7 +58,7 @@ export async function upImage(
       const db = await connectToDatabase();
 
       if (!db) {
-        res.status(400).json({
+        res.status(500).json({
           error: 'Internal server error',
           message: 'Database connection error',
         });
@@ -94,9 +105,12 @@ export async function upImage(
       db.end();
       res.json({ success: true, newPictures });
     } catch (error) {
-      res.status(401).json({
-        // 501 for real but not tolerated by 42
-        error: 'Server error',
+      const e = error as ThrownError;
+
+      logger(e);
+
+      res.status(500).json({
+        error: 'Internal server error',
         message: 'An error occurred while updating the pictures',
       });
     }

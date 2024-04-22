@@ -15,7 +15,7 @@ import chatPost from './api/chat/post';
 import chatGet from './api/chat/get';
 
 import { authCheck } from './middlewares/authCheck';
-import { initializeIO } from './websocket/functions/initializeIo';
+import { initializeIO } from './websocket/initializeIo';
 import { randScript } from './api/auth/functions/randScript';
 
 const PORT = process.env.BACK_PORT;
@@ -62,10 +62,6 @@ initializeIO(server);
 // Start web server
 server.listen(PORT, async () => {
   await randScript();
-
-  console.log(
-    `API and WebSocket server is running at ${process.env.NEXT_PUBLIC_API}`
-  );
 });
 
 // Create mail transporter

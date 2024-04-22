@@ -1,7 +1,7 @@
 import { Connection } from 'mysql2/promise';
 
 import { updateFame } from '../../../utils/fame';
-import { sendNotification } from '../../../websocket/functions/initializeIo';
+import { sendNotification } from '../../../websocket/initializeIo';
 import { Notification } from '../../../types/type';
 
 const NB_RANDOM_VISITS = 15;
@@ -45,8 +45,6 @@ export async function randVisits(total: number, db: Connection): Promise<boolean
 
     return true;
   } catch (error) {
-    // console.error('Error while adding user', ':', error);
-
     return false;
   }
 }
