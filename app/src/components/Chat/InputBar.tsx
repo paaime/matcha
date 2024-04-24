@@ -46,6 +46,13 @@ export default function InputBar({
 
   const sendMessage = async (e) => {
     e.preventDefault();
+
+    // check message length
+    if (input.trim().length < 1 || input.trim().length > 300) {
+      toast.error('Message must be between 1 and 300 characters');
+      return;
+    }
+
     try {
       if (!input) return;
       const { data } = await customAxios.post(`/chat/${chatId}`, {
@@ -72,7 +79,8 @@ export default function InputBar({
             <Input
               type="search"
               placeholder="Type a message..."
-              onChange={(e) => setInput(e.target.value)}
+              maxLength={300}
+              onChange={(e) => setInput(e.target.value?.slice(0, 300) || '')}
               className="bg-transparent border-0 ml-1 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
               value={input}
             />

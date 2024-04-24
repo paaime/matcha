@@ -121,11 +121,7 @@ export default function NotificationsComp() {
 
     setHasUnread(hasUnread);
 
-    if (hasUnread) {
-      document.title = `(${user?.notifications?.length}) Matcha`;
-    } else {
-      document.title = 'Matcha';
-    }
+    document.title = 'Matcha';
   }, [user?.notifications]);
 
   return (

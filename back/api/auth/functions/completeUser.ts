@@ -105,7 +105,8 @@ export async function completeUser(
       }
     }
 
-    if (!biographyRegex.test(biography)) {
+    const bioTrim = biography.trim();
+    if (!biographyRegex.test(bioTrim)) {
       res.status(422).json({
         error: 'Unprocessable entity',
         message: 'Biography is not valid',
@@ -144,7 +145,7 @@ export async function completeUser(
       gender,
       sexualPreferences,
       age,
-      biography.trim(),
+      bioTrim,
       user_id,
     ]);
 

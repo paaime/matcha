@@ -102,17 +102,28 @@ export async function blockUser(block_id: number, req: RequestUser, res: Respons
     if (code === 'ER_DUP_ENTRY') {
       res.status(400).json({
         error: 'Bad request',
-        message: 'You already blocked this user',
+        message: 'blocked already added',
       });
       return;
-    } else if (code.startsWith('ER_')) {
+    } else if (code.startsWith('ER_NO_REFERENCED_ROW')) {
+      res.status(404).json({
+        error: 'Not found',
+        message: 'User not found',
+      });
+      return;
+    } else if (code === 'ER_DATA_TOO_LONG') {
       res.status(400).json({
         error: 'Bad request',
-        message: 'Error while blocking the user',
+        message: 'Data too long',
+      });
+      return;
+    } else if (code === 'ER_BAD_NULL_ERROR') {
+      res.status(400).json({
+        error: 'Bad request',
+        message: 'Bad request',
       });
       return;
     }
-
 
     res.status(500).json({
       error: 'Server error',

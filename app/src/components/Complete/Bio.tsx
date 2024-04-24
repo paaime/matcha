@@ -20,7 +20,8 @@ export default function Bio({
     if (
       data.biography?.length < 10 ||
       data.biography?.length > 1000 ||
-      !data.biography
+      !data.biography ||
+      data.biography?.trim() === ''
     ) {
       return toast.error('Biography must be between 10 and 1000 characters.');
     }

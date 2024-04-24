@@ -52,7 +52,9 @@ export async function addMessage(
 
     // Test values with regex
     if (!imageUrl) {
-      if (!messageRegex.test(content)) {
+      const trimLength = content.trim()?.length;
+
+      if (!messageRegex.test(content) || trimLength < 1 || trimLength > 300) {
         res.status(422).json({
           error: 'Unprocessable entity',
           message: 'Invalid message',
