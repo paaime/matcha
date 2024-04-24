@@ -182,7 +182,7 @@ export default function LoveCarousel() {
             whileTap={{ scale: 0.9 }}
             onClick={superLike}
             className={clsx(
-              '!h-14 !w-14 !rounded-full !bg-primary dark:!bg-[#4a154b] shadow-xl text-white',
+              '!h-14 !w-14 !rounded-full !bg-[#4a154b] shadow-xl text-white',
               buttonVariants({ variant: 'secondary' })
             )}
           >

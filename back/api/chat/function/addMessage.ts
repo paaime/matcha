@@ -73,6 +73,20 @@ export async function addMessage(
       return;
     }
 
+    // Check if the match exists
+    const matchCheckQuery = 'SELECT * FROM Matchs WHERE id = ?';
+    const [matchCheck] = (await db.query(matchCheckQuery, [matchId])) as any;
+
+    console.log({ matchCheck });
+
+    if (!matchCheck || matchCheck.length === 0) {
+      res.status(404).json({
+        error: 'Match not found',
+        message: 'Match not found',
+      });
+      return;
+    }
+
     // Insert new message into the Chat table
     const query = `
       INSERT INTO Chat (match_id, user_id, content, type)

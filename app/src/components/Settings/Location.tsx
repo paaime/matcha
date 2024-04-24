@@ -40,7 +40,7 @@ export default function Location() {
     '4.850000',
   ];
 
-  const profilePicture = `${process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
+  const profilePicture = `${pictures[0].startsWith('http') ? '' : process.env.NEXT_PUBLIC_API}${pictures[0] ?? ''}`;
 
   const iconPerson = new L.Icon({
     iconUrl: profilePicture,
@@ -61,7 +61,6 @@ export default function Location() {
       await customAxios.put('/user/location', {
         location
       });
-      // setUser({ ...user, loc: location });
       const { data } = await customAxios.get('/user/me');
       setUser(data);
       toast.success('Updated');
