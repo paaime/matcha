@@ -124,15 +124,10 @@ const addRandom = async(db: Connection): Promise<boolean> => {
   }
 }
 
-// TODO restaure
-// const NB_USERS = 500;
-// const NB_LIKES = 15;
-// const NB_TAGS = 3;
-// const NB_VISITS = 7;
-const NB_USERS = 50;
-const NB_LIKES = 1;
+const NB_USERS = 500;
+const NB_LIKES = 15;
 const NB_TAGS = 3;
-const NB_VISITS = 1;
+const NB_VISITS = 7;
 
 export async function randScript(): Promise<boolean> {
 
